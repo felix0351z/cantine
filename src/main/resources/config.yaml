@@ -1,0 +1,9 @@
+
+port: 8080
+
+databaseType: sqlite
+databaseProperties:
+  url: cantine/data.db
+  port:
+  username:
+  password:
