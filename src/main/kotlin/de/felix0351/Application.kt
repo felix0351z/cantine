@@ -4,10 +4,11 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import de.felix0351.plugins.*
 import de.felix0351.utils.FileHandler
+import java.lang.Exception
+import kotlin.system.exitProcess
 
 
-//TODO Beispiel config.yaml kommentieren
-
+//TODO Unit-Test für Datenbank Verbindung
 //TODO DatatenbankService erstellen
 //TODO DAO Interface
 //TODO DAO Implementation
@@ -15,6 +16,8 @@ import de.felix0351.utils.FileHandler
 
 //TODO Authentifizierung (LDAP vs Session?)
 //TODO Routen definieren
+
+//TODO Beispiel config.yaml kommentieren
 
 
 fun main() {
@@ -29,5 +32,11 @@ fun runServer(port: Int)  = embeddedServer(Netty, port = port, host = "0.0.0.0")
     configureSerialization()
     configureRouting()
 }.start(wait = true)
+
+
+fun fail(e: Exception): Nothing {
+    e.printStackTrace()
+    exitProcess(1)
+}
 
 
