@@ -3,15 +3,15 @@ package de.felix0351.db
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import de.felix0351.fail
-import de.felix0351.utils.FileHandler
+import de.felix0351.models.ConfigFile
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseService {
     
-    fun init() {
+    fun init(config: ConfigFile) {
         try {
-            val type = ConnectionTypeFactory.fromConfig(FileHandler.configuration)
+            val type = ConnectionFactory.fromConfig(config)
             val db = when(type) {
                 is Connection.MySQL -> connectHikari(type)
                 is Connection.SQLite -> connectSQLite(type)
@@ -23,7 +23,7 @@ object DatabaseService {
 
 
         } catch (e: Exception) {
-            // WrongSQLTypeConnection | MissingArgumentsException | and from exposed can be thrown
+            // WrongSQLTypeConnection | MissingArgumentsException | HikariPoolInitializationException | and from exposed can be thrown
             fail(e)
         }
         

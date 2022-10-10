@@ -11,6 +11,11 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
 }
 
+tasks.test {
+    useJUnit()
+    ignoreFailures = true
+}
+
 group = "de.felix0351"
 version = "0.0.1"
 application {
@@ -23,6 +28,7 @@ application {
 repositories {
     mavenCentral()
 }
+
 
 dependencies {
     val kaml_version = "0.49.0"

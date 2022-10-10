@@ -4,10 +4,10 @@ import de.felix0351.exceptions.MissingArgumentsException
 import de.felix0351.exceptions.WrongSQLTypeException
 import de.felix0351.models.ConfigFile
 
-object ConnectionTypeFactory {
+object ConnectionFactory {
 
     @Throws(WrongSQLTypeException::class, MissingArgumentsException::class)
-    fun fromConfig(config: ConfigFile): Connection.ConnectionType {
+    fun fromConfig(config: ConfigFile): Connection {
         when(config.databaseType) {
             "sqlite" -> {
                 return Connection.SQLite(config.databaseProperties.url)
@@ -38,7 +38,6 @@ object ConnectionTypeFactory {
 
 
 sealed class Connection {
-    sealed interface ConnectionType
-    class MySQL(val url: String, val username: String?, val password: String?) : ConnectionType
-    class SQLite(val url: String) : ConnectionType
+    class MySQL(val url: String, val username: String?, val password: String?) : Connection()
+    class SQLite(val url: String) : Connection()
 }
