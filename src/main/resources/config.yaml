@@ -1,0 +1,8 @@
+
+port: 8080
+
+databaseType: sqlite
+databaseProperties:
+  url: data.db
+  username:
+  password:
