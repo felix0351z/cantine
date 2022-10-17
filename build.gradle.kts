@@ -59,6 +59,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     //HikariCP als Verbindungsframework
     implementation("com.zaxxer:HikariCP:$hikari_version")
     //MySQL/MAriaDB/SQLite Treiber

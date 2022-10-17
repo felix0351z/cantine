@@ -8,8 +8,10 @@ import java.lang.Exception
 import kotlin.system.exitProcess
 
 
-//TODO Unit-Test für Datenbank Verbindung
-//TODO DatatenbankService erstellen
+
+
+//TODO Debug databaseService
+
 //TODO DAO Interface
 //TODO DAO Implementation
 //TODO DAO Testing
@@ -17,6 +19,9 @@ import kotlin.system.exitProcess
 //TODO Authentifizierung (LDAP vs Session?)
 //TODO Routen definieren
 
+
+//Muss zwischendurch mal gemacht werden
+//TODO SQL Tabellen Varchar Größen in Konstanten auslagern
 //TODO Beispiel config.yaml kommentieren
 
 
