@@ -1,8 +1,12 @@
 
 port: 8080
 
-databaseType: sqlite
-databaseProperties:
+database:
+  type: sqlite
   url: data.db
   username:
   password:
+
+authentication:
+  session_age: 60
+  sign_key: 6819b57a326945c1968f45236589

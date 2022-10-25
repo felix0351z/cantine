@@ -1,26 +1,25 @@
 package de.felix0351.models
 
 import kotlinx.serialization.Serializable
-
 /**
  * Config file for the server, which will be read as yaml
  *
  * @property port Port, where the server will run on
- * @property databaseType The name, which database should be used (mysql, mariadb, or sqlite)
- * @property databaseProperties Properties for the connection to the database
+ * @property database Properties for the connection to the database
  *
  */
 @Serializable
 data class ConfigFile(
     val port: Int,
-    val databaseType: String,
-    val databaseProperties: DatabaseProperties
+    val database: DatabaseProperties,
+    val authentication: AuthenticationProperties
 )
 
 
 /**
  * Properties for the database connection
  *
+ * @property type The name, which database should be used (mysql, or sqlite)
  * @property url Adress to the database
  * //@property port Standard sql port is 3306
  * @property username Username for the database
@@ -28,8 +27,21 @@ data class ConfigFile(
  */
 @Serializable
 data class DatabaseProperties(
+    val type: String,
     val url: String,
     //val port: Int?,
     val username: String?,
     val password: String?
+)
+
+/**
+ * Properties for the user authentication
+ * @property session_age How long a user can be signed in (in days)
+ * @property signKey  Key to sign every user session (Automatically generated)
+ *
+ */
+@Serializable
+data class AuthenticationProperties(
+    val session_age: Int,
+    val signKey: String,
 )
