@@ -23,3 +23,17 @@ object Users : Table("users") {
 
     override val primaryKey = PrimaryKey(id)
 }
+
+/**
+ *  Saves all opened sessions
+ *
+ * @property id Unique id of the session. Automatically generated.
+ * @property value Content of the session
+ */
+object UserSessions : Table("sessions") {
+
+    val id: Column<String> = varchar("session_id", 128).autoIncrement()
+    val value: Column<String> = varchar("session_value", 512)
+
+    override val primaryKey = PrimaryKey(id)
+}

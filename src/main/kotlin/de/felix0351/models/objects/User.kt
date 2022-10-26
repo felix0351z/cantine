@@ -1,7 +1,7 @@
 package de.felix0351.models.objects
 
 import io.ktor.server.auth.*
-import java.time.LocalDateTime
+
 
 
 /**
@@ -24,5 +24,5 @@ data class User(
 
 data class UserSession(
     val id: Int,
-    val time: LocalDateTime
+    val user: User,
 ): Principal

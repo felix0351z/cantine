@@ -22,7 +22,7 @@ fun Application.configureSecurity() {
         val signKey = hex(FileHandler.configuration.authentication.signKey)
 
 
-        cookie<UserSession>("user_session", AuthenticationRepository()) {
+        cookie<UserSession>("user_session", AuthenticationRepository.AuthenticationSessionStorage()) {
 
             // Only transfer cookies via ssl encrypted connection
             cookie.secure = true
