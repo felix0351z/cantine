@@ -1,14 +1,14 @@
 package de.felix0351.plugins
 
 import de.felix0351.dependencies.AuthenticationRepositoryImpl
-import de.felix0351.exceptions.AuthenticationException
-import de.felix0351.exceptions.AuthorizationException
 import de.felix0351.models.objects.UserSession
 import de.felix0351.dependencies.CantineService
 import de.felix0351.utils.FileHandler
+import io.ktor.http.*
 
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
 import org.koin.ktor.ext.inject
@@ -62,12 +62,12 @@ private fun SessionsConfig.configureAuthCookie() {
  * Let the user log in bei their session (via cookie)
  * Checks if a User session exists to the cookie
  *
- * @throws AuthorizationException if the user doesn't have a session.
+ * Return 403 if there is no valid session for request
  */
 private fun AuthenticationConfig.configureSessionAuthentication() {
     session<UserSession>("session") {
         challenge {
-            throw AuthorizationException()
+            call.respond(HttpStatusCode.Forbidden)
         }
 
     }
@@ -79,7 +79,7 @@ private fun AuthenticationConfig.configureSessionAuthentication() {
  * Check`s if the credentials are correct and returns a Principal with the name
  * to the route if everything is fine
  *
- * @throws AuthenticationException Throws if the credentials are not correct.
+ * Returns 401 if username or password is incorrect
  *
  */
 
@@ -95,7 +95,11 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
                     credentials.name
                 )
             }
-            else throw AuthorizationException()
+            else null
+        }
+
+        challenge {
+            call.respond(HttpStatusCode.Unauthorized)
         }
 
     }
