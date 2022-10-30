@@ -7,22 +7,19 @@ import io.ktor.server.auth.*
 /**
  * User
  *
- * @property id Unique id of the user, Null if it isn't already in the database
+ * @property username Unique name of the user
  * @property name The personal name
- * @property mail E-Mail address of the user
  * @property permissionLevel User's permission level
  * @property password Entered password of the user (hashed in db)
  *
  */
 data class User(
-    val id: Int?,
+    val username: String,
     val name: String,
-    val mail: String,
     val permissionLevel: Int,
     val password: String
 )
 
 data class UserSession(
-    val id: Int,
-    val user: User,
+    val username: String,
 ): Principal

@@ -37,11 +37,13 @@ data class DatabaseProperties(
 /**
  * Properties for the user authentication
  * @property session_age How long a user can be signed in (in days)
- * @property signKey  Key to sign every user session (Automatically generated)
+ * @property sign_key  Key to sign every user session (Automatically generated)
+ * @property auth_key Key to encrypt the cookies data
  *
  */
 @Serializable
 data class AuthenticationProperties(
     val session_age: Int,
-    val signKey: String,
+    val sign_key: String,
+    val auth_key: String
 )
