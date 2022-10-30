@@ -1,12 +1,13 @@
 package de.felix0351.db
 
-import de.felix0351.exceptions.MissingArgumentsException
-import de.felix0351.exceptions.WrongSQLTypeException
+
 import de.felix0351.models.ConfigFile
+import de.felix0351.utils.SQLException
+import de.felix0351.utils.fail
 
 object ConnectionFactory {
 
-    @Throws(WrongSQLTypeException::class, MissingArgumentsException::class)
+    @Throws(SQLException.WrongSQLTypeException::class, SQLException.MissingArgumentsException::class)
     fun fromConfig(config: ConfigFile): Connection {
         when(config.database.type) {
             "sqlite" -> {
@@ -16,7 +17,7 @@ object ConnectionFactory {
             "mysql" -> {
                 // If the password or the username are null, then a connection won't be possible
                 if (config.database.username == null || config.database.password == null) {
-                    throw MissingArgumentsException()
+                    fail(SQLException.MissingArgumentsException())
                 }
 
                 return Connection.MySQL(
@@ -30,7 +31,7 @@ object ConnectionFactory {
         }
 
         //If there is no correct type throw an exception
-        throw WrongSQLTypeException(config.database.type)
+        fail(SQLException.WrongSQLTypeException(config.database.type))
     }
 
 }

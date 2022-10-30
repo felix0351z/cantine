@@ -4,8 +4,6 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import de.felix0351.plugins.*
 import de.felix0351.utils.FileHandler
-import java.lang.Exception
-import kotlin.system.exitProcess
 
 //Muss zwischendurch mal gemacht werden
 //TODO SQL Tabellen Varchar Größen in Konstanten auslagern
@@ -25,11 +23,5 @@ fun runServer(port: Int)  = embeddedServer(Netty, port = port, host = "0.0.0.0")
     configureRouting()
     configureDependencyInjection()
 }.start(wait = true)
-
-
-fun fail(e: Exception): Nothing {
-    e.printStackTrace()
-    exitProcess(1)
-}
 
 

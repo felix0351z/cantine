@@ -2,8 +2,8 @@ package de.felix0351.db
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import de.felix0351.fail
 import de.felix0351.models.ConfigFile
+import de.felix0351.utils.fail
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
