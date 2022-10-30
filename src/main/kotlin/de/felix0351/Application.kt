@@ -7,19 +7,6 @@ import de.felix0351.utils.FileHandler
 import java.lang.Exception
 import kotlin.system.exitProcess
 
-
-
-
-//TODO Debug databaseService
-
-//TODO DAO Interface
-//TODO DAO Implementation
-//TODO DAO Testing
-
-//TODO Authentifizierung (LDAP vs Session?)
-//TODO Routen definieren
-
-
 //Muss zwischendurch mal gemacht werden
 //TODO SQL Tabellen Varchar Größen in Konstanten auslagern
 //TODO Beispiel config.yaml kommentieren
@@ -36,6 +23,7 @@ fun runServer(port: Int)  = embeddedServer(Netty, port = port, host = "0.0.0.0")
     configureSecurity()
     configureSerialization()
     configureRouting()
+    configureDependencyInjection()
 }.start(wait = true)
 
 

@@ -35,11 +35,17 @@ dependencies {
     val hikari_version = "5.0.1"
     val mysql_connector_version = "8.0.30"
     val sqlite_connector_version = "3.30.1"
+    val koin_version = "3.2.2"
 
     //Ktor Server Core Library mit Netty als Network Framework
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+
+    // Dependency Injection mit Koin
+    implementation("io.insert-koin:koin-core:$koin_version")
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
     //Session Authentifizierung
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
