@@ -1,7 +1,6 @@
 package de.felix0351.utils
 
 import com.charleskorn.kaml.Yaml
-import de.felix0351.fail
 import de.felix0351.models.ConfigFile
 import org.slf4j.LoggerFactory
 import java.io.File
