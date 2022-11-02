@@ -22,7 +22,7 @@ object News : Table("news") {
     val title: Column<String> = varchar("title", 128)
     val description: Column<String> = varchar("description", 4096)
     val picture: Column<String> = varchar("picture", 128)
-    val time: Column<LocalDateTime> = datetime("time").autoIncrement()
+    val time: Column<LocalDateTime> = datetime("time")
 
     override val primaryKey = PrimaryKey(id)
 

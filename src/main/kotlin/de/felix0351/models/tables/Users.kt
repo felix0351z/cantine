@@ -32,7 +32,7 @@ object Users : Table("users") {
  */
 object UserSessions : Table("sessions") {
 
-    val id: Column<String> = varchar("session_id", 128).autoIncrement()
+    val id: Column<String> = varchar("session_id", 128)
     val value: Column<String> = varchar("session_value", 512)
 
     override val primaryKey = PrimaryKey(id)

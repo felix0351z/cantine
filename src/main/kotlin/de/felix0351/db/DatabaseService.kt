@@ -46,9 +46,11 @@ object DatabaseService {
         
     }
 
+
     private fun connectSQLite(properties: Connection.SQLite): Database {
-        return Database.connect("jdbc:sqlite:/${properties.url}")
+        return Database.connect("jdbc:sqlite:${properties.url}", "org.sqlite.JDBC")
     }
+
 
     private fun connectHikari(properties: Connection.MySQL): Database {
         val config = HikariConfig().apply {
