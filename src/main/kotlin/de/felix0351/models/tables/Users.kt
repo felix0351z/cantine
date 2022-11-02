@@ -19,7 +19,7 @@ object Users : Table("users") {
     val name: Column<String> = varchar("name", 128)
     val mail: Column<String> = varchar("mail", 128)
     val permissionLevel: Column<Int> = integer("permission_level")
-    val hash: Column<ByteArray> = binary("hash", 60)
+    val hash: Column<String> = varchar("hash", 128)
 
     override val primaryKey = PrimaryKey(username)
 }

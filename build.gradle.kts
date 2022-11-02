@@ -53,6 +53,10 @@ dependencies {
 
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
 
+    //Hashing with BCrypt
+    //implementation("at.favre.lib:bcrypt:0.9.0")
+    implementation("org.mindrot:jbcrypt:0.4")
+
     //Serialization
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
