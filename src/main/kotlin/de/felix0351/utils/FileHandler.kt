@@ -1,10 +1,12 @@
 package de.felix0351.utils
 
 import com.charleskorn.kaml.Yaml
+import de.felix0351.models.AuthenticationProperties
 import de.felix0351.models.ConfigFile
+import de.felix0351.models.DatabaseProperties
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.IOException
+
 
 object FileHandler {
 
@@ -28,16 +30,28 @@ object FileHandler {
 
 
     private fun initConfig(file: File) {
-        // Load example from recourse folder
-        val example = this.javaClass.classLoader.getResource("config.yaml")
-        if (example == null) {
-            //Without a correct configuration file, the server can't start
-            fail(IOException("Failed to load example config.yaml"))
-        }
+        val example = Yaml.default.encodeToString(
+            serializer = ConfigFile.serializer(),
+            value = EXAMPLE_CONFIG
+        )
 
-        else example.openStream().copyTo(file.outputStream())
+        file.writeText(example)
     }
 
-
+    private val EXAMPLE_CONFIG = ConfigFile(
+        port = 8080,
+        database = DatabaseProperties(
+            type = "sqlite",
+            url = "data.db",
+            username = null,
+            password = null
+        ),
+        authentication = AuthenticationProperties(
+            session_age = 60, //Days
+            sign_key = randomString(28),
+            auth_key = randomString(32),
+            pepper = randomString(16, complexCharset = true),
+        )
+    )
 
 }
