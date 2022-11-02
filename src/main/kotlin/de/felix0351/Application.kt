@@ -1,5 +1,6 @@
 package de.felix0351
 
+import de.felix0351.db.DatabaseService
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import de.felix0351.plugins.*
@@ -13,6 +14,7 @@ import de.felix0351.utils.FileHandler
 fun main() {
     //Load all configurations for the server
     FileHandler.load()
+    DatabaseService.init()
 
     runServer(FileHandler.configuration.port)
 }
