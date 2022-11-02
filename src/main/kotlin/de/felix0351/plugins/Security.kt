@@ -66,6 +66,12 @@ private fun SessionsConfig.configureAuthCookie() {
  */
 private fun AuthenticationConfig.configureSessionAuthentication() {
     session<UserSession>("session") {
+
+        // Additional validation not needed
+        validate { session ->
+            session
+        }
+
         challenge {
             call.respond(HttpStatusCode.Forbidden)
         }
