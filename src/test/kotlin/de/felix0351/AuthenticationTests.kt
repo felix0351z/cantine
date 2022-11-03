@@ -51,4 +51,13 @@ class AuthenticationTests {
         assertEquals("Logout successfully", response.bodyAsText())
     }
 
+    @Test
+    fun testStatusPages() = testModule {
+        val loginResponse = it.login("NichtRichtig")
+        val logoutResponse = it.logout()
+
+        assertEquals("401: Password or Username incorrect", loginResponse.bodyAsText())
+        assertEquals("403: No valid session", logoutResponse.bodyAsText())
+    }
+
 }
