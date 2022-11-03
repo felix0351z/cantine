@@ -2,13 +2,24 @@ package de.felix0351
 
 import de.felix0351.db.DatabaseService
 import de.felix0351.utils.FileHandler
+import de.felix0351.utils.Hashing
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class AuthenticationTests {
+
+   @Test
+   fun testBCrypt() {
+       testUtils()
+
+       val hash = Hashing.toHash(EXAMPLE_PASSWORD)
+
+       assertTrue(Hashing.checkPassword(EXAMPLE_PASSWORD, hash))
+   }
 
     @Test
     fun testUtils() {
@@ -22,6 +33,22 @@ class AuthenticationTests {
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals("Cantine Server is running", response.bodyAsText())
+    }
+
+    @Test
+    fun testLogin() = testModule {
+        val response = it.login()
+
+        assertEquals(HttpStatusCode.Accepted, response.status)
+    }
+
+    @Test
+    fun testLogout() = testModule {
+        it.login()
+        val response = it.logout()
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("Logout successfully", response.bodyAsText())
     }
 
 }
