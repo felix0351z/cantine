@@ -7,7 +7,7 @@ object Hashing {
     private val pepper = FileHandler.configuration.authentication.pepper
 
     fun checkPassword(pw: String, hash: String) : Boolean {
-        return BCrypt.checkpw(pw, hash)
+        return BCrypt.checkpw((pepper + pw), hash)
     }
 
     fun toHash(password: String): String {
