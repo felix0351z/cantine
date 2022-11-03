@@ -53,11 +53,11 @@ fun HttpRequestBuilder.https() {
 /*
 Simulate login
  */
-suspend fun HttpClient.login() = submitForm(
+suspend fun HttpClient.login(password: String = EXAMPLE_PASSWORD) = submitForm(
     url = "/login",
     formParameters = Parameters.build {
         append("username", EXAMPLE_USERNAME)
-        append("password", EXAMPLE_PASSWORD)
+        append("password", password)
     }
 ) {
     https()
