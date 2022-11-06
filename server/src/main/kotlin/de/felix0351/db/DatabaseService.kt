@@ -8,6 +8,7 @@ import de.felix0351.models.tables.UserSessions
 import de.felix0351.models.tables.Users
 import de.felix0351.utils.FileHandler
 import de.felix0351.utils.fail
+import de.felix0351.utils.getLogger
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -16,6 +17,8 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseService {
+
+    private val logger = getLogger()
 
     private val TABLES = listOf(
         Users, UserSessions,
@@ -36,10 +39,12 @@ object DatabaseService {
                 TABLES.forEach { table ->
                     SchemaUtils.create(table)
                 }
+                logger.info("Loaded database tables successfully")
             }
 
 
         } catch (e: Exception) {
+            logger.error("Error while initiating database connection")
             // WrongSQLTypeConnection | MissingArgumentsException | HikariPoolInitializationException | and from exposed can be thrown
             fail(e)
         }

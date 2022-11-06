@@ -4,13 +4,11 @@ import com.charleskorn.kaml.Yaml
 import de.felix0351.models.AuthenticationProperties
 import de.felix0351.models.ConfigFile
 import de.felix0351.models.DatabaseProperties
-import org.slf4j.LoggerFactory
 import java.io.File
-
 
 object FileHandler {
 
-    private val logger = LoggerFactory.getLogger(FileHandler.javaClass)
+    private val logger = getLogger()
     private const val FILE_NAME = "config.yaml"
 
     lateinit var configuration: ConfigFile
