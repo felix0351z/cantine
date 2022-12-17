@@ -1,6 +1,5 @@
 package de.felix0351
 
-import de.felix0351.db.DatabaseService
 import de.felix0351.utils.FileHandler
 import de.felix0351.utils.Hashing
 import io.ktor.client.request.*
@@ -24,7 +23,7 @@ class AuthenticationTests {
     @Test
     fun testUtils() {
         FileHandler.load()
-        DatabaseService.init()
+        //DatabaseService.init()
     }
 
     @Test

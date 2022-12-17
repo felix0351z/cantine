@@ -1,7 +1,8 @@
 package de.felix0351.plugins
 
+import de.felix0351.db.MongoDBConnection
 import de.felix0351.dependencies.CantineService
-import de.felix0351.dependencies.AuthenticationRepositoryImpl
+import de.felix0351.dependencies.AuthenticationRepositoryMongoDB
 import de.felix0351.dependencies.ContentRepositoryImpl
 import de.felix0351.dependencies.AuthenticationRepository
 import de.felix0351.dependencies.ContentRepository
@@ -24,7 +25,8 @@ fun Application.configureDependencyInjection() {
 
 val appModule = module {
 
-    single<AuthenticationRepository> { AuthenticationRepositoryImpl() }
+    single { MongoDBConnection() }
+    single<AuthenticationRepository> { AuthenticationRepositoryMongoDB(get()) }
     single<ContentRepository> { ContentRepositoryImpl() }
     single { CantineService(get(), get()) }
 

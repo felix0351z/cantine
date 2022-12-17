@@ -19,16 +19,17 @@ data class ConfigFile(
 /**
  * Properties for the database connection
  *
- * @property type The name, which database should be used (mysql, or sqlite)
- * @property url Adress to the database
- * //@property port Standard sql port is 3306
+ * @property host Address to the database
+ * @property port Standard mongodb port is 27017
+ * @property database Name of the database
  * @property username Username for the database
  * @property password Password for the database
  */
 @Serializable
 data class DatabaseProperties(
-    val type: String,
-    val url: String,
+    val host: String,
+    val port: Int,
+    val database: String,
     //val port: Int?,
     val username: String?,
     val password: String?

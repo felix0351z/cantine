@@ -64,8 +64,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     //MongoDB
-    implementation("org.litote.kmongo:kmongo:$kmongo_version")
-
+    //implementation("org.litote.kmongo:kmongo:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
 
 
     //JUnit als Test Library
