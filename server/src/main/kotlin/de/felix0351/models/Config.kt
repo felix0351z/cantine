@@ -24,6 +24,8 @@ data class ConfigFile(
  * @property database Name of the database
  * @property username Username for the database
  * @property password Password for the database
+ * @property authMechanism Mechanism for the authentication (sha-256 or sha-1 normally)
+ * @property timeout: ImeOut in Milliseconds
  */
 @Serializable
 data class DatabaseProperties(
@@ -32,7 +34,9 @@ data class DatabaseProperties(
     val database: String,
     //val port: Int?,
     val username: String?,
-    val password: String?
+    val password: String?,
+    val authMechanism: String?,
+    val timeout: Long?
 )
 
 /**

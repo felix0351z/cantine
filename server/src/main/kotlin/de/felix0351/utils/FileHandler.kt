@@ -43,7 +43,10 @@ object FileHandler {
             port = 27017,
             database = "cantine",
             username = null,
-            password = null
+            password = null,
+            // Also SCRAM-SHA-1 is supported
+            authMechanism = "SCRAM-SHA-256",
+            timeout = 2000 // 2 Seconds
         ),
         authentication = AuthenticationProperties(
             session_age = 60, //Days
