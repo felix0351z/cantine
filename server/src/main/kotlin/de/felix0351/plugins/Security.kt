@@ -1,8 +1,7 @@
 package de.felix0351.plugins
 
-import de.felix0351.dependencies.AuthenticationRepositoryImpl
-import de.felix0351.models.objects.UserSession
 import de.felix0351.dependencies.CantineService
+import de.felix0351.models.objects.Auth
 import de.felix0351.utils.FileHandler
 import io.ktor.http.*
 
@@ -12,12 +11,14 @@ import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
 import org.koin.ktor.ext.inject
+import java.io.File
 
 import kotlin.collections.set
 import kotlin.time.Duration.Companion.days
 
 
 const val AUTHENTICATED_PATH = "/user" //Path which needs a session
+const val SESSION_FILE_PATH = ".sessions"
 
 fun Application.configureSecurity() {
     val service by inject<CantineService>()
@@ -39,7 +40,7 @@ private fun SessionsConfig.configureAuthCookie() {
     val signKey = hex(FileHandler.configuration.authentication.sign_key)
     val authKey = hex(FileHandler.configuration.authentication.auth_key)
 
-    cookie<UserSession>("user_session", AuthenticationRepositoryImpl.AuthenticationSessionStorage()) {
+    cookie<Auth.UserSession>("user_session", directorySessionStorage(File(SESSION_FILE_PATH))) {
 
         // Only transfer cookies via ssl encrypted connection
         cookie.secure = true
@@ -65,7 +66,7 @@ private fun SessionsConfig.configureAuthCookie() {
  * Return 403 if there is no valid session for request
  */
 private fun AuthenticationConfig.configureSessionAuthentication() {
-    session<UserSession>("session") {
+    session<Auth.UserSession>("session") {
 
         // Additional validation not needed
         validate { session ->
@@ -96,11 +97,10 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
         passwordParamName = "password"
 
         validate { credentials ->
-            if (service.checkUserCredentials(credentials.name, credentials.password)) {
-                UserIdPrincipal(
-                    credentials.name
-                )
-            }
+
+            val user = service.checkUserCredentials(credentials.name, credentials.password)
+
+            if (user != null) Auth.UserSession(user)
             else null
         }
 
