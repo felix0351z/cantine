@@ -1,4 +1,4 @@
-package de.felix0351.errors
+package de.felix0351.models.errors
 
 class InternalDatabaseException: RuntimeException()
 

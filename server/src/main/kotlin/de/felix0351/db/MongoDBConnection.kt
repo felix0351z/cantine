@@ -1,6 +1,6 @@
 package de.felix0351.db
 
-import de.felix0351.errors.InternalDatabaseException
+import de.felix0351.models.errors.InternalDatabaseException
 import de.felix0351.models.DatabaseProperties
 import de.felix0351.models.objects.Auth
 import de.felix0351.models.objects.Collections
