@@ -1,8 +1,8 @@
 package de.felix0351.models.objects
 
 import de.felix0351.utils.UUIDSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.Id
 
 import java.util.UUID
@@ -19,7 +19,7 @@ sealed class Content {
      */
     @Serializable
     data class Category(
-        @SerialName("_id") val id: Id<Category>?,
+        @BsonId val id: Id<Category>?,
         val name: String
     )
 
@@ -62,7 +62,7 @@ sealed class Content {
 
     @Serializable
     data class Meal(
-        @SerialName("_id") val id: Id<Meal>?,
+        @BsonId val id: Id<Meal>?,
         val category: Category?,
         val name: String,
         val description: String,
@@ -111,7 +111,7 @@ sealed class Content {
      */
     @Serializable
     data class Order(
-        @SerialName("_id") val id: Id<Order>?,
+        @BsonId val id: Id<Order>?,
         @Serializable(with = UUIDSerializer::class) val code: UUID,
         val user: String,
         val meals: List<OrderedMeal>,
@@ -131,7 +131,7 @@ sealed class Content {
      */
     @Serializable
     data class Report(
-        @SerialName("_id") val id: Id<Report>?,
+        @BsonId val id: Id<Report>?,
         val title: String,
         val description: String,
         val picture: String,

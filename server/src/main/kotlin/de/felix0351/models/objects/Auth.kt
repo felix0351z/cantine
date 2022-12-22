@@ -1,8 +1,7 @@
 package de.felix0351.models.objects
 
 import io.ktor.server.auth.*
-import kotlinx.serialization.SerialName
-import org.bson.types.ObjectId
+import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.Id
 
 
@@ -20,7 +19,7 @@ sealed class Auth {
      */
 
     data class User(
-        @SerialName("_id") val id: Id<User>?,
+        @BsonId val id: Id<User>?,
         val username: String,
         val name: String,
         val permissionLevel: PermissionLevel,
@@ -43,14 +42,14 @@ sealed class Auth {
         val creationTime: Long
     )
 
-    enum class PermissionLevel(level: Int) {
+    enum class PermissionLevel(val int: Int) {
         ADMIN(2),
         WORKER(1),
         USER(0)
     }
 
     data class UserSession(
-        val id: ObjectId,
+        val user: User,
     ): Principal
 
 
