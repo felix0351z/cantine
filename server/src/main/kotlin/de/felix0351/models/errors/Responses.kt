@@ -14,3 +14,15 @@ enum class ErrorCode(val code: Int) {
     SameValue(3)
 
 }
+
+
+//Konzept:
+
+sealed class ServiceResult {
+
+    //data class Success<T>(val result: T)
+    //data class PermissionDenied()
+    //data class DatabaseError(val message: String, val exception: InternalDatabaseException)
+
+
+}

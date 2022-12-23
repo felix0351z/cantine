@@ -1,15 +1,15 @@
 package de.felix0351.db
 
-import de.felix0351.models.errors.InternalDatabaseException
+import de.felix0351.models.errors.DatabaseException.InternalException
 import de.felix0351.models.DatabaseProperties
-import de.felix0351.models.objects.Auth
-import de.felix0351.models.objects.Collections
-import de.felix0351.models.objects.Content
 import de.felix0351.utils.FileHandler
 import de.felix0351.utils.fail
 import de.felix0351.utils.getLogger
 
 import com.mongodb.*
+import de.felix0351.models.objects.Auth
+import de.felix0351.models.objects.Collections
+import de.felix0351.models.objects.Content
 import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
@@ -104,7 +104,7 @@ class MongoDBConnection {
             is MongoServerException -> {
                 log.error("Exception on mongodb server occured!", ex)
 
-                return InternalDatabaseException()
+                return InternalException()
             }
 
             else -> {
@@ -120,11 +120,11 @@ class MongoDBConnection {
      *  If the return type is null, an error occurred, and the call wasn't executed correctly
      *
      *  Fatal errors could also cause to a crash of the complete server
-     * @throws InternalDatabaseException
+     * @throws InternalException
      */
 
-    @Throws(InternalDatabaseException::class)
-    inline fun<T> call(fn: (db: CoroutineDatabase) -> T): T {
+    @Throws(InternalException::class)
+    inline fun<T> callToDatabase(fn: (db: CoroutineDatabase) -> T): T {
         try {
             return fn(database)
         } catch (ex: MongoException) {
@@ -133,33 +133,84 @@ class MongoDBConnection {
     }
 
     /**
-     *  Wrapper around the normal call function
+     *  Wrapper around the normal callToDatabase function
      *
-     *  Get the User Collection directly instead of getting a db value with the normal call function
-     *  @see call
-     *  @throws InternalDatabaseException
+     *  Get the Meal Collection directly instead of getting a db value with the normal call function
+     *  @see callToDatabase
+     *  @throws InternalException
      */
-    @Throws(InternalDatabaseException::class)
-    inline fun<T> callToUserCollection(fn: (col: CoroutineCollection<Auth.User>) -> T): T {
-        return call {
-            val col = it.getCollection<Auth.User>(Collections.USERS.name)
+    @Throws(InternalException::class)
+    inline fun<T, reified U: Any> callToCollection(collection: Collections, fn: (col: CoroutineCollection<U>) -> T): T {
+        return callToDatabase {
+            val col = it.getCollection<U>(collection.name)
             fn(col)
         }
     }
 
     /**
-     *  Wrapper around the normal call function
+     *  Wrapper around the normal callToCollection function
      *
-     *  Get the Meal Collection directly instead of getting a db value with the normal call function
-     *  @see call
-     *  @throws InternalDatabaseException
+     *  @see callToCollection
+     *  @throws InternalException
      */
-    @Throws(InternalDatabaseException::class)
+    @Throws(InternalException::class)
+    inline fun<T> callToUserCollection(fn: (col: CoroutineCollection<Auth.User>) -> T): T {
+        return callToCollection(Collections.USERS, fn)
+    }
+
+    /**
+     *  Wrapper around the normal callToCollection function
+     *
+     *  @see callToCollection
+     *  @throws InternalException
+     */
+    @Throws(InternalException::class)
+    inline fun<T> callToPaymentsCollection(fn: (col: CoroutineCollection<Auth.Payment>) -> T): T {
+        return callToCollection(Collections.PAYMENTS, fn)
+    }
+
+    /**
+     *  Wrapper around the normal callToCollection function
+     *
+     *  @see callToCollection
+     *  @throws InternalException
+     */
+    @Throws(InternalException::class)
+    inline fun<T> callToCategoriesCollection(fn: (col: CoroutineCollection<Content.Category>) -> T): T {
+        return callToCollection(Collections.CATEGORIES, fn)
+    }
+
+    /**
+     *  Wrapper around the normal callToCollection function
+     *
+     *  @see callToCollection
+     *  @throws InternalException
+     */
+    @Throws(InternalException::class)
     inline fun<T> callToMealsCollection(fn: (col: CoroutineCollection<Content.Meal>) -> T): T {
-        return call {
-            val col = it.getCollection<Content.Meal>(Collections.MEALS.name)
-            fn(col)
-        }
+        return callToCollection(Collections.MEALS, fn)
+    }
+
+    /**
+     *  Wrapper around the normal callToCollection function
+     *
+     *  @see callToCollection
+     *  @throws InternalException
+     */
+    @Throws(InternalException::class)
+    inline fun<T> callToOrdersCollection(fn: (col: CoroutineCollection<Content.Order>) -> T): T {
+        return callToCollection(Collections.ORDERS, fn)
+    }
+
+    /**
+     *  Wrapper around the normal callToCollection function
+     *
+     *  @see callToCollection
+     *  @throws InternalException
+     */
+    @Throws(InternalException::class)
+    inline fun<T> callToReportsCollection(fn: (col: CoroutineCollection<Content.Report>) -> T): T {
+        return callToCollection(Collections.REPORTS, fn)
     }
 
 

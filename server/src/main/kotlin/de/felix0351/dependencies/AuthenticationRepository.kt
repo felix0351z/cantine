@@ -1,25 +1,42 @@
 package de.felix0351.dependencies
 
-import de.felix0351.models.errors.Response
+import de.felix0351.models.errors.DatabaseException.*
 import de.felix0351.models.objects.Auth
 import de.felix0351.models.objects.Auth.User
+import java.time.Instant
+import kotlin.jvm.Throws
 
 
 interface AuthenticationRepository {
+
+    //User
 
     suspend fun getUserByUsername(username: String): User?
 
     suspend fun getUsers(): List<User>
 
-    suspend fun addUser(user: User): Response
+    @Throws(ValueAlreadyExistsException::class)
+    suspend fun addUser(user: User)
 
-    suspend fun removeUser(username: String): Response
+    @Throws(NotFoundException::class)
+    suspend fun removeUser(username: String)
 
-    suspend fun updatePermissionLevel(username: String, level: Auth.PermissionLevel): Response
+    @Throws(NotFoundException::class, SameValueException::class)
+    suspend fun updatePermissionLevel(username: String, level: Auth.PermissionLevel)
 
-    suspend fun updateUserHash(username: String, hash: String): Response
+    @Throws(NotFoundException::class, SameValueException::class)
+    suspend fun updateUserHash(username: String, hash: String)
 
-    suspend fun updateUserCredit(username: String, hash: String): Response
+    @Throws(NotFoundException::class)
+    suspend fun updateUserCredit(username: String, hash: String)
+
+    //Payments
+
+    suspend fun addPayment(payment: Auth.Payment)
+
+    suspend fun getPayments(username: String, range: Instant?): List<Auth.Payment>
+
+    suspend fun clearPayments(username: String)
 
 
 

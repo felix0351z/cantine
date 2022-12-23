@@ -1,14 +1,15 @@
 package de.felix0351.dependencies
 
 import de.felix0351.db.MongoDBConnection
-import de.felix0351.models.errors.Response
+import de.felix0351.models.errors.DatabaseException.*
 import de.felix0351.models.objects.Auth
 import de.felix0351.models.objects.Auth.User
-import de.felix0351.models.errors.ErrorCode
 import de.felix0351.utils.getLogger
 
 import org.litote.kmongo.eq
+import org.litote.kmongo.gte
 import org.litote.kmongo.setValue
+import java.time.Instant
 
 
 class AuthenticationRepositoryMongoDB(private val con: MongoDBConnection) : AuthenticationRepository {
@@ -23,41 +24,57 @@ class AuthenticationRepositoryMongoDB(private val con: MongoDBConnection) : Auth
         it.find().toList()
     }
 
-    override suspend fun addUser(user: User): Response = con.callToUserCollection {
-        if (getUserByUsername(user.username) != null) return@callToUserCollection Response.Error(ErrorCode.AlreadyExists)
+    override suspend fun addUser(user: User): Unit = con.callToUserCollection {
+        if (getUserByUsername(user.username) != null) throw ValueAlreadyExistsException()
         it.insertOne(user)
 
-        Response.Ok
     }
 
-    override suspend fun removeUser(username: String): Response = con.callToUserCollection {
+    override suspend fun removeUser(username: String): Unit = con.callToUserCollection {
+        // Delete the user. If nothing was deleted, the user wasn't found.
         val count = it.deleteOne( User::username eq username ).deletedCount
-        if (count == 0L) return@callToUserCollection Response.Error(ErrorCode.NotFound)
-
-        Response.Ok
+        // The deleteCount can't be higher than 1 because the username checking in the addUser() method
+        if (count == 0L) throw NotFoundException()
     }
 
-    override suspend fun updatePermissionLevel(username: String, level: Auth.PermissionLevel): Response = con.callToUserCollection {
+    override suspend fun updatePermissionLevel(username: String, level: Auth.PermissionLevel): Unit = con.callToUserCollection {
+        // Update the permission and notify the user if it has already the same permission or if the user wasn't found
         val res = it.updateOne(User::username eq username, setValue(User::permissionLevel, level))
-        if (res.matchedCount == 0L) return@callToUserCollection Response.Error(ErrorCode.NotFound)
-        if (res.modifiedCount == 0L) return@callToUserCollection Response.Error(ErrorCode.SameValue)
+        if (res.matchedCount == 0L) throw NotFoundException()
+        if (res.modifiedCount == 0L) throw SameValueException()
 
-        Response.Ok
     }
 
-    override suspend fun updateUserHash(username: String, hash: String): Response = con.callToUserCollection {
+    override suspend fun updateUserHash(username: String, hash: String): Unit = con.callToUserCollection {
+        // Update the password hash of the user. Notify if the user tries to set the new to the old password or if the username wasn't found
         val res = it.updateOne( User::username eq username, setValue(User::hash, hash))
-        if (res.matchedCount == 0L) return@callToUserCollection Response.Error(ErrorCode.NotFound)
-        if (res.modifiedCount == 0L) return@callToUserCollection Response.Error(ErrorCode.SameValue)
+        if (res.matchedCount == 0L) throw NotFoundException()
+        if (res.modifiedCount == 0L) throw SameValueException()
 
-        Response.Ok
     }
 
-    override suspend fun updateUserCredit(username: String, hash: String): Response = con.callToUserCollection {
+    override suspend fun updateUserCredit(username: String, hash: String): Unit = con.callToUserCollection {
+        // Update the credit of the user. Because the server handles the charge, the value can't be equal
         val matched = it.updateOne(User::username eq username, setValue(User::credit, hash)).matchedCount
-        if (matched == 0L) return@callToUserCollection Response.Error(ErrorCode.NotFound)
+        if (matched == 0L) throw NotFoundException()
 
-        Response.Ok
     }
+
+    override suspend fun addPayment(payment: Auth.Payment): Unit = con.callToPaymentsCollection {
+        it.insertOne(payment)
+    }
+
+    override suspend fun getPayments(username: String, range: Instant?): List<Auth.Payment> = con.callToPaymentsCollection {
+        // If time is null, it includes all payments
+        val time = range ?: Instant.ofEpochSecond(0)
+
+        // Only give the payments which are newer then the time date
+        it.find(Auth.Payment::creationTime gte time).toList()
+    }
+
+    override suspend fun clearPayments(username: String): Unit = con.callToPaymentsCollection {
+        it.deleteMany(Auth.Payment::user eq username)
+    }
+
 
 }
