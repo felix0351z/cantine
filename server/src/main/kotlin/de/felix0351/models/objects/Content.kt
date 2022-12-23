@@ -1,9 +1,11 @@
 package de.felix0351.models.objects
 
+import de.felix0351.utils.InstantSerializer
 import de.felix0351.utils.UUIDSerializer
 import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.Id
+import java.time.Instant
 
 import java.util.UUID
 
@@ -115,7 +117,7 @@ sealed class Content {
         @Serializable(with = UUIDSerializer::class) val code: UUID,
         val user: String,
         val meals: List<OrderedMeal>,
-        val orderTime: Long,
+        @Serializable(with = InstantSerializer::class) val orderTime: Instant
     )
 
 
@@ -135,7 +137,7 @@ sealed class Content {
         val title: String,
         val description: String,
         val picture: String,
-        val creationTime: Long
+        @Serializable(with = InstantSerializer::class) val creationTime: Instant
     )
 
 
