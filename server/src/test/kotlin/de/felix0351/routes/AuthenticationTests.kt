@@ -1,5 +1,9 @@
-package de.felix0351
+package de.felix0351.routes
 
+import de.felix0351.EXAMPLE_PASSWORD
+import de.felix0351.login
+import de.felix0351.logout
+import de.felix0351.testModule
 import de.felix0351.utils.FileHandler
 import de.felix0351.utils.Hashing
 import io.ktor.client.request.*

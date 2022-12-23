@@ -14,8 +14,8 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 
 
-const val EXAMPLE_USERNAME = "admin"
-const val EXAMPLE_PASSWORD = "cantine"
+const val EXAMPLE_USERNAME = "felix0351"
+const val EXAMPLE_PASSWORD = "Pommes"
 
 /*
 Simulate a normal server start

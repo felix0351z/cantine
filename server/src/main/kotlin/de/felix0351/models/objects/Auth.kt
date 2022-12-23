@@ -3,8 +3,6 @@ package de.felix0351.models.objects
 import de.felix0351.utils.InstantSerializer
 import io.ktor.server.auth.*
 import kotlinx.serialization.Serializable
-import org.bson.codecs.pojo.annotations.BsonId
-import org.litote.kmongo.Id
 import java.time.Instant
 
 
@@ -22,7 +20,6 @@ sealed class Auth {
      */
 
     data class User(
-        @BsonId val id: Id<User>?,
         val username: String,
         val name: String,
         val permissionLevel: PermissionLevel,

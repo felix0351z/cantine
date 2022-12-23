@@ -14,7 +14,6 @@ class AuthRepository {
     @Test
     fun addUser() = runBlocking {
         val user = Auth.User(
-            id = null,
             username = "felix0351",
             name = "Felix Zimmermann",
             permissionLevel = Auth.PermissionLevel.ADMIN,
