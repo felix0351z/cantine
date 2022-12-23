@@ -42,7 +42,7 @@ sealed class Content {
     @Serializable
     data class Selection(
         val name: String,
-        val clicked: Boolean
+        val price: Float
     )
 
 

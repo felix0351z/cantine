@@ -40,6 +40,7 @@ sealed class Auth {
      *
      */
     data class Payment(
+        val user: String,
         val title: String,
         val price: Float,
         @Serializable(with = InstantSerializer::class) val creationTime: Instant
