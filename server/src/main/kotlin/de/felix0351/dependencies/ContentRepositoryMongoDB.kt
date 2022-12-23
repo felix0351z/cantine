@@ -36,8 +36,6 @@ class ContentRepositoryMongoDB(private val con: MongoDBConnection) : ContentRepo
         it.find().toList()
     }
 
-    //TODO: Mit Categories joinen
-
     override suspend fun updateMeal(meal: Content.Meal): Unit = con.callToMealsCollection {
         val matched = it.updateOne(Content.Meal::id eq meal.id, meal).matchedCount
         if (matched == 0L) throw NotFoundException()
