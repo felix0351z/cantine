@@ -1,6 +1,6 @@
 package de.felix0351
 
-import de.felix0351.db.DatabaseService
+
 import de.felix0351.plugins.configureDependencyInjection
 import de.felix0351.plugins.configureRouting
 import de.felix0351.plugins.configureSecurity
@@ -14,8 +14,8 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 
 
-const val EXAMPLE_USERNAME = "admin"
-const val EXAMPLE_PASSWORD = "cantine"
+const val EXAMPLE_USERNAME = "felix0351"
+const val EXAMPLE_PASSWORD = "Pommes"
 
 /*
 Simulate a normal server start
@@ -23,7 +23,6 @@ Simulate a normal server start
 fun testModule(func: suspend ApplicationTestBuilder.(testClient: HttpClient) -> Unit) = testApplication {
     application {
         FileHandler.load()
-        DatabaseService.init()
 
         configureDependencyInjection()
         configureSecurity()

@@ -1,8 +1,9 @@
 package de.felix0351.plugins
 
+import de.felix0351.db.MongoDBConnection
 import de.felix0351.dependencies.CantineService
-import de.felix0351.dependencies.AuthenticationRepositoryImpl
-import de.felix0351.dependencies.ContentRepositoryImpl
+import de.felix0351.dependencies.AuthenticationRepositoryMongoDB
+import de.felix0351.dependencies.ContentRepositoryMongoDB
 import de.felix0351.dependencies.AuthenticationRepository
 import de.felix0351.dependencies.ContentRepository
 import io.ktor.server.application.*
@@ -24,8 +25,9 @@ fun Application.configureDependencyInjection() {
 
 val appModule = module {
 
-    single<AuthenticationRepository> { AuthenticationRepositoryImpl() }
-    single<ContentRepository> { ContentRepositoryImpl() }
+    single { MongoDBConnection() }
+    single<AuthenticationRepository> { AuthenticationRepositoryMongoDB(get()) }
+    single<ContentRepository> { ContentRepositoryMongoDB(get()) }
     single { CantineService(get(), get()) }
 
 }

@@ -32,9 +32,7 @@ repositories {
 
 dependencies {
     val kaml_version = "0.49.0"
-    val hikari_version = "5.0.1"
-    val mysql_connector_version = "8.0.30"
-    val sqlite_connector_version = "3.30.1"
+    val kmongo_version = "4.8.0"
     val koin_version = "3.2.2"
 
     //Ktor Server Core Library mit Netty als Network Framework
@@ -65,16 +63,9 @@ dependencies {
     //Logback als Logger
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
-    //Exposed als Datenbank Library
-    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
-    implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
-    //HikariCP als Verbindungsframework
-    implementation("com.zaxxer:HikariCP:$hikari_version")
-    //MySQL/MAriaDB/SQLite Treiber
-    implementation("mysql:mysql-connector-java:$mysql_connector_version")
-    implementation("org.xerial:sqlite-jdbc:$sqlite_connector_version")
+    //MongoDB
+    //implementation("org.litote.kmongo:kmongo:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
 
 
     //JUnit als Test Library
