@@ -34,6 +34,27 @@ fun Route.logout() {
 }
 
 
+/**
+ * Verify new money for the user
+ *
+ * POST /user/credit
+ *
+ */
+fun Route.verifyNewCredit() {
+    authenticate("session") {
+        post("/user/credit") {
+            //TODO: JSON-Content
+
+        }
+
+
+    }
+}
+
+
+
+
+
 fun Application.authenticationRoutes() {
     routing {
         get("/") {
@@ -42,5 +63,6 @@ fun Application.authenticationRoutes() {
 
         login()
         logout()
+        verifyNewCredit()
     }
 }
