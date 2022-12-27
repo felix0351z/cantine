@@ -1,28 +1,35 @@
 package de.felix0351.models.errors
 
-sealed class Response {
+import kotlinx.serialization.Serializable
 
-    object Ok : Response()
-    data class Error(val code: ErrorCode): Response()
 
-}
+/**
+ * A ServiceError contains an id and a description.
+ *
+ * The error will be serialized and responded to the caller
+ * @see ErrorCode
+ */
+@Serializable
+data class ServiceError(
+    val id: Int,
+    val description: String
+)
 
+
+/**
+ * Describes all possible errors which can occur
+ * @property NoPermission Will be returned if the logged-in user tries to call a route which needs more permissions than he have (User/Worker/Admin)
+ * @property AlreadyExists Will be returned if the user tries to insert something unique which already exists (example: user or category)
+ * @property NotFound Will be returned if the requested value won't be found
+ * @property SameValue Will be returned if the user tries to set something with the same value (password or permission-level)
+ *
+ * @see DatabaseException
+ */
 enum class ErrorCode(val code: Int) {
 
-    AlreadyExists(1),
-    NotFound(2),
-    SameValue(3)
-
-}
-
-
-//Konzept:
-
-sealed class ServiceResult {
-
-    //data class Success<T>(val result: T)
-    //data class PermissionDenied()
-    //data class DatabaseError(val message: String, val exception: InternalDatabaseException)
-
+    NoPermission(1),
+    AlreadyExists(2),
+    NotFound(3),
+    SameValue(4),
 
 }
