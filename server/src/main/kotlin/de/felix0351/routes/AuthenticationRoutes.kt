@@ -15,7 +15,7 @@ fun Route.login() {
             val userToLogin = call.principal<Auth.UserSession>()!!
 
             //Create new session for the user
-            call.sessions.set(userToLogin.user.username, userToLogin)
+            call.sessions.set(userToLogin)
             call.respond(HttpStatusCode.Accepted, userToLogin.user.username)
         }
     }

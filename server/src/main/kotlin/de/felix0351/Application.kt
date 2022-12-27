@@ -14,10 +14,10 @@ fun main() {
 }
 
 fun runServer(port: Int)  = embeddedServer(Netty, port = port, host = "0.0.0.0") {
+    configureDependencyInjection()
     configureSecurity()
     configureSerialization()
     configureRouting()
-    configureDependencyInjection()
 }.start(wait = true)
 
 
