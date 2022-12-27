@@ -11,56 +11,30 @@ import io.ktor.server.routing.*
  *  Get all available meals
  *  GET /content/meals
  *
- *  Minimum permission level: User
  */
-fun Route.getMeals() {
+fun Route.meals() {
     get("/meals") {
-        call.respond(HttpStatusCode.OK)
-    }
-}
 
-/**
- * Get a specific meal
- * GET /content/meal/<id>
- *
- * Minimum Permission Level: User
- */
-fun Route.getMeal() {
-    get("/meal/{id}") {
-        call.respond(HttpStatusCode.OK, call.parameters["id"].toString())
-    }
-
-}
-
-/**
- *  Add new meal
- *  POST /content/meal
- *
- *  Minimum PermissionLevel: Worker
- *
- */
-fun Route.addMeal() {
-    post("/meal") {
-        call.respond(HttpStatusCode.OK)
     }
 }
 
 
 /**
- * Delete/Edit one specific meal
- * DELETE/PUT /content/meal/<id>
- *
- * Minimum Permission Level: Worker
+ * Create/Get/Delete/Edit one specific meal
+ * POST /content/meal
+ * GET/DELETE/PUT /content/meal/<id>
  *
  */
-fun Route.deleteOrEditMeal() {
+fun Route.meal() {
+    route("/meal") {
+        post {
 
-    route("/meal/{id}") {
-        delete {
-            call.respond(HttpStatusCode.OK, call.parameters["id"].toString())
         }
-        put {
-            call.respond(HttpStatusCode.OK, call.parameters["id"].toString())
+
+        route("/{id}") {
+            get {  }
+            delete {  }
+            put {  }
         }
     }
 }
@@ -70,10 +44,9 @@ fun Route.deleteOrEditMeal() {
  * Get all reports
  * GET /content/reports
  *
- * Minimum Permission Level: User
  *
  */
-fun Route.getReports() {
+fun Route.reports() {
     get("/reports") {
         call.respond(HttpStatusCode.OK)
     }
@@ -81,44 +54,21 @@ fun Route.getReports() {
 
 
 /**
- * Get specific report
- * GET /content/report/<id>
- *
- * Minimum Permission Level: User
- */
-fun Route.getReport() {
-    get("/report/{id}") {
-        call.respond(HttpStatusCode.OK, call.parameters["id"].toString())
-    }
-}
-
-/**
- * Add new report
- * POST /content/report/
- *
- * Minimum Permission Level: Worker
- */
-fun Route.addReport() {
-    post("/report") {
-
-    }
-}
-
-/**
- * Delete/Edit one specific report
- * DELETE/PUT /content/report/<id>
- *
- * Minimum Permission Level: Worker
+ * Create/Get/Delete/Edit one specific meal
+ * POST /content/report
+ * GET/DELETE/PUT /content/report/<id>
  *
  */
-fun Route.deleteOrEditReport() {
-    route("/report/{id}") {
-        delete {  }
+fun Route.report() {
+    route("/report") {
         post {  }
 
-
+        route("/{id}") {
+            get {  }
+            delete {  }
+            put {  }
+        }
     }
-
 }
 
 
@@ -126,17 +76,13 @@ fun Route.deleteOrEditReport() {
 fun Application.contentRoutes() {
     routing {
 
+        // All content routes need a active user session
         authenticate("session") {
             route("/content") {
-                getMeals()
-                getMeal()
-                addMeal()
-                deleteOrEditMeal()
-
-                getReports()
-                getReport()
-                addReport()
-                deleteOrEditReport()
+                meals()
+                meal()
+                reports()
+                report()
             }
         }
 

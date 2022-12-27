@@ -66,7 +66,7 @@ suspend fun HttpClient.login(password: String = EXAMPLE_PASSWORD) = submitForm(
 /*
 Simulate logout
  */
-suspend fun HttpClient.logout() = get("/user/logout") {
+suspend fun HttpClient.logout() = get("/logout") {
     https()
 }
 

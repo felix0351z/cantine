@@ -23,7 +23,7 @@ fun Route.login() {
 
 fun Route.logout() {
     authenticate("session") {
-        get("/user/logout") {
+        get("/logout") {
             call.sessions.clear<UserSession>()
 
             call.respond(HttpStatusCode.OK, "Logout successfully")
@@ -33,23 +33,41 @@ fun Route.logout() {
 
 }
 
-
 /**
- * Verify new money for the user
+ * Get all available users
+ * GET /users
  *
- * POST /user/credit
+ *
  *
  */
-fun Route.verifyNewCredit() {
-    authenticate("session") {
-        post("/user/credit") {
-            //TODO: JSON-Content
-
-        }
+fun Route.users() {
+    get("/users") {
 
 
     }
 }
+
+/**
+ * Get/Delete or update a user
+ *
+ * GET/DELETE /user/<id>
+ * POST /user/<id>/name
+ * POST /user/<id>/password
+ * POST /user/<id>/permission
+ * 
+ */
+fun Route.user() {
+    route("/user/{id}") {
+        get {  }
+        delete {  }
+
+        post("/name") {  }
+        post("/password") {  }
+        post("/permission") {  }
+    }
+
+}
+
 
 
 
@@ -63,6 +81,7 @@ fun Application.authenticationRoutes() {
 
         login()
         logout()
-        verifyNewCredit()
+        users()
+        user()
     }
 }

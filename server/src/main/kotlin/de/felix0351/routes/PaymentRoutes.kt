@@ -4,82 +4,73 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 
-
 /**
- * Create a new order
- * POST /payment/order
- *
- * Minimum Permission Level: User
- *
- */
-fun Route.createOrder() {
-    post("/order") {
-
-
-    }
-}
-
-/**
- * Cancel an own order
- * DELETE /payment/order/
- *
- * Minimum Permission Level: User (Only his own orders)
- */
-fun Route.cancelOrder() {
-    delete("/order") {
-        //ID in Body
-
-
-    }
-}
-
-
-/**
- * Get all self taken purchases
- * GET /payment/purchases
- *
- * Minimum Permission Level: User
- */
-fun Route.getPurchases() {
-    get("/purchases") {
-
-    }
-}
-
-
-/**
- * Delete own purchases, or from all users (Admin)
- * 1. DELETE /payment/purchases
- * Minimum Permission Level: User
- *
- * 2. DELETE /payment/purchases/all
- * Minimum Permission Level: Admin
+ * Credit of the user
+ * GET/POST /payment/credit
  *
  *
  */
-fun Route.deletePurchases() {
-    authenticate("session") {
 
-        delete("/purchases") {  }
+fun Route.credit() {
+    route("/credit") {
+        get {  }
 
-        delete("/purchases/all") {
+        post {
+            //Worker permission
 
         }
+    }
+}
+
+
+/**
+ * All active orders
+ * GET /payment/orders
+ *
+ *
+ */
+fun Route.orders() {
+    get("/orders") {
 
     }
+}
 
+
+
+/**
+ * Create/cancel an order
+ * POST/DELETE /payment/order
+ *
+ *
+ */
+fun Route.order() {
+    route("/order") {
+        post {  }
+        delete {  }
+    }
+}
+
+
+/**
+ * Get/Clear all purchases
+ * GET/DELETE /payment/purchases
+ *
+ * Minimum Permission Level: User
+ */
+fun Route.purchases() {
+    route("/purchases") {
+        get {  }
+        delete {  }
+    }
 }
 
 
 /**
  * Verify a purchase at the mensa
- *
  * POST /payment/purchase/
  *
- * Minimum Permission Level: Worker
- *
  */
-fun Route.verifyPurchase() {
+fun Route.purchase() {
     post("/purchase/") {
 
         //TODO: JSON-Content
@@ -94,16 +85,15 @@ fun Route.verifyPurchase() {
 
 fun Application.paymentRoutes() {
     routing {
+
+        // All payment routes needs an active user session
         authenticate("sessions") {
             route("/payment") {
-                createOrder()
-                cancelOrder()
-
-                getPurchases()
-                deletePurchases()
-
-                verifyPurchase()
-
+                credit()
+                orders()
+                order()
+                purchases()
+                purchase()
             }
         }
     }
