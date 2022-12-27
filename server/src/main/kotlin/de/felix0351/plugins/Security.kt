@@ -1,6 +1,8 @@
 package de.felix0351.plugins
 
 import de.felix0351.dependencies.CantineService
+import de.felix0351.models.errors.ErrorCode
+import de.felix0351.models.errors.ServiceError
 import de.felix0351.models.objects.Auth
 import de.felix0351.utils.FileHandler
 import io.ktor.http.*
@@ -10,6 +12,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
+import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
 import java.io.File
 
@@ -108,6 +111,32 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
             call.respond(HttpStatusCode.Unauthorized)
         }
 
+    }
+}
+
+
+suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
+    minimum: Auth.PermissionLevel,
+    route: PipelineContext<Unit, ApplicationCall>.() -> Unit
+) {
+    // If there is no session. Normally not null, because authorization block comes before this
+    val session = call.sessions.get<Auth.UserSession>()
+    if(session == null) {
+        call.respond(HttpStatusCode.Forbidden)
+        return
+    }
+
+    // If the user has the minimum permission level
+    if (session.user.permissionLevel.int >= minimum.int) {
+        route()
+    } else {
+        call.respond(
+            HttpStatusCode.Forbidden,
+            ServiceError(
+                id = ErrorCode.NoPermission.code,
+                description = "You don't have enough permissions to call this route. Minimum Permission for this is $minimum"
+            )
+        )
     }
 }
 
