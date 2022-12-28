@@ -14,7 +14,6 @@ import io.ktor.server.sessions.*
 import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
-import java.io.File
 
 import kotlin.collections.set
 import kotlin.time.Duration.Companion.days
@@ -42,7 +41,7 @@ private fun SessionsConfig.configureAuthCookie() {
     val signKey = hex(FileHandler.configuration.authentication.sign_key)
     val authKey = hex(FileHandler.configuration.authentication.auth_key)
 
-    cookie<Auth.UserSession>("user_session", directorySessionStorage(File(SESSION_FILE_PATH))) {
+    cookie<Auth.UserSession>("user_session", SessionStorageMemory()) {
 
         // Only transfer cookies via ssl encrypted connection
         cookie.secure = true

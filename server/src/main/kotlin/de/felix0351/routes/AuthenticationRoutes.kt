@@ -26,7 +26,7 @@ fun Route.logout() {
     authenticate("session") {
 
         get("/logout") {
-            call.sessions.clear<UserSession>()
+            call.sessions.clear<Auth.UserSession>()
 
             call.respond(HttpStatusCode.OK, "Logout successfully")
         }
