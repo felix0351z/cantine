@@ -12,9 +12,6 @@ import io.ktor.server.response.*
 fun Application.configureRouting() {
 
     install(StatusPages) {
-        status(HttpStatusCode.Forbidden) { call, _ ->
-            call.respond("403: No valid session")
-        }
         status(HttpStatusCode.Unauthorized) { call, _ ->
             call.respond("401: Password or Username incorrect")
         }

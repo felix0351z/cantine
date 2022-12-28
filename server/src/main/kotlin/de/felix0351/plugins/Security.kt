@@ -1,8 +1,9 @@
 package de.felix0351.plugins
 
-import de.felix0351.dependencies.AuthenticationRepositoryImpl
-import de.felix0351.models.objects.UserSession
 import de.felix0351.dependencies.CantineService
+import de.felix0351.models.errors.ErrorCode
+import de.felix0351.models.errors.ServiceError
+import de.felix0351.models.objects.Auth
 import de.felix0351.utils.FileHandler
 import io.ktor.http.*
 
@@ -11,7 +12,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
+import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
+import java.io.File
 
 import kotlin.collections.set
 import kotlin.time.Duration.Companion.days
@@ -39,7 +42,7 @@ private fun SessionsConfig.configureAuthCookie() {
     val signKey = hex(FileHandler.configuration.authentication.sign_key)
     val authKey = hex(FileHandler.configuration.authentication.auth_key)
 
-    cookie<UserSession>("user_session", AuthenticationRepositoryImpl.AuthenticationSessionStorage()) {
+    cookie<Auth.UserSession>("user_session", directorySessionStorage(File(SESSION_FILE_PATH))) {
 
         // Only transfer cookies via ssl encrypted connection
         cookie.secure = true
@@ -65,7 +68,7 @@ private fun SessionsConfig.configureAuthCookie() {
  * Return 403 if there is no valid session for request
  */
 private fun AuthenticationConfig.configureSessionAuthentication() {
-    session<UserSession>("session") {
+    session<Auth.UserSession>("session") {
 
         // Additional validation not needed
         validate { session ->
@@ -96,11 +99,10 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
         passwordParamName = "password"
 
         validate { credentials ->
-            if (service.checkUserCredentials(credentials.name, credentials.password)) {
-                UserIdPrincipal(
-                    credentials.name
-                )
-            }
+
+            val user = service.checkUserCredentials(credentials.name, credentials.password)
+
+            if (user != null) Auth.UserSession(user)
             else null
         }
 
@@ -108,6 +110,32 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
             call.respond(HttpStatusCode.Unauthorized)
         }
 
+    }
+}
+
+
+suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
+    minimum: Auth.PermissionLevel,
+    route: PipelineContext<Unit, ApplicationCall>.() -> Unit
+) {
+    // If there is no session. Normally not null, because authorization block comes before this
+    val session = call.sessions.get<Auth.UserSession>()
+    if(session == null) {
+        call.respond(HttpStatusCode.Forbidden)
+        return
+    }
+
+    // If the user has the minimum permission level
+    if (session.user.permissionLevel.int >= minimum.int) {
+        route()
+    } else {
+        call.respond(
+            HttpStatusCode.Forbidden,
+            ServiceError(
+                id = ErrorCode.NoPermission.code,
+                description = "You don't have enough permissions to call this route. Minimum Permission for this is $minimum"
+            )
+        )
     }
 }
 

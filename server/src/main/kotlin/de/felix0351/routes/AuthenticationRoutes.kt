@@ -1,6 +1,6 @@
 package de.felix0351.routes
 
-import de.felix0351.models.objects.UserSession
+import de.felix0351.models.objects.Auth
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -12,10 +12,11 @@ import io.ktor.server.sessions.*
 fun Route.login() {
     authenticate("form") {
         post("/login") {
-            val username = call.principal<UserIdPrincipal>()?.name.toString()
-            call.sessions.set(UserSession(username))
+            val userToLogin = call.principal<Auth.UserSession>()!!
 
-            call.respond(HttpStatusCode.Accepted, username)
+            //Create new session for the user
+            call.sessions.set(userToLogin)
+            call.respond(HttpStatusCode.Accepted, userToLogin.user.username)
         }
     }
 
@@ -23,6 +24,7 @@ fun Route.login() {
 
 fun Route.logout() {
     authenticate("session") {
+
         get("/logout") {
             call.sessions.clear<UserSession>()
 
