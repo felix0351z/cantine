@@ -20,8 +20,7 @@ import kotlin.collections.set
 import kotlin.time.Duration.Companion.days
 
 
-const val AUTHENTICATED_PATH = "/user" //Path which needs a session
-const val SESSION_FILE_PATH = ".sessions"
+const val COOKIE_PATH = "/" //Path which needs a session
 
 fun Application.configureSecurity() {
     val service by inject<CantineService>()
@@ -55,7 +54,7 @@ private fun SessionsConfig.configureAuthCookie() {
         cookie.extensions["SameSite"] = "strict"
 
         // Path to the content, which needs a session
-        cookie.path = AUTHENTICATED_PATH
+        cookie.path = COOKIE_PATH
 
         // Prevents user to edit the cookie, but can show the content
         transform(SessionTransportTransformerEncrypt(authKey, signKey))

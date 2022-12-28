@@ -2,6 +2,7 @@ package de.felix0351.plugins
 
 import de.felix0351.routes.authenticationRoutes
 import de.felix0351.routes.contentRoutes
+import de.felix0351.routes.paymentRoutes
 
 import io.ktor.http.*
 import io.ktor.server.plugins.statuspages.*
@@ -19,5 +20,6 @@ fun Application.configureRouting() {
 
     authenticationRoutes()
     contentRoutes()
+    paymentRoutes()
 
 }

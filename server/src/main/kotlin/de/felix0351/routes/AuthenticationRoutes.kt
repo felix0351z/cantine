@@ -24,9 +24,9 @@ fun Route.login() {
 
 fun Route.logout() {
     authenticate("session") {
-        get("/user/logout") {
-            // Remove the users' session
-            call.sessions.clear<Auth.UserSession>()
+
+        get("/logout") {
+            call.sessions.clear<UserSession>()
 
             call.respond(HttpStatusCode.OK, "Logout successfully")
         }
@@ -34,6 +34,45 @@ fun Route.logout() {
 
 
 }
+
+/**
+ * Get all available users
+ * GET /users
+ *
+ *
+ *
+ */
+fun Route.users() {
+    get("/users") {
+
+
+    }
+}
+
+/**
+ * Get/Delete or update a user
+ *
+ * GET/DELETE /user/<id>
+ * POST /user/<id>/name
+ * POST /user/<id>/password
+ * POST /user/<id>/permission
+ * 
+ */
+fun Route.user() {
+    route("/user/{id}") {
+        get {  }
+        delete {  }
+
+        post("/name") {  }
+        post("/password") {  }
+        post("/permission") {  }
+    }
+
+}
+
+
+
+
 
 
 fun Application.authenticationRoutes() {
@@ -44,5 +83,7 @@ fun Application.authenticationRoutes() {
 
         login()
         logout()
+        users()
+        user()
     }
 }
