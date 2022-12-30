@@ -86,3 +86,13 @@ fun Application.configureRouting() {
     paymentRoutes()
 
 }
+
+@Throws(IllegalIdException::class)
+fun<T> String.asBsonObjectId(): Id<T> {
+    try {
+        return ObjectId(this).toId()
+    } catch (ex: IllegalArgumentException) {
+        throw IllegalIdException()
+    }
+}
+

@@ -1,5 +1,6 @@
 package de.felix0351.utils
 
+import de.felix0351.models.errors.IllegalIdException
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.nullable
@@ -9,6 +10,9 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.litote.kmongo.Id
+import org.litote.kmongo.id.IdGenerator
+import java.lang.Exception
 import java.time.Instant
 import java.util.UUID
 
@@ -32,6 +36,37 @@ object InstantSerializer : KSerializer<Instant> {
 
     override fun serialize(encoder: Encoder, value: Instant) =
         encoder.encodeLong(value.toEpochMilli())
+}
+
+class CustomIDSerializer<T: Id<*>> : KSerializer<T> {
+
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        serialName = "IdSerializer",
+        kind = PrimitiveKind.STRING)
+
+
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun deserialize(decoder: Decoder): T {
+        val str = decoder.decodeNullableSerializableValue(String.serializer().nullable)
+
+        // If a correct id was provided take this (or throw an illegalid exception)
+        //If no id is provided create a new
+        try {
+            return if (str == null) IdGenerator.defaultGenerator.generateNewId<T>() as T
+            else IdGenerator.defaultGenerator.create(str) as T
+
+        } catch (ex: Exception) {
+            throw IllegalIdException()
+        }
+
+    }
+
+
+
+    override fun serialize(encoder: Encoder, value: T) {
+        encoder.encodeString(value.toString())
+    }
+
 }
 
 
