@@ -2,7 +2,7 @@ package de.felix0351.plugins
 
 import de.felix0351.dependencies.CantineService
 import de.felix0351.models.errors.ErrorCode
-import de.felix0351.models.errors.ServiceError
+import de.felix0351.models.errors.RouteError
 import de.felix0351.models.objects.Auth
 import de.felix0351.utils.FileHandler
 import io.ktor.http.*
@@ -130,7 +130,7 @@ suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
     } else {
         call.respond(
             HttpStatusCode.Forbidden,
-            ServiceError(
+            RouteError(
                 id = ErrorCode.NoPermission.code,
                 description = "You don't have enough permissions to call this route. Minimum Permission for this is $minimum"
             )

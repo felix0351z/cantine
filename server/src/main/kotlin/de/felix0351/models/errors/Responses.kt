@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * @see ErrorCode
  */
 @Serializable
-data class ServiceError(
+data class RouteError(
     val id: Int,
     val description: String
 )
@@ -27,9 +27,12 @@ data class ServiceError(
  */
 enum class ErrorCode(val code: Int) {
 
-    NoPermission(1),
-    AlreadyExists(2),
-    NotFound(3),
-    SameValue(4),
+    InternalDatabaseError(0),
+    ContentTransformationError(1),
+    IllegalID(2),
+    NoPermission(3),
+    AlreadyExists(4),
+    NotFound(5),
+    SameValue(6),
 
 }

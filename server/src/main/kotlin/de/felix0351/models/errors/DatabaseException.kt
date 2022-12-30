@@ -7,3 +7,5 @@ sealed class DatabaseException: RuntimeException() {
     class ValueAlreadyExistsException: DatabaseException()
 
 }
+
+class IllegalIdException: RuntimeException()
