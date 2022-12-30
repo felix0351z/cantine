@@ -95,9 +95,12 @@ fun Route.meal() = withInjection { service ->
  *
  *
  */
-fun Route.reports() {
+fun Route.reports() = withInjection { service ->
     get("/reports") {
-        call.respond(HttpStatusCode.OK)
+
+        val reports = service.contentRepo.getReports()
+        call.respond(HttpStatusCode.OK, reports)
+
     }
 }
 
@@ -108,14 +111,56 @@ fun Route.reports() {
  * GET/DELETE/PUT /content/report/<id>
  *
  */
-fun Route.report() {
+fun Route.report() = withInjection { service ->
     route("/report") {
-        post {  }
+
+        // Add a report
+        post {
+            //Worker permission is needed
+            checkPermission(Auth.PermissionLevel.WORKER) {
+
+                val report = call.receive<Content.Report>()
+                service.contentRepo.addReport(report)
+
+                call.respond(HttpStatusCode.OK, report.id.toString())
+
+            }
+        }
+
+        // Update a report
+        put {
+            //Worker permission is needed
+            checkPermission(Auth.PermissionLevel.WORKER) {
+
+                val report = call.receive<Content.Report>()
+                service.contentRepo.updateReport(report)
+
+                call.respond(HttpStatusCode.OK)
+            }
+        }
 
         route("/{id}") {
-            get {  }
-            delete {  }
-            put {  }
+
+            // Get the report <id>
+            get {
+
+                val id = call.parameters["id"]!!
+                val report = service.contentRepo.getReport(id.asBsonObjectId())
+
+                call.respond(HttpStatusCode.OK, report)
+            }
+
+            // Delete the report <id>
+            delete {
+
+                val id = call.parameters["id"]!!
+                // Worker permission needed
+                checkPermission(Auth.PermissionLevel.WORKER) {
+                    service.contentRepo.deleteReport(id.asBsonObjectId())
+                    call.respond(HttpStatusCode.OK)
+                }
+
+            }
         }
     }
 }
