@@ -1,5 +1,6 @@
 package de.felix0351.models.objects
 
+import de.felix0351.utils.CustomIDSerializer
 import de.felix0351.utils.InstantSerializer
 import de.felix0351.utils.UUIDSerializer
 import kotlinx.serialization.Serializable
@@ -21,7 +22,7 @@ sealed class Content {
      */
     @Serializable
     data class Category(
-        @BsonId val id: Id<Category>?,
+        @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Category>,
         val name: String
     )
 
@@ -64,8 +65,8 @@ sealed class Content {
 
     @Serializable
     data class Meal(
-        @BsonId val id: Id<Meal>?,
-        val category: Category?,
+        @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Meal>,
+        val category: String?,
         val name: String,
         val description: String,
         val price: Float,
@@ -113,7 +114,7 @@ sealed class Content {
      */
     @Serializable
     data class Order(
-        @BsonId val id: Id<Order>?,
+        @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Order>,
         @Serializable(with = UUIDSerializer::class) val code: UUID,
         val user: String,
         val meals: List<OrderedMeal>,
@@ -133,7 +134,7 @@ sealed class Content {
      */
     @Serializable
     data class Report(
-        @BsonId val id: Id<Report>?,
+        @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Report>,
         val title: String,
         val description: String,
         val picture: String,
