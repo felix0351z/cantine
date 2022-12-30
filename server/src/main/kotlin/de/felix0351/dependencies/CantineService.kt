@@ -4,8 +4,8 @@ import de.felix0351.models.objects.Auth
 import de.felix0351.utils.Hashing
 
 class CantineService(
-    private val authRepo: AuthenticationRepository,
-    private val contentRepo: ContentRepository
+     val authRepo: AuthenticationRepository,
+     val contentRepo: ContentRepository
     ) {
 
 
