@@ -2,7 +2,6 @@ package de.felix0351.dependencies
 
 import de.felix0351.db.MongoDBConnection
 import de.felix0351.models.errors.DatabaseException.*
-import de.felix0351.models.errors.Response
 import de.felix0351.models.objects.Content
 
 import org.litote.kmongo.Id
@@ -25,7 +24,6 @@ class ContentRepositoryMongoDB(private val con: MongoDBConnection) : ContentRepo
         val count = it.deleteOne(Content.Category::name eq name).deletedCount
         if (count == 0L) throw NotFoundException()
 
-        Response.Ok
     }
 
     override suspend fun addMeal(meal: Content.Meal): Unit = con.callToMealsCollection {
@@ -34,6 +32,10 @@ class ContentRepositoryMongoDB(private val con: MongoDBConnection) : ContentRepo
 
     override suspend fun getMeals(): List<Content.Meal> = con.callToMealsCollection {
         it.find().toList()
+    }
+
+    override suspend fun getMeal(id: Id<Content.Meal>): Content.Meal = con.callToMealsCollection {
+        it.find(Content.Meal::id eq id).first() ?: throw NotFoundException()
     }
 
     override suspend fun updateMeal(meal: Content.Meal): Unit = con.callToMealsCollection {
@@ -71,6 +73,10 @@ class ContentRepositoryMongoDB(private val con: MongoDBConnection) : ContentRepo
 
     override suspend fun getReports(): List<Content.Report> = con.callToReportsCollection {
         it.find().toList()
+    }
+
+    override suspend fun getReport(id: Id<Content.Report>): Content.Report = con.callToReportsCollection {
+        it.find(Content.Report::id eq id).first() ?: throw NotFoundException()
     }
 
     override suspend fun updateReport(report: Content.Report): Unit = con.callToReportsCollection {

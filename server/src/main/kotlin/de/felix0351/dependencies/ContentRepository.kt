@@ -24,6 +24,9 @@ interface ContentRepository {
     suspend fun getMeals(): List<Content.Meal>
 
     @Throws(NotFoundException::class)
+    suspend fun getMeal(id: Id<Content.Meal>): Content.Meal
+
+    @Throws(NotFoundException::class)
     suspend fun updateMeal(meal: Content.Meal)
 
     @Throws(NotFoundException::class)
@@ -45,6 +48,9 @@ interface ContentRepository {
     suspend fun addReport(report: Content.Report)
 
     suspend fun getReports(): List<Content.Report>
+
+    @Throws(NotFoundException::class)
+    suspend fun getReport(id: Id<Content.Report>): Content.Report
 
     @Throws(NotFoundException::class)
     suspend fun updateReport(report: Content.Report)
