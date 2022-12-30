@@ -1,8 +1,14 @@
 package de.felix0351.routes
 
+import de.felix0351.models.objects.Auth
+import de.felix0351.models.objects.Content
+import de.felix0351.plugins.asBsonObjectId
+import de.felix0351.plugins.checkPermission
+import de.felix0351.plugins.withInjection
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -12,29 +18,72 @@ import io.ktor.server.routing.*
  *  GET /content/meals
  *
  */
-fun Route.meals() {
+fun Route.meals() = withInjection { service ->
     get("/meals") {
 
+        val meals = service.contentRepo.getMeals()
+        call.respond(HttpStatusCode.OK, meals)
     }
 }
 
 
 /**
  * Create/Get/Delete/Edit one specific meal
- * POST /content/meal
- * GET/DELETE/PUT /content/meal/<id>
+ * POST/PUT /content/meal
+ * GET/DELETE/ /content/meal/<id>
  *
  */
-fun Route.meal() {
+fun Route.meal() = withInjection { service ->
     route("/meal") {
+        // Create a meal
         post {
+            //Worker Permission is needed
+            checkPermission(Auth.PermissionLevel.WORKER) {
+                val meal = call.receive<Content.Meal>()
+                service.contentRepo.addMeal(meal)
+
+                call.respond(HttpStatusCode.OK, meal.id.toString())
+            }
+
 
         }
 
+        // Update a meal
+        put {
+            //Worker Permission is needed
+            checkPermission(Auth.PermissionLevel.WORKER) {
+                val meal = call.receive<Content.Meal>()
+                service.contentRepo.updateMeal(meal)
+
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+
         route("/{id}") {
-            get {  }
-            delete {  }
-            put {  }
+
+
+            // Get the meal <id>
+            get {
+
+                val id = call.parameters["id"]!!
+                val meal = service.contentRepo.getMeal(id.asBsonObjectId())
+
+                call.respond(HttpStatusCode.OK, meal)
+
+            }
+
+            //Remove the meal <id>
+            delete {
+
+                val id = call.parameters["id"]!!
+                //Worker Permission is needed
+                checkPermission(Auth.PermissionLevel.WORKER) {
+                    service.contentRepo.deleteMeal(id.asBsonObjectId())
+
+                    call.respond(HttpStatusCode.OK)
+                }
+
+            }
         }
     }
 }
