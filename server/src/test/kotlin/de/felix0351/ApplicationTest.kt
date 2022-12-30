@@ -7,11 +7,14 @@ import de.felix0351.plugins.configureSecurity
 import de.felix0351.plugins.configureSerialization
 import de.felix0351.utils.FileHandler
 import io.ktor.client.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.json.Json
 
 
 const val EXAMPLE_USERNAME = "felix0351"
@@ -33,6 +36,15 @@ fun testModule(func: suspend ApplicationTestBuilder.(testClient: HttpClient) -> 
     val testClient = client.config {
         // Install cookies to remember login session and work with them
         install(HttpCookies)
+        // For serialization
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    prettyPrint = true
+                }
+            )
+        }
+
     }
 
     func(testClient)
@@ -46,6 +58,14 @@ fun HttpRequestBuilder.https() {
     url {
         protocol = URLProtocol.HTTPS
     }
+}
+
+/*
+Set json as content-type
+ */
+inline fun<reified T> HttpRequestBuilder.json(body: T) {
+    contentType(ContentType.Application.Json)
+    setBody(body)
 }
 
 
