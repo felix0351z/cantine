@@ -49,7 +49,12 @@ class AuthenticationRepositoryMongoDB(private val con: MongoDBConnection) : Auth
         // Update the password hash of the user. Notify if the user tries to set the new to the old password or if the username wasn't found
         val res = it.updateOne( User::username eq username, setValue(User::hash, hash))
         if (res.matchedCount == 0L) throw NotFoundException()
-        if (res.modifiedCount == 0L) throw SameValueException()
+    }
+
+    override suspend fun updateUserName(username: String, name: String): Unit = con.callToUserCollection {
+
+        val res = it.updateOne(User::username eq username, setValue(User::name, name))
+        if (res.matchedCount == 0L) throw NotFoundException()
 
     }
 

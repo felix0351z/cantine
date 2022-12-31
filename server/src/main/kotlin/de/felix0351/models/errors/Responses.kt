@@ -34,5 +34,7 @@ enum class ErrorCode(val code: Int) {
     AlreadyExists(4),
     NotFound(5),
     SameValue(6),
+    WrongPassword(7),
+    NoPassword(8)
 
 }

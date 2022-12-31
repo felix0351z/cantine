@@ -9,3 +9,5 @@ sealed class DatabaseException: RuntimeException() {
 }
 
 class IllegalIdException: RuntimeException()
+class NoPasswordException: RuntimeException()
+class WrongPasswordException: RuntimeException()

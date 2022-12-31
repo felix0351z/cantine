@@ -56,6 +56,30 @@ fun Application.configureRouting() {
 
         }
 
+        exception<IllegalIdException> { call, _ ->
+            call.respond(HttpStatusCode.BadRequest, RouteError(
+                id = ErrorCode.IllegalID.code,
+                description = "No valid id"
+            ))
+        }
+
+        exception<WrongPasswordException> {  call, _ ->
+            call.respond(HttpStatusCode.Forbidden, RouteError(
+                id = ErrorCode.WrongPassword.code,
+                description = "Wrong password"
+            ))
+        }
+
+        exception<NoPasswordException> { call, _ ->
+            call.respond(HttpStatusCode.BadRequest, RouteError(
+                id = ErrorCode.NoPassword.code,
+                description = "Password is needed"
+            ))
+        }
+
+
+        // Kotlinx Transformation errors
+
         exception<ContentTransformationException> { call, _ ->
             call.respond(HttpStatusCode.BadRequest, RouteError(
                 id = ErrorCode.ContentTransformationError.code,
@@ -72,12 +96,6 @@ fun Application.configureRouting() {
 
         }
 
-        exception<IllegalIdException> { call, _ ->
-            call.respond(HttpStatusCode.BadRequest, RouteError(
-                id = ErrorCode.IllegalID.code,
-                description = "No valid id"
-            ))
-        }
 
     }
 

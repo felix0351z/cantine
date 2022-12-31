@@ -24,11 +24,14 @@ interface AuthenticationRepository {
     @Throws(NotFoundException::class, SameValueException::class)
     suspend fun updatePermissionLevel(username: String, level: Auth.PermissionLevel)
 
-    @Throws(NotFoundException::class, SameValueException::class)
+    @Throws(NotFoundException::class)
     suspend fun updateUserHash(username: String, hash: String)
 
     @Throws(NotFoundException::class)
     suspend fun updateUserCredit(username: String, hash: String)
+
+    @Throws(NotFoundException::class)
+    suspend fun updateUserName(username: String, name: String)
 
     //Payments
 
