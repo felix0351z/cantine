@@ -10,14 +10,11 @@ import com.mongodb.*
 import de.felix0351.models.objects.Auth
 import de.felix0351.models.objects.Collections
 import de.felix0351.models.objects.Content
-import org.litote.kmongo.coroutine.CoroutineClient
-import org.litote.kmongo.coroutine.CoroutineCollection
-import org.litote.kmongo.coroutine.CoroutineDatabase
-import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
+import org.litote.kmongo.coroutine.*
 import kotlin.jvm.Throws
 
 
@@ -113,6 +110,26 @@ class MongoDBConnection {
 
         }
     }
+
+    /**
+     * Wrap the normal callToDatabase function around a transaction
+     * With this method multiple operations will be sent together.
+     * If one operation fail, all will fail
+     *
+     * @see callToDatabase
+     */
+    suspend fun<T> callWithTransaction(fn: suspend (db: CoroutineDatabase) -> T): T {
+        return client.startSession().use {
+            it.startTransaction()
+
+            val value = callToDatabase { database -> fn(database) }
+
+            it.commitTransactionAndAwait()
+
+            value
+        }
+    }
+
 
     /**
      * Inline function to wrap db calls around an error handling system
