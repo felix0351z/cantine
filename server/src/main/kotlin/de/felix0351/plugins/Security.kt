@@ -101,7 +101,7 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
 
             val user = service.checkUserCredentials(credentials.name, credentials.password)
 
-            if (user != null) Auth.UserSession(user)
+            if (user != null) Auth.UserSession(user.username)
             else null
         }
 
@@ -114,6 +114,7 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
 
 
 suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
+    service: CantineService,
     minimum: Auth.PermissionLevel,
     route: PipelineContext<Unit, ApplicationCall>.() -> Unit
 ) {
@@ -124,8 +125,10 @@ suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
         return
     }
 
+    val user = service.getUser(session.username)
+
     // If the user has the minimum permission level
-    if (session.user.permissionLevel.int >= minimum.int) {
+    if (user.permissionLevel.int >= minimum.int) {
         route()
     } else {
         call.respond(

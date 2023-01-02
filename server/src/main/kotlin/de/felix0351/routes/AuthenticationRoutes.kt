@@ -19,7 +19,7 @@ fun Route.login() {
 
             //Create new session for the user
             call.sessions.set(userToLogin)
-            call.respond(HttpStatusCode.Accepted, userToLogin.user.username)
+            call.respond(HttpStatusCode.Accepted, userToLogin.username)
         }
     }
 
@@ -47,7 +47,7 @@ fun Route.logout() {
  */
 fun Route.users() = withInjection { service ->
     get("/users") {
-        checkPermission(Auth.PermissionLevel.ADMIN) {
+        checkPermission(service, Auth.PermissionLevel.ADMIN) {
 
             val users = service.getUsers()
             call.respond(HttpStatusCode.OK, users)
@@ -67,7 +67,7 @@ fun Route.account() = withInjection { service ->
 
         get {
             val session = call.sessions.get<Auth.UserSession>()!!
-            val user = service.userToPublicUser(session.user)
+            val user = service.getUser(session.username)
 
             call.respond(HttpStatusCode.OK, user)
         }
@@ -101,7 +101,7 @@ fun Route.user() = withInjection { service ->
         // Get user
         get("/{username}") {
 
-            checkPermission(Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) {
                 val name = call.parameters["username"]!!
                 call.respond(HttpStatusCode.OK, service.getUser(name))
             }
@@ -111,7 +111,7 @@ fun Route.user() = withInjection { service ->
 
         // Add new user
         post {
-            checkPermission(Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) {
                 val request = call.receive<Auth.UserAddRequest>()
                 service.addUser(call.sessions.get()!!, request)
 
@@ -121,7 +121,7 @@ fun Route.user() = withInjection { service ->
 
         // Delete user
         delete {
-            checkPermission(Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) {
                 val request = call.receive<Auth.UserDeleteRequest>()
                 service.deleteUser(call.sessions.get()!!, request)
 
@@ -131,7 +131,7 @@ fun Route.user() = withInjection { service ->
 
         // Change users name
         post("/name") {
-            checkPermission(Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) {
                 val request = call.receive<Auth.NameChangeRequest>()
                 service.changeName(call.sessions.get()!!, request)
 
@@ -141,7 +141,7 @@ fun Route.user() = withInjection { service ->
 
         // Change users password
         post("/password") {
-            checkPermission(Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) {
                 val request = call.receive<Auth.PasswordChangeRequest>()
                 service.changePassword(call.sessions.get()!!, request)
 
@@ -151,7 +151,7 @@ fun Route.user() = withInjection { service ->
 
         // Change users permission level
         post("/permission") {
-            checkPermission(Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) {
                 val request = call.receive<Auth.PermissionChangeRequest>()
                 service.changePermissionLevel(call.sessions.get()!!, request)
 

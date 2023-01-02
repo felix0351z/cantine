@@ -5,6 +5,7 @@ import de.felix0351.models.errors.NoPasswordException
 import de.felix0351.models.errors.WrongPasswordException
 import de.felix0351.models.objects.Auth
 import de.felix0351.utils.Hashing
+import java.time.Instant
 
 import kotlin.jvm.Throws
 
@@ -13,6 +14,9 @@ class CantineService(
      private val authRepo: AuthenticationRepository,
      val contentRepo: ContentRepository
     ) {
+
+    private suspend fun getPrivateUser(session: Auth.UserSession): Auth.User =
+        authRepo.getUserByUsername(session.username) ?: throw DatabaseException.NotFoundException()
 
 
     /**
@@ -70,7 +74,7 @@ class CantineService(
     @Throws(NoPasswordException::class, DatabaseException.ValueAlreadyExistsException::class)
     suspend fun addUser(session: Auth.UserSession, request: Auth.UserAddRequest) {
         // If the own password is wrong
-        if (!Hashing.checkPassword(request.password, session.user.hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
 
         if (request.user.password == null) throw NoPasswordException()
 
@@ -95,7 +99,7 @@ class CantineService(
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class)
     suspend fun deleteUser(session: Auth.UserSession, request: Auth.UserDeleteRequest) {
         // If the own password is wrong
-        if (!Hashing.checkPassword(request.password, session.user.hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
 
         authRepo.removeUser(request.username)
     }
@@ -112,11 +116,11 @@ class CantineService(
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class)
     suspend fun changeOwnPassword(session: Auth.UserSession, request: Auth.PasswordChangeRequest) {
 
-        if (!Hashing.checkPassword(request.password, session.user.hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
 
         // Set new password
         authRepo.updateUserHash(
-            session.user.username,
+            session.username,
             Hashing.toHash(request.newPassword)
         )
 
@@ -134,7 +138,7 @@ class CantineService(
     suspend fun changeName(session: Auth.UserSession, request: Auth.NameChangeRequest) {
 
         //if the password of admin is wrong
-        if (!Hashing.checkPassword(request.password, session.user.hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
 
         // Set new name for the user
         authRepo.updateUserName(request.username, request.newName)
@@ -151,7 +155,7 @@ class CantineService(
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class, DatabaseException.SameValueException::class)
     suspend fun changePassword(session: Auth.UserSession, request: Auth.PasswordChangeRequest) {
         //if the password of admin is wrong
-        if (!Hashing.checkPassword(request.password, session.user.hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
         //if no username was provided
         if (request.username == null) throw DatabaseException.NotFoundException()
 
@@ -169,7 +173,7 @@ class CantineService(
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class, DatabaseException.SameValueException::class)
     suspend fun changePermissionLevel(session: Auth.UserSession, request: Auth.PermissionChangeRequest) {
         //if the password of admin is wrong
-        if (!Hashing.checkPassword(request.password, session.user.hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
 
         authRepo.updatePermissionLevel(request.username,  request.newPermissionLevel)
     }

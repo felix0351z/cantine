@@ -38,7 +38,7 @@ fun Route.meal() = withInjection { service ->
         // Create a meal
         post {
             //Worker Permission is needed
-            checkPermission(Auth.PermissionLevel.WORKER) {
+            checkPermission(service, Auth.PermissionLevel.WORKER) {
                 val meal = call.receive<Content.Meal>()
                 service.contentRepo.addMeal(meal)
 
@@ -51,7 +51,7 @@ fun Route.meal() = withInjection { service ->
         // Update a meal
         put {
             //Worker Permission is needed
-            checkPermission(Auth.PermissionLevel.WORKER) {
+            checkPermission(service, Auth.PermissionLevel.WORKER) {
                 val meal = call.receive<Content.Meal>()
                 service.contentRepo.updateMeal(meal)
 
@@ -77,7 +77,7 @@ fun Route.meal() = withInjection { service ->
 
                 val id = call.parameters["id"]!!
                 //Worker Permission is needed
-                checkPermission(Auth.PermissionLevel.WORKER) {
+                checkPermission(service, Auth.PermissionLevel.WORKER) {
                     service.contentRepo.deleteMeal(id.asBsonObjectId())
 
                     call.respond(HttpStatusCode.OK)
@@ -117,7 +117,7 @@ fun Route.report() = withInjection { service ->
         // Add a report
         post {
             //Worker permission is needed
-            checkPermission(Auth.PermissionLevel.WORKER) {
+            checkPermission(service, Auth.PermissionLevel.WORKER) {
 
                 val report = call.receive<Content.Report>()
                 service.contentRepo.addReport(report)
@@ -130,7 +130,7 @@ fun Route.report() = withInjection { service ->
         // Update a report
         put {
             //Worker permission is needed
-            checkPermission(Auth.PermissionLevel.WORKER) {
+            checkPermission(service, Auth.PermissionLevel.WORKER) {
 
                 val report = call.receive<Content.Report>()
                 service.contentRepo.updateReport(report)
@@ -155,7 +155,7 @@ fun Route.report() = withInjection { service ->
 
                 val id = call.parameters["id"]!!
                 // Worker permission needed
-                checkPermission(Auth.PermissionLevel.WORKER) {
+                checkPermission(service, Auth.PermissionLevel.WORKER) {
                     service.contentRepo.deleteReport(id.asBsonObjectId())
                     call.respond(HttpStatusCode.OK)
                 }

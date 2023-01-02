@@ -142,7 +142,7 @@ sealed class Auth {
     }
 
     data class UserSession(
-        val user: User,
+        val username: String,
     ): Principal
 
 
