@@ -112,6 +112,15 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
     }
 }
 
+/**
+ * Utility extended function to get the current session as Object
+ *
+ * @see Auth.UserSession
+ */
+fun PipelineContext<Unit, ApplicationCall>.currentSession() =
+    call.sessions.get<Auth.UserSession>()
+
+
 
 suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
     service: CantineService,
