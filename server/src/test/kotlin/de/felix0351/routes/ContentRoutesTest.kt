@@ -15,6 +15,7 @@ import io.ktor.http.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Test
+import kotlin.system.measureTimeMillis
 import kotlin.test.assertEquals
 
 class ContentRoutesTest {
@@ -25,11 +26,14 @@ class ContentRoutesTest {
     fun testGetMeals() = testModule {
         it.login()
 
-        val meals: List<Meal> = it.get("/content/meals") {
-            https()
-        }.body()
+        val millis = measureTimeMillis {
+            val meals: List<Meal> = it.get("/content/meals") {
+                https()
+            }.body()
 
-        println(meals)
+            println(meals)
+        }
+        println("Taken time: $millis ms")
     }
 
     @Test
@@ -50,12 +54,15 @@ class ContentRoutesTest {
         val meal = Json.encodeToString(exampleMeal)
         println(meal)
         
-        val id = it.post("/content/meal") {
-            https()
-            json(exampleMeal)
-        }.bodyAsText()
+        val millis = measureTimeMillis {
+            val id = it.post("/content/meal") {
+                https()
+                json(exampleMeal)
+            }.bodyAsText()
+            println(id)
+        }
 
-        println(id)
+        println("Taken time: $millis ms")
     }
 
     @Test

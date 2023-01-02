@@ -1,7 +1,7 @@
 package de.felix0351.routes
 
 import de.felix0351.*
-import de.felix0351.models.objects.Auth
+import de.felix0351.models.objects.*
 import de.felix0351.utils.FileHandler
 import de.felix0351.utils.Hashing
 import io.ktor.client.call.*
@@ -88,7 +88,7 @@ class AuthenticationTests {
     fun testChangeOwnPassword() = testModule {
         it.login()
 
-        val request = Auth.PasswordChangeRequest(
+        val request = PasswordChangeRequest(
             username = null,
             password = EXAMPLE_PASSWORD,
             newPassword = EXAMPLE_PASSWORD
@@ -107,7 +107,7 @@ class AuthenticationTests {
         it.login()
 
 
-        val request = Auth.UserAddRequest(
+        val request = UserAddRequest(
             password = EXAMPLE_PASSWORD,
             user = Auth.PublicUser(
                 username = "hanss",
@@ -142,7 +142,7 @@ class AuthenticationTests {
     fun testDeleteUser() = testModule {
         it.login()
 
-        val request = Auth.UserDeleteRequest(
+        val request = UserDeleteRequest(
             EXAMPLE_PASSWORD,
             "hanss"
         )
@@ -159,7 +159,7 @@ class AuthenticationTests {
     fun testChangeUserName() = testModule {
         it.login()
 
-        val request = Auth.NameChangeRequest(
+        val request = NameChangeRequest(
             EXAMPLE_PASSWORD,
             "hanss",
             "Günter Hans"
@@ -177,7 +177,7 @@ class AuthenticationTests {
     fun testChangeUserPassword() = testModule {
         it.login()
 
-        val request = Auth.PasswordChangeRequest(
+        val request = PasswordChangeRequest(
             EXAMPLE_PASSWORD,
             "hanss",
             "123456passwort"
@@ -195,7 +195,7 @@ class AuthenticationTests {
     fun testChangeUserPermission() = testModule {
         it.login()
 
-        val request = Auth.PermissionChangeRequest(
+        val request = PermissionChangeRequest(
             EXAMPLE_PASSWORD,
             "hanss",
             Auth.PermissionLevel.WORKER
