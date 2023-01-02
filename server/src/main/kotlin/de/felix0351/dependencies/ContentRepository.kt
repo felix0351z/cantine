@@ -32,17 +32,6 @@ interface ContentRepository {
     @Throws(NotFoundException::class)
     suspend fun deleteMeal(id: Id<Content.Meal>)
 
-    // Order
-
-    suspend fun addOrder(order: Content.Order)
-
-    suspend fun getOrders(): List<Content.Order>
-
-    suspend fun getOrdersFromUser(username: String): List<Content.Order>
-
-    @Throws(NotFoundException::class)
-    suspend fun deleteOrder(id: Id<Content.Order>)
-
     // Report
 
     suspend fun addReport(report: Content.Report)

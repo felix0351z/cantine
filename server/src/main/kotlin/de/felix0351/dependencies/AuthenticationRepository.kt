@@ -3,7 +3,7 @@ package de.felix0351.dependencies
 import de.felix0351.models.errors.DatabaseException.*
 import de.felix0351.models.objects.Auth
 import de.felix0351.models.objects.Auth.User
-import java.time.Instant
+
 import kotlin.jvm.Throws
 
 
@@ -32,14 +32,6 @@ interface AuthenticationRepository {
 
     @Throws(NotFoundException::class)
     suspend fun updateUserName(username: String, name: String)
-
-    //Payments
-
-    suspend fun addPayment(payment: Auth.Payment)
-
-    suspend fun getPayments(username: String, range: Instant?): List<Auth.Payment>
-
-    suspend fun clearPayments(username: String)
 
 
 

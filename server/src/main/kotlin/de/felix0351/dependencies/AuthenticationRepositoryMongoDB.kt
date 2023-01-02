@@ -7,9 +7,8 @@ import de.felix0351.models.objects.Auth.User
 import de.felix0351.utils.getLogger
 
 import org.litote.kmongo.eq
-import org.litote.kmongo.gte
 import org.litote.kmongo.setValue
-import java.time.Instant
+
 
 
 class AuthenticationRepositoryMongoDB(private val con: MongoDBConnection) : AuthenticationRepository {
@@ -65,21 +64,7 @@ class AuthenticationRepositoryMongoDB(private val con: MongoDBConnection) : Auth
 
     }
 
-    override suspend fun addPayment(payment: Auth.Payment): Unit = con.callToPaymentsCollection {
-        it.insertOne(payment)
-    }
 
-    override suspend fun getPayments(username: String, range: Instant?): List<Auth.Payment> = con.callToPaymentsCollection {
-        // If time is null, it includes all payments
-        val time = range ?: Instant.ofEpochSecond(0)
-
-        // Only give the payments which are newer then the time date
-        it.find(Auth.Payment::creationTime gte time).toList()
-    }
-
-    override suspend fun clearPayments(username: String): Unit = con.callToPaymentsCollection {
-        it.deleteMany(Auth.Payment::user eq username)
-    }
 
 
 }

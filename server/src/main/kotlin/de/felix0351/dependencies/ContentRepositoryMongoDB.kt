@@ -3,9 +3,7 @@ package de.felix0351.dependencies
 import de.felix0351.db.MongoDBConnection
 import de.felix0351.models.errors.DatabaseException.*
 import de.felix0351.models.objects.Content
-
-import org.litote.kmongo.Id
-import org.litote.kmongo.eq
+import org.litote.kmongo.*
 
 class ContentRepositoryMongoDB(private val con: MongoDBConnection) : ContentRepository {
     override suspend fun addCategory(category: Content.Category): Unit = con.callToCategoriesCollection {
@@ -49,23 +47,6 @@ class ContentRepositoryMongoDB(private val con: MongoDBConnection) : ContentRepo
         if (count == 0L) throw NotFoundException()
     }
 
-    override suspend fun addOrder(order: Content.Order): Unit = con.callToOrdersCollection {
-        it.insertOne(order)
-    }
-
-    override suspend fun getOrders(): List<Content.Order> = con.callToOrdersCollection {
-        it.find().toList()
-    }
-
-    override suspend fun getOrdersFromUser(username: String): List<Content.Order> = con.callToOrdersCollection {
-        it.find(Content.Order::user eq username).toList()
-    }
-
-    override suspend fun deleteOrder(id: Id<Content.Order>): Unit = con.callToOrdersCollection {
-        val count = it.deleteOne(Content.Order::id eq id).deletedCount
-        if (count == 0L) throw NotFoundException()
-
-    }
 
     override suspend fun addReport(report: Content.Report): Unit = con.callToReportsCollection {
         it.insertOne(report)
