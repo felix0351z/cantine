@@ -48,7 +48,7 @@ sealed class Auth {
     /**
      * A Payment order from the past
      *
-     * @property title Name of the order
+     * @property meals Name of the meals
      * @property price Price
      * @property creationTime Creation Time of the payment
      *
@@ -56,7 +56,7 @@ sealed class Auth {
     @Serializable
     data class Payment(
         val user: String,
-        val title: String,
+        val meals: List<String>,
         val price: Float,
         @Serializable(with = InstantSerializer::class) val creationTime: Instant
     )
