@@ -1,11 +1,7 @@
 package de.felix0351.plugins
 
 import de.felix0351.db.MongoDBConnection
-import de.felix0351.dependencies.CantineService
-import de.felix0351.dependencies.AuthenticationRepositoryMongoDB
-import de.felix0351.dependencies.ContentRepositoryMongoDB
-import de.felix0351.dependencies.AuthenticationRepository
-import de.felix0351.dependencies.ContentRepository
+import de.felix0351.dependencies.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import org.koin.dsl.module
@@ -28,7 +24,8 @@ val appModule = module {
     single { MongoDBConnection() }
     single<AuthenticationRepository> { AuthenticationRepositoryMongoDB(get()) }
     single<ContentRepository> { ContentRepositoryMongoDB(get()) }
-    single { CantineService(get(), get()) }
+    single<PaymentRepository> { PaymentRepositoryMongoDB(get()) }
+    single { CantineService(get(), get(), get() ) }
 
 }
 
