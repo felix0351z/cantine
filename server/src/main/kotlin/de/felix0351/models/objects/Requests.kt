@@ -90,7 +90,7 @@ data class CreateOrderRequest(
 
 @Serializable
 data class CreateOrderRequestMeal(
-    @Serializable(with = CustomIDSerializer::class) val meal: Id<Content.Meal>,
+    @Serializable(with = CustomIDSerializer::class) val id: Id<Content.Meal>,
     val selections: List<String>
 )
 
