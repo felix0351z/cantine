@@ -266,7 +266,29 @@ class CantineService(
         )
     }
 
-    suspend fun verifyOrder() {
+    /**
+     * Verify an order
+     *
+     * Order will be deleted and inserted as payment
+     *
+     * @param username The user which called the route
+     * @param id The order
+     *
+     *
+     */
+    suspend fun verifyOrder(username: String, id: Id<Content.Order>) {
+        val order = paymentRepo.getOrder(id)
+        val payment = Auth.Payment(
+            user = username,
+            meals = order.meals.map { it.name },
+            price = order.price,
+            creationTime = Instant.now()
+        )
+
+        paymentRepo.verifyAndDeleteOrder(id, payment)
+    }
+
+    suspend fun addCreditToUser(self: Auth.User, username: String, credit: Float) {
         TODO()
     }
 
