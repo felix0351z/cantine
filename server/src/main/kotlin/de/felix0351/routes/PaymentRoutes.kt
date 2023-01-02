@@ -1,7 +1,16 @@
 package de.felix0351.routes
 
+import de.felix0351.models.objects.Auth
+import de.felix0351.models.objects.CreateOrderRequest
+import de.felix0351.models.objects.DeleteOrderRequest
+import de.felix0351.plugins.checkPermission
+import de.felix0351.plugins.currentSession
+import de.felix0351.plugins.withInjection
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 /**
@@ -11,13 +20,21 @@ import io.ktor.server.routing.*
  *
  */
 
-fun Route.credit() {
+fun Route.credit() = withInjection { service ->
     route("/credit") {
-        get {  }
+        get {
+            val session = currentSession()!!
+            val credit = service.getUser(session.username).credit
+
+            call.respond(HttpStatusCode.OK, credit)
+        }
 
         post {
             //Worker permission
 
+            checkPermission(service, Auth.PermissionLevel.WORKER) {
+                TODO()
+            }
         }
     }
 }
@@ -29,9 +46,12 @@ fun Route.credit() {
  *
  *
  */
-fun Route.orders() {
+fun Route.orders() = withInjection {service ->
     get("/orders") {
 
+        val session = currentSession()!!
+        val orders = service.getOrdersFromUser(session.username)
+        call.respond(HttpStatusCode.OK, orders)
     }
 }
 
@@ -43,10 +63,22 @@ fun Route.orders() {
  *
  *
  */
-fun Route.order() {
+fun Route.order() = withInjection { service ->
     route("/order") {
-        post {  }
-        delete {  }
+        post {
+            val request = call.receive<CreateOrderRequest>()
+            val session = currentSession()!!
+
+            service.createOrder(session.username, request)
+            call.respond(HttpStatusCode.OK)
+        }
+        delete {
+            val request = call.receive<DeleteOrderRequest>()
+            val session = currentSession()!!
+
+            service.cancelOrder(session.username, request)
+            call.respond(HttpStatusCode.OK)
+        }
     }
 }
 
@@ -57,10 +89,20 @@ fun Route.order() {
  *
  * Minimum Permission Level: User
  */
-fun Route.purchases() {
+fun Route.purchases() = withInjection { service ->
     route("/purchases") {
-        get {  }
-        delete {  }
+        get {
+            val session = currentSession()!!
+            val payments = service.getPayments(session.username)
+
+            call.respond(HttpStatusCode.OK, payments)
+        }
+        delete {
+            val session = currentSession()!!
+            service.clearPayments(session.username)
+
+            call.respond(HttpStatusCode.OK)
+        }
     }
 }
 
