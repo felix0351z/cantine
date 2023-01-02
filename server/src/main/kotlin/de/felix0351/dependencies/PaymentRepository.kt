@@ -12,10 +12,10 @@ interface PaymentRepository {
     //Orders
 
     @Throws(DatabaseException.NotFoundException::class)
-    suspend fun getMealsAndCredit(username: String, ids: List<Id<Content.Meal>>): Pair<List<Content.Meal>, String>
+    suspend fun getMeals(ids: List<Id<Content.Meal>>): List<Content.Meal>
 
     @Throws(DatabaseException.NotFoundException::class)
-    suspend fun getOrderAndCredit(username: String, id: Id<Content.Order>): Pair<Content.Order, String>
+    suspend fun getOrder(id: Id<Content.Order>): Content.Order
 
     @Throws(DatabaseException.NotFoundException::class)
     suspend fun addOrder(order: Content.Order, username: String, credit: String)
@@ -23,15 +23,13 @@ interface PaymentRepository {
     @Throws(DatabaseException.NotFoundException::class)
     suspend fun cancelOrder(username: String, id: Id<Content.Order>, credit: String)
 
-    suspend fun verifyOrder(username: String, id: Id<Content.Order>)
+    suspend fun verifyAndDeleteOrder(id: Id<Content.Order>, payment: Auth.Payment)
 
     suspend fun getOrders(): List<Content.Order>
 
     suspend fun getOrdersFromUser(username: String): List<Content.Order>
 
     //Payments
-
-    suspend fun addPayment(payment: Auth.Payment)
 
     suspend fun getPayments(username: String, range: Instant?): List<Auth.Payment>
 

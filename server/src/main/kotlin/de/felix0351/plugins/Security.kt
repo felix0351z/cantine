@@ -117,15 +117,23 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
  *
  * @see Auth.UserSession
  */
-fun PipelineContext<Unit, ApplicationCall>.currentSession() =
+fun PipelineContext<Unit, ApplicationCall>.currentSession(): Auth.UserSession? =
     call.sessions.get<Auth.UserSession>()
 
+
+
+
+
+suspend fun PipelineContext<Unit, ApplicationCall>.currentUser(service: CantineService): Auth.User {
+    val session = currentSession()
+    return service.getPrivateUser(session!!)
+}
 
 
 suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
     service: CantineService,
     minimum: Auth.PermissionLevel,
-    route: PipelineContext<Unit, ApplicationCall>.() -> Unit
+    route: PipelineContext<Unit, ApplicationCall>.(user: Auth.User) -> Unit
 ) {
     // If there is no session. Normally not null, because authorization block comes before this
     val session = call.sessions.get<Auth.UserSession>()
@@ -134,11 +142,11 @@ suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
         return
     }
 
-    val user = service.getUser(session.username)
+    val user = service.getPrivateUser(session)
 
     // If the user has the minimum permission level
     if (user.permissionLevel.int >= minimum.int) {
-        route()
+        route(user)
     } else {
         call.respond(
             HttpStatusCode.Forbidden,

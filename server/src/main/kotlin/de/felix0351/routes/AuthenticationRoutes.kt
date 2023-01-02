@@ -75,9 +75,9 @@ fun Route.account() = withInjection { service ->
 
         post("/password") {
             val request = call.receive<PasswordChangeRequest>()
-            val session = currentSession()!!
+            val user = service.getPrivateUser(currentSession()!!)
 
-            service.changeOwnPassword(session, request)
+            service.changeOwnPassword(user, request)
             call.respond(HttpStatusCode.OK)
         }
 
@@ -112,9 +112,9 @@ fun Route.user() = withInjection { service ->
 
         // Add new user
         post {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<UserAddRequest>()
-                service.addUser(currentSession()!!, request)
+                service.addUser(user, request)
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -122,9 +122,9 @@ fun Route.user() = withInjection { service ->
 
         // Delete user
         delete {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<UserDeleteRequest>()
-                service.deleteUser(currentSession()!!, request)
+                service.deleteUser(user, request)
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -132,9 +132,9 @@ fun Route.user() = withInjection { service ->
 
         // Change users name
         post("/name") {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<NameChangeRequest>()
-                service.changeName(currentSession()!!, request)
+                service.changeName(user, request)
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -142,9 +142,9 @@ fun Route.user() = withInjection { service ->
 
         // Change users password
         post("/password") {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<PasswordChangeRequest>()
-                service.changePassword(currentSession()!!, request)
+                service.changePassword(user, request)
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -152,9 +152,9 @@ fun Route.user() = withInjection { service ->
 
         // Change users permission level
         post("/permission") {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) {
+            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<PermissionChangeRequest>()
-                service.changePermissionLevel(currentSession()!!, request)
+                service.changePermissionLevel(user, request)
 
                 call.respond(HttpStatusCode.OK)
             }

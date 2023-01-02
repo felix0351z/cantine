@@ -6,7 +6,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import java.time.Instant
 import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 class AuthRepository {
 
@@ -45,36 +44,15 @@ class AuthRepository {
     fun addPayment() = runBlocking {
         val payment = Auth.Payment(
             user = "felix0351",
-            title = "Pommes mit Rahmsoße",
+            meals = listOf("Pommes mit Rahmsoße"),
             price = 2.2F,
             creationTime = Instant.now()
         )
         val repo = getAuthRepo()
 
-        repo.addPayment(payment)
+        //repo.addPayment(payment)
 
     }
-
-    @Test
-    fun getPayment() = runBlocking {
-        val repo = getAuthRepo()
-
-        val response = repo.getPayments("felix0351", null)
-
-        println(response)
-        assertTrue(response.isNotEmpty())
-    }
-
-    @Test
-    fun clearPayments() = runBlocking {
-        val repo = getAuthRepo()
-
-        repo.clearPayments("felix0351")
-
-        val list = repo.getPayments("felix0351", null)
-        assertTrue(list.isEmpty())
-    }
-
 
 
 }

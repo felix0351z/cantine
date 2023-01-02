@@ -6,6 +6,7 @@ import de.felix0351.models.errors.NoPasswordException
 import de.felix0351.models.errors.WrongPasswordException
 import de.felix0351.models.objects.*
 import de.felix0351.utils.Hashing
+import org.litote.kmongo.Id
 import org.litote.kmongo.newId
 import java.time.Instant
 
@@ -18,7 +19,7 @@ class CantineService(
      val contentRepo: ContentRepository
     ) {
 
-    private suspend fun getPrivateUser(session: Auth.UserSession): Auth.User =
+    suspend fun getPrivateUser(session: Auth.UserSession): Auth.User =
         authRepo.getUserByUsername(session.username) ?: throw DatabaseException.NotFoundException()
 
 
@@ -69,15 +70,15 @@ class CantineService(
     /**
      *  Change the permission level of the requested user
      *
-     * @param session The session if the admin which called the route
+     * @param self The Admin which called the route
      * @param request Request to change the permission level
      *
      * @see PermissionChangeRequest
      */
     @Throws(NoPasswordException::class, DatabaseException.ValueAlreadyExistsException::class)
-    suspend fun addUser(session: Auth.UserSession, request: UserAddRequest) {
+    suspend fun addUser(self: Auth.User, request: UserAddRequest) {
         // If the own password is wrong
-        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, self.hash)) throw WrongPasswordException()
 
         if (request.user.password == null) throw NoPasswordException()
 
@@ -94,15 +95,15 @@ class CantineService(
     /**
      *  Delete a user
      *
-     * @param session The session of the admin
+     * @param self The admin which called the route
      * @param request Request to delete the user
      *
      * @see UserDeleteRequest
      */
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class)
-    suspend fun deleteUser(session: Auth.UserSession, request: UserDeleteRequest) {
+    suspend fun deleteUser(self: Auth.User, request: UserDeleteRequest) {
         // If the own password is wrong
-        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, self.hash)) throw WrongPasswordException()
 
         authRepo.removeUser(request.username)
     }
@@ -110,20 +111,20 @@ class CantineService(
     /**
      * Change the password of the own account
      *
-     * @param session User's session
+     * @param self The user which called the route
      * @param request Request to change the password
      *
      * @see PasswordChangeRequest
      *
      */
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class)
-    suspend fun changeOwnPassword(session: Auth.UserSession, request: PasswordChangeRequest) {
+    suspend fun changeOwnPassword(self: Auth.User, request: PasswordChangeRequest) {
 
-        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, self.hash)) throw WrongPasswordException()
 
         // Set new password
         authRepo.updateUserHash(
-            session.username,
+            self.username,
             Hashing.toHash(request.newPassword)
         )
 
@@ -132,16 +133,16 @@ class CantineService(
     /**
      *  Change the full name of the requested user
      *
-     * @param session The session if the admin which called the route
+     * @param self The admin which called the route
      * @param request Request to change the full name
      *
      * @see NameChangeRequest
      */
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class)
-    suspend fun changeName(session: Auth.UserSession, request: NameChangeRequest) {
+    suspend fun changeName(self: Auth.User, request: NameChangeRequest) {
 
         //if the password of admin is wrong
-        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, self.hash)) throw WrongPasswordException()
 
         // Set new name for the user
         authRepo.updateUserName(request.username, request.newName)
@@ -150,15 +151,15 @@ class CantineService(
     /**
      *  Change the password  of the requested user
      *
-     * @param session The session if the admin which called the route
+     * @param self The admin which called the route
      * @param request Request to change the password
      *
      * @see PasswordChangeRequest
      */
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class, DatabaseException.SameValueException::class)
-    suspend fun changePassword(session: Auth.UserSession, request: PasswordChangeRequest) {
+    suspend fun changePassword(self: Auth.User, request: PasswordChangeRequest) {
         //if the password of admin is wrong
-        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, self.hash)) throw WrongPasswordException()
         //if no username was provided
         if (request.username == null) throw DatabaseException.NotFoundException()
 
@@ -168,15 +169,15 @@ class CantineService(
     /**
      *  Change the permission level of the requested user
      *
-     * @param session The session if the admin which called the route
+     * @param self The admin which called the route
      * @param request Request to change the permission level
      *
      * @see PermissionChangeRequest
      */
     @Throws(WrongPasswordException::class, DatabaseException.NotFoundException::class, DatabaseException.SameValueException::class)
-    suspend fun changePermissionLevel(session: Auth.UserSession, request: PermissionChangeRequest) {
+    suspend fun changePermissionLevel(self: Auth.User, request: PermissionChangeRequest) {
         //if the password of admin is wrong
-        if (!Hashing.checkPassword(request.password, getPrivateUser(session).hash)) throw WrongPasswordException()
+        if (!Hashing.checkPassword(request.password, self.hash)) throw WrongPasswordException()
 
         authRepo.updatePermissionLevel(request.username,  request.newPermissionLevel)
     }
@@ -187,32 +188,32 @@ class CantineService(
      *
      * Add the order to database and update the credit amount of the user
      *
-     * @param username User which initiated the request
+     * @param self The user which called the route
      * @param request The create request
      *
      * @see CreateOrderRequest
      *
      */
     @Throws(IncorrectOrderException::class, DatabaseException.NotFoundException::class)
-    suspend fun createOrder(username: String, request: CreateOrderRequest) {
+    suspend fun createOrder(self: Auth.User, request: CreateOrderRequest) {
         // Serialize order (check for meals if their exists) -> Update credit -> Add Order to db
 
         // All selected meals by the user as id
-        val ids = request.meals.map { it.meal }
-        val pair = try {
-            paymentRepo.getMealsAndCredit(username, ids)
+        val ids = request.meals.map { it.id }
+        val mealsInDB = try {
+            paymentRepo.getMeals(ids)
         } catch (ex: DatabaseException.NotFoundException) {
             throw IncorrectOrderException()
         }
 
         // Create a map with the meals from database and the id as key
-        val meals = pair.first.associateBy { it.id }
+        val mealsMap = mealsInDB.associateBy { it.id }
 
         var fullPrice = 0F
         var fullDeposit = 0F
         val orderMeals = request.meals.map {
             // Get the meal by the key id value and add it to the order
-            val meal = meals[it.meal]!!
+            val meal = mealsMap[it.id]!!
 
             // Add the price and deposit to the full values of the order
             fullPrice += meal.price
@@ -231,24 +232,35 @@ class CantineService(
         paymentRepo.addOrder(
             order = Content.Order(
                 id = newId(),
-                user = username,
+                user = self.username,
                 meals = orderMeals,
                 price = fullPrice,
                 deposit = fullDeposit,
                 orderTime = Instant.now()
             ),
-            username = username,
+            username = self.username,
             credit = "")
     }
 
-    suspend fun cancelOrder(username: String, request: DeleteOrderRequest) {
+    /**
+     * Cancel a current order
+     *
+     * Remove the order and give the user back his credit
+     *
+     * @param self The user which called the route
+     * @param request The create request
+     *
+     * @see DeleteOrderRequest
+     *
+     */
+    suspend fun cancelOrder(self: Auth.User, request: DeleteOrderRequest) {
         // Update credit ->  Cancel order
-        val pair = paymentRepo.getOrderAndCredit(username, request.order)
+        val order = paymentRepo.getOrder(request.order)
         //TODO Hashing
         val newCredit = ""
 
         paymentRepo.cancelOrder(
-            username = username,
+            username = self.username,
             id = request.order,
             credit = newCredit
         )
@@ -258,6 +270,11 @@ class CantineService(
         TODO()
     }
 
+    /**
+     * Utility function to convert a Meal to a OrderedMeal Object
+     *
+     * @see Content.OrderedMeal
+     */
     private fun mealToOrderedMeal(meal: Content.Meal, selections: List<String>) = Content.OrderedMeal(
         name = meal.name,
         description = meal.description,

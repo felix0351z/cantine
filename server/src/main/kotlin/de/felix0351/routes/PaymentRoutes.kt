@@ -5,6 +5,7 @@ import de.felix0351.models.objects.CreateOrderRequest
 import de.felix0351.models.objects.DeleteOrderRequest
 import de.felix0351.plugins.checkPermission
 import de.felix0351.plugins.currentSession
+import de.felix0351.plugins.currentUser
 import de.felix0351.plugins.withInjection
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -67,16 +68,14 @@ fun Route.order() = withInjection { service ->
     route("/order") {
         post {
             val request = call.receive<CreateOrderRequest>()
-            val session = currentSession()!!
 
-            service.createOrder(session.username, request)
+            service.createOrder(currentUser(service), request)
             call.respond(HttpStatusCode.OK)
         }
         delete {
             val request = call.receive<DeleteOrderRequest>()
-            val session = currentSession()!!
 
-            service.cancelOrder(session.username, request)
+            service.cancelOrder(currentUser(service), request)
             call.respond(HttpStatusCode.OK)
         }
     }
