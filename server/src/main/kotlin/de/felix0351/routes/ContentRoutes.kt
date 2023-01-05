@@ -1,6 +1,7 @@
 package de.felix0351.routes
 
 import de.felix0351.models.objects.Auth
+import de.felix0351.models.objects.Auth.PermissionLevel.*
 import de.felix0351.models.objects.Content
 import de.felix0351.plugins.asBsonObjectId
 import de.felix0351.plugins.checkPermission
@@ -165,6 +166,94 @@ fun Route.report() = withInjection { service ->
     }
 }
 
+/**
+ *  Get all category templates
+ *  GET /content/categories
+ *
+ */
+fun Route.categories() = withInjection { service ->
+    get("/categories") {
+        checkPermission(service, WORKER) {
+            val categories = service.contentRepo.getCategories()
+
+            call.respond(HttpStatusCode.OK, categories)
+        }
+    }
+}
+
+/**
+ *  Add or delete a category template
+ *
+ *  POST/DELETE /content/category
+ *
+ *
+ */
+fun Route.category() = withInjection {service ->
+    route("/category") {
+        post {
+            checkPermission(service, WORKER) {
+                val category = call.receive<Content.Category>()
+                service.contentRepo.addCategory(category)
+
+                call.respond(HttpStatusCode.OK)
+            }
+
+        }
+        delete {
+            checkPermission(service, WORKER) {
+                val category = call.receive<Content.Category>()
+                service.contentRepo.deleteCategory(category.name)
+
+                call.respond(HttpStatusCode.OK)
+            }
+
+        }
+
+
+    }
+
+}
+
+/**
+ * Get all selection templates
+ * GET /content/selections
+ */
+fun Route.selections() = withInjection { service ->
+    get("/selections") {
+        checkPermission(service, WORKER) {
+            val selections = service.contentRepo.getSelections()
+            call.respond(HttpStatusCode.OK, selections)
+        }
+    }
+}
+
+/**
+ * Add/Delete a selection template
+ * POST/DELETE /content/selection
+ *
+ */
+fun Route.selection() = withInjection { service ->
+    route("/selection") {
+        post {
+            checkPermission(service, WORKER) {
+                val selections = call.receive<Content.SelectionGroup>()
+                service.contentRepo.addSelections(selections)
+
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+
+        delete {
+            checkPermission(service, WORKER) {
+                val selections = call.receive<Content.SelectionGroup>()
+                service.contentRepo.deleteSelection(selections.name)
+
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+    }
+}
+
 
 
 fun Application.contentRoutes() {
@@ -177,6 +266,10 @@ fun Application.contentRoutes() {
                 meal()
                 reports()
                 report()
+                categories()
+                category()
+                selections()
+                selection()
             }
         }
 

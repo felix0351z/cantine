@@ -73,4 +73,22 @@ class ContentRepositoryMongoDB(private val con: MongoDBConnection) : ContentRepo
     }
 
 
+    override suspend fun addSelections(selection: Content.SelectionGroup): Unit = con.callToSelectionsCollection {
+        if (it.countDocuments(Content.SelectionGroup::name eq selection.name) > 0L) {
+            throw ValueAlreadyExistsException()
+        }
+
+        it.insertOne(selection)
+    }
+
+    override suspend fun getSelections(): List<Content.SelectionGroup> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteSelection(name: String): Unit = con.callToSelectionsCollection {
+        val count = it.deleteOne(Content.SelectionGroup::name eq name).deletedCount
+        if (count == 0L) throw NotFoundException()
+    }
+
+
 }

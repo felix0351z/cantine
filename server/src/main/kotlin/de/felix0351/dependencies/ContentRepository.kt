@@ -47,4 +47,14 @@ interface ContentRepository {
    @Throws(NotFoundException::class)
     suspend fun deleteReport(id: Id<Content.Report>)
 
+
+    //Selections
+    @Throws(ValueAlreadyExistsException::class)
+    suspend fun addSelections(selection: Content.SelectionGroup)
+
+    suspend fun getSelections(): List<Content.SelectionGroup>
+
+    @Throws(NotFoundException::class)
+    suspend fun deleteSelection(name: String)
+
 }
