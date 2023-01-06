@@ -178,7 +178,7 @@ class ContentRoutesTest {
     fun deleteCategory() = testModule {
         it.login()
 
-        val category = Content.Category(name = "Mittagessen")
+        val category = "Mittagessen"
         val response = it.delete("/content/category") {
             https()
             json(category)

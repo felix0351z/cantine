@@ -201,8 +201,8 @@ fun Route.category() = withInjection {service ->
         }
         delete {
             checkPermission(service, WORKER) {
-                val category = call.receive<Content.Category>()
-                service.contentRepo.deleteCategory(category.name)
+                val categoryName = call.receive<String>()
+                service.contentRepo.deleteCategory(categoryName)
 
                 call.respond(HttpStatusCode.OK)
             }
