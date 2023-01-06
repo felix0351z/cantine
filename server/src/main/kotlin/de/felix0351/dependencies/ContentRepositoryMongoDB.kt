@@ -81,8 +81,8 @@ class ContentRepositoryMongoDB(private val con: MongoDBConnection) : ContentRepo
         it.insertOne(selection)
     }
 
-    override suspend fun getSelections(): List<Content.SelectionGroup> {
-        TODO("Not yet implemented")
+    override suspend fun getSelections(): List<Content.SelectionGroup> = con.callToSelectionsCollection {
+        it.find().toList()
     }
 
     override suspend fun deleteSelection(name: String): Unit = con.callToSelectionsCollection {

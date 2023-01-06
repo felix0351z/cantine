@@ -245,8 +245,8 @@ fun Route.selection() = withInjection { service ->
 
         delete {
             checkPermission(service, WORKER) {
-                val selections = call.receive<Content.SelectionGroup>()
-                service.contentRepo.deleteSelection(selections.name)
+                val selectionName = call.receive<String>()
+                service.contentRepo.deleteSelection(selectionName)
 
                 call.respond(HttpStatusCode.OK)
             }
