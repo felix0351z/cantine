@@ -1,18 +1,22 @@
 package de.felix0351.routes
 
-import de.felix0351.models.objects.Auth
-import de.felix0351.models.objects.CreateOrderRequest
-import de.felix0351.models.objects.DeleteOrderRequest
-import de.felix0351.plugins.checkPermission
-import de.felix0351.plugins.currentSession
-import de.felix0351.plugins.currentUser
-import de.felix0351.plugins.withInjection
+import de.felix0351.models.objects.*
+import de.felix0351.plugins.withRole
+import de.felix0351.services.PaymentService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
+import org.koin.ktor.ext.inject
+
+
+private fun Route.with(route: Route.(service: PaymentService) -> Unit) {
+    val service: PaymentService by inject()
+    route(service)
+}
 
 /**
  * Credit of the user
@@ -20,21 +24,29 @@ import io.ktor.server.routing.*
  *
  *
  */
+fun Route.credit() = with { service ->
 
-fun Route.credit() = withInjection { service ->
-    route("/credit") {
+route("/credit") {
         get {
-            val session = currentSession()!!
-            val credit = service.getUser(session.username).credit
 
-            call.respond(HttpStatusCode.OK, credit)
+            withRole(Auth.PermissionLevel.USER) {
+
+                val credit = service.getCreditFromUser(it)
+                call.respond(HttpStatusCode.OK, credit)
+
+            }
+
         }
 
         post {
             //Worker permission
 
-            checkPermission(service, Auth.PermissionLevel.WORKER) {
-                TODO()
+            withRole(Auth.PermissionLevel.WORKER) {
+
+                val request = call.receive<AddCreditRequest>()
+                service.addCreditToUser(it, request)
+
+                call.respond(HttpStatusCode.OK)
             }
         }
     }
@@ -47,10 +59,10 @@ fun Route.credit() = withInjection { service ->
  *
  *
  */
-fun Route.orders() = withInjection {service ->
+fun Route.orders() = with { service ->
     get("/orders") {
 
-        val session = currentSession()!!
+        val session = call.sessions.get<Auth.UserSession>()!!
         val orders = service.getOrdersFromUser(session.username)
         call.respond(HttpStatusCode.OK, orders)
     }
@@ -64,19 +76,27 @@ fun Route.orders() = withInjection {service ->
  *
  *
  */
-fun Route.order() = withInjection { service ->
+fun Route.order() = with { service ->
     route("/order") {
         post {
-            val request = call.receive<CreateOrderRequest>()
 
-            service.createOrder(currentUser(service), request)
-            call.respond(HttpStatusCode.OK)
+            withRole(Auth.PermissionLevel.USER) {
+                val request = call.receive<CreateOrderRequest>()
+                service.createOrder(it, request)
+
+                call.respond(HttpStatusCode.OK)
+            }
+
         }
         delete {
-            val request = call.receive<DeleteOrderRequest>()
 
-            service.cancelOrder(currentUser(service), request)
-            call.respond(HttpStatusCode.OK)
+            withRole(Auth.PermissionLevel.USER) {
+                val request = call.receive<DeleteOrderRequest>()
+
+                service.cancelOrder(it, request)
+                call.respond(HttpStatusCode.OK)
+            }
+
         }
     }
 }
@@ -88,16 +108,16 @@ fun Route.order() = withInjection { service ->
  *
  * Minimum Permission Level: User
  */
-fun Route.purchases() = withInjection { service ->
+fun Route.purchases() = with { service ->
     route("/purchases") {
         get {
-            val session = currentSession()!!
+            val session = call.sessions.get<Auth.UserSession>()!!
             val payments = service.getPayments(session.username)
 
             call.respond(HttpStatusCode.OK, payments)
         }
         delete {
-            val session = currentSession()!!
+            val session = call.sessions.get<Auth.UserSession>()!!
             service.clearPayments(session.username)
 
             call.respond(HttpStatusCode.OK)
@@ -111,16 +131,17 @@ fun Route.purchases() = withInjection { service ->
  * POST /payment/purchase/
  *
  */
-fun Route.purchase() {
+fun Route.purchase() = with { service ->
     post("/purchase/") {
 
-        //TODO: JSON-Content
+        withRole(Auth.PermissionLevel.WORKER) {
+            val request = call.receive<VerifyOrderRequest>()
+            service.verifyOrder(request)
+
+            call.respond(HttpStatusCode.OK)
+        }
 
     }
-
-    //
-
-
 
 }
 

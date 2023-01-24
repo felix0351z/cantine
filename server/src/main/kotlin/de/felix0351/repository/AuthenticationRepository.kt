@@ -1,4 +1,4 @@
-package de.felix0351.dependencies
+package de.felix0351.repository
 
 import de.felix0351.models.errors.DatabaseException.*
 import de.felix0351.models.objects.Auth

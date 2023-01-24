@@ -1,9 +1,8 @@
 package de.felix0351.routes
 
 import de.felix0351.models.objects.*
-import de.felix0351.plugins.checkPermission
-import de.felix0351.plugins.currentSession
-import de.felix0351.plugins.withInjection
+import de.felix0351.plugins.withRole
+import de.felix0351.services.AuthenticationService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -11,6 +10,12 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
+import org.koin.ktor.ext.inject
+
+private fun Route.with(route: Route.(service: AuthenticationService) -> Unit) {
+    val service: AuthenticationService by inject()
+    route(service)
+}
 
 
 fun Route.login() {
@@ -46,9 +51,9 @@ fun Route.logout() {
  * Minimum Permission: Admin
  *
  */
-fun Route.users() = withInjection { service ->
+fun Route.users() = with { service ->
     get("/users") {
-        checkPermission(service, Auth.PermissionLevel.ADMIN) {
+        withRole(Auth.PermissionLevel.ADMIN) {
 
             val users = service.getUsers()
             call.respond(HttpStatusCode.OK, users)
@@ -63,22 +68,25 @@ fun Route.users() = withInjection { service ->
  *  Change own password -> POST /account/password
  *
  */
-fun Route.account() = withInjection { service ->
+fun Route.account() = with { service ->
     route("/account") {
 
         get {
-            val session = currentSession()!!
+            val session = call.sessions.get<Auth.UserSession>()!!
             val user = service.getUser(session.username)
 
             call.respond(HttpStatusCode.OK, user)
         }
 
         post("/password") {
-            val request = call.receive<PasswordChangeRequest>()
-            val user = service.getPrivateUser(currentSession()!!)
 
-            service.changeOwnPassword(user, request)
-            call.respond(HttpStatusCode.OK)
+            withRole(Auth.PermissionLevel.USER) { user ->
+
+                val request = call.receive<PasswordChangeRequest>()
+                service.changeOwnPassword(user, request)
+                call.respond(HttpStatusCode.OK)
+
+            }
         }
 
     }
@@ -96,13 +104,13 @@ fun Route.account() = withInjection { service ->
  * POST /user/permission
  * 
  */
-fun Route.user() = withInjection { service ->
+fun Route.user() = with { service ->
     route("/user") {
 
         // Get user
         get("/{username}") {
 
-            checkPermission(service, Auth.PermissionLevel.ADMIN) {
+            withRole(Auth.PermissionLevel.ADMIN) {
                 val name = call.parameters["username"]!!
                 call.respond(HttpStatusCode.OK, service.getUser(name))
             }
@@ -112,7 +120,7 @@ fun Route.user() = withInjection { service ->
 
         // Add new user
         post {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
+            withRole(Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<UserAddRequest>()
                 service.addUser(user, request)
 
@@ -122,7 +130,7 @@ fun Route.user() = withInjection { service ->
 
         // Delete user
         delete {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
+            withRole(Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<UserDeleteRequest>()
                 service.deleteUser(user, request)
 
@@ -132,7 +140,7 @@ fun Route.user() = withInjection { service ->
 
         // Change users name
         post("/name") {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
+            withRole(Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<NameChangeRequest>()
                 service.changeName(user, request)
 
@@ -142,7 +150,7 @@ fun Route.user() = withInjection { service ->
 
         // Change users password
         post("/password") {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
+            withRole(Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<PasswordChangeRequest>()
                 service.changePassword(user, request)
 
@@ -152,7 +160,7 @@ fun Route.user() = withInjection { service ->
 
         // Change users permission level
         post("/permission") {
-            checkPermission(service, Auth.PermissionLevel.ADMIN) { user ->
+            withRole(Auth.PermissionLevel.ADMIN) { user ->
                 val request = call.receive<PermissionChangeRequest>()
                 service.changePermissionLevel(user, request)
 

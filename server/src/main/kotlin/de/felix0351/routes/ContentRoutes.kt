@@ -3,25 +3,31 @@ package de.felix0351.routes
 import de.felix0351.models.objects.Auth
 import de.felix0351.models.objects.Content
 import de.felix0351.plugins.asBsonObjectId
-import de.felix0351.plugins.checkPermission
-import de.felix0351.plugins.withInjection
+import de.felix0351.plugins.withRole
+import de.felix0351.repository.ContentRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
+private fun Route.with(route: Route.(repo: ContentRepository) -> Unit) {
+    val contentRepo: ContentRepository by inject()
+    route(contentRepo)
+}
 
 /**
  *  Get all available meals
  *  GET /content/meals
  *
  */
-fun Route.meals() = withInjection { service ->
+fun Route.meals() = with { contentRepo ->
+
     get("/meals") {
 
-        val meals = service.contentRepo.getMeals()
+        val meals = contentRepo.getMeals()
         call.respond(HttpStatusCode.OK, meals)
     }
 }
@@ -33,14 +39,15 @@ fun Route.meals() = withInjection { service ->
  * GET/DELETE/ /content/meal/<id>
  *
  */
-fun Route.meal() = withInjection { service ->
+fun Route.meal() = with { contentRepo ->
+
     route("/meal") {
         // Create a meal
         post {
             //Worker Permission is needed
-            checkPermission(service, Auth.PermissionLevel.WORKER) {
+            withRole(Auth.PermissionLevel.WORKER) {
                 val meal = call.receive<Content.Meal>()
-                service.contentRepo.addMeal(meal)
+                contentRepo.addMeal(meal)
 
                 call.respond(HttpStatusCode.OK, meal.id.toString())
             }
@@ -51,9 +58,9 @@ fun Route.meal() = withInjection { service ->
         // Update a meal
         put {
             //Worker Permission is needed
-            checkPermission(service, Auth.PermissionLevel.WORKER) {
+            withRole(Auth.PermissionLevel.WORKER) {
                 val meal = call.receive<Content.Meal>()
-                service.contentRepo.updateMeal(meal)
+                contentRepo.updateMeal(meal)
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -66,7 +73,7 @@ fun Route.meal() = withInjection { service ->
             get {
 
                 val id = call.parameters["id"]!!
-                val meal = service.contentRepo.getMeal(id.asBsonObjectId())
+                val meal = contentRepo.getMeal(id.asBsonObjectId())
 
                 call.respond(HttpStatusCode.OK, meal)
 
@@ -77,9 +84,8 @@ fun Route.meal() = withInjection { service ->
 
                 val id = call.parameters["id"]!!
                 //Worker Permission is needed
-                checkPermission(service, Auth.PermissionLevel.WORKER) {
-                    service.contentRepo.deleteMeal(id.asBsonObjectId())
-
+                withRole(Auth.PermissionLevel.WORKER) {
+                    contentRepo.deleteMeal(id.asBsonObjectId())
                     call.respond(HttpStatusCode.OK)
                 }
 
@@ -95,10 +101,10 @@ fun Route.meal() = withInjection { service ->
  *
  *
  */
-fun Route.reports() = withInjection { service ->
+fun Route.reports() = with { contentRepo ->
     get("/reports") {
 
-        val reports = service.contentRepo.getReports()
+        val reports = contentRepo.getReports()
         call.respond(HttpStatusCode.OK, reports)
 
     }
@@ -111,16 +117,16 @@ fun Route.reports() = withInjection { service ->
  * GET/DELETE/PUT /content/report/<id>
  *
  */
-fun Route.report() = withInjection { service ->
+fun Route.report() = with { contentRepo ->
     route("/report") {
 
         // Add a report
         post {
             //Worker permission is needed
-            checkPermission(service, Auth.PermissionLevel.WORKER) {
+            withRole(Auth.PermissionLevel.WORKER) {
 
                 val report = call.receive<Content.Report>()
-                service.contentRepo.addReport(report)
+                contentRepo.addReport(report)
 
                 call.respond(HttpStatusCode.OK, report.id.toString())
 
@@ -130,10 +136,10 @@ fun Route.report() = withInjection { service ->
         // Update a report
         put {
             //Worker permission is needed
-            checkPermission(service, Auth.PermissionLevel.WORKER) {
+            withRole(Auth.PermissionLevel.WORKER) {
 
                 val report = call.receive<Content.Report>()
-                service.contentRepo.updateReport(report)
+                contentRepo.updateReport(report)
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -145,7 +151,7 @@ fun Route.report() = withInjection { service ->
             get {
 
                 val id = call.parameters["id"]!!
-                val report = service.contentRepo.getReport(id.asBsonObjectId())
+                val report = contentRepo.getReport(id.asBsonObjectId())
 
                 call.respond(HttpStatusCode.OK, report)
             }
@@ -155,8 +161,9 @@ fun Route.report() = withInjection { service ->
 
                 val id = call.parameters["id"]!!
                 // Worker permission needed
-                checkPermission(service, Auth.PermissionLevel.WORKER) {
-                    service.contentRepo.deleteReport(id.asBsonObjectId())
+                withRole(Auth.PermissionLevel.WORKER) {
+
+                    contentRepo.deleteReport(id.asBsonObjectId())
                     call.respond(HttpStatusCode.OK)
                 }
 

@@ -1,10 +1,10 @@
 package de.felix0351
 
 import de.felix0351.db.MongoDBConnection
-import de.felix0351.dependencies.AuthenticationRepository
-import de.felix0351.dependencies.AuthenticationRepositoryMongoDB
-import de.felix0351.dependencies.ContentRepository
-import de.felix0351.dependencies.ContentRepositoryMongoDB
+import de.felix0351.repository.AuthenticationRepository
+import de.felix0351.repository.AuthenticationRepositoryMongoDB
+import de.felix0351.repository.ContentRepository
+import de.felix0351.repository.ContentRepositoryMongoDB
 import de.felix0351.utils.FileHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking

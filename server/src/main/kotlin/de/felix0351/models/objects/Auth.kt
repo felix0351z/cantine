@@ -42,7 +42,7 @@ sealed class Auth {
         val permissionLevel: PermissionLevel,
         val credit: String,
         val hash: String
-    )
+    ): Principal
 
 
     /**

@@ -1,11 +1,11 @@
 package de.felix0351.plugins
 
 import de.felix0351.db.MongoDBConnection
-import de.felix0351.dependencies.*
+import de.felix0351.repository.*
+import de.felix0351.services.AuthenticationService
+import de.felix0351.services.PaymentService
 import io.ktor.server.application.*
-import io.ktor.server.routing.*
 import org.koin.dsl.module
-import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
@@ -25,14 +25,7 @@ val appModule = module {
     single<AuthenticationRepository> { AuthenticationRepositoryMongoDB(get()) }
     single<ContentRepository> { ContentRepositoryMongoDB(get()) }
     single<PaymentRepository> { PaymentRepositoryMongoDB(get()) }
-    single { CantineService(get(), get(), get() ) }
+    single { PaymentService(get(), get()) }
+    single { AuthenticationService(get()) }
 
-}
-
-/**
- *  Injects a CantineService instance via Koin
- */
-fun Route.withInjection(route: Route.(service: CantineService) -> Unit) {
-    val service by inject<CantineService>()
-    return route(service)
 }

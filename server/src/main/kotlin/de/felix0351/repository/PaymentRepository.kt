@@ -1,4 +1,4 @@
-package de.felix0351.dependencies
+package de.felix0351.repository
 
 import de.felix0351.models.errors.DatabaseException
 import de.felix0351.models.objects.Auth
@@ -23,6 +23,7 @@ interface PaymentRepository {
     @Throws(DatabaseException.NotFoundException::class)
     suspend fun cancelOrder(username: String, id: Id<Content.Order>, credit: String)
 
+    @Throws(DatabaseException.NotFoundException::class)
     suspend fun verifyAndDeleteOrder(id: Id<Content.Order>, payment: Auth.Payment)
 
     suspend fun getOrders(): List<Content.Order>

@@ -77,6 +77,13 @@ fun Application.configureRouting() {
             ))
         }
 
+        exception<NotEnoughMoneyException> { call, err ->
+            call.respond(HttpStatusCode.BadRequest, RouteError(
+                id = ErrorCode.NotEnoughMoney.code,
+                description = "You are ${err.minus} to low to create this order!"
+            ))
+        }
+
 
         // Kotlinx Transformation errors
 

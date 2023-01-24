@@ -13,3 +13,5 @@ class NoPasswordException: RuntimeException()
 class WrongPasswordException: RuntimeException()
 
 class IncorrectOrderException: RuntimeException()
+
+class NotEnoughMoneyException(val minus: Float): RuntimeException()

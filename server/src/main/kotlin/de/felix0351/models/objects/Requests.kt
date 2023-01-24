@@ -99,3 +99,17 @@ data class DeleteOrderRequest(
     val order: Id<Content.Order>
 )
 
+@Serializable
+data class VerifyOrderRequest(
+    val username: String,
+    val orderId: Id<Content.Order>
+)
+
+@Serializable
+data class AddCreditRequest(
+    val password: String,
+    val username: String,
+    val credit: Float
+
+)
+

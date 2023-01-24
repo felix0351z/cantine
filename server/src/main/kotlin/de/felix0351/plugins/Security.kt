@@ -1,9 +1,9 @@
 package de.felix0351.plugins
 
-import de.felix0351.dependencies.CantineService
 import de.felix0351.models.errors.ErrorCode
 import de.felix0351.models.errors.RouteError
 import de.felix0351.models.objects.Auth
+import de.felix0351.services.AuthenticationService
 import de.felix0351.utils.FileHandler
 import io.ktor.http.*
 
@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.days
 const val COOKIE_PATH = "/" //Path which needs a session
 
 fun Application.configureSecurity() {
-    val service by inject<CantineService>()
+    val service by inject<AuthenticationService>()
 
     install(Sessions) {
         configureAuthCookie()
@@ -30,7 +30,7 @@ fun Application.configureSecurity() {
 
     install(Authentication) {
         configureFormAuthentication(service)
-        configureSessionAuthentication()
+        configureSessionAuthentication(service)
     }
 
 }
@@ -66,12 +66,14 @@ private fun SessionsConfig.configureAuthCookie() {
  *
  * Return 403 if there is no valid session for request
  */
-private fun AuthenticationConfig.configureSessionAuthentication() {
+private fun AuthenticationConfig.configureSessionAuthentication(service: AuthenticationService) {
     session<Auth.UserSession>("session") {
 
-        // Additional validation not needed
+        // Extra validation
+        // Perform a database call to return the user as principal
         validate { session ->
-            session
+
+            service.getPrivateUser(session)
         }
 
         challenge {
@@ -91,7 +93,7 @@ private fun AuthenticationConfig.configureSessionAuthentication() {
  *
  */
 
-private fun AuthenticationConfig.configureFormAuthentication(service: CantineService) {
+private fun AuthenticationConfig.configureFormAuthentication(service: AuthenticationService) {
 
     form("form") {
         userParamName = "username"
@@ -112,37 +114,12 @@ private fun AuthenticationConfig.configureFormAuthentication(service: CantineSer
     }
 }
 
-/**
- * Utility extended function to get the current session as Object
- *
- * @see Auth.UserSession
- */
-fun PipelineContext<Unit, ApplicationCall>.currentSession(): Auth.UserSession? =
-    call.sessions.get<Auth.UserSession>()
 
-
-
-
-
-suspend fun PipelineContext<Unit, ApplicationCall>.currentUser(service: CantineService): Auth.User {
-    val session = currentSession()
-    return service.getPrivateUser(session!!)
-}
-
-
-suspend inline fun PipelineContext<Unit, ApplicationCall>.checkPermission(
-    service: CantineService,
+suspend inline fun PipelineContext<Unit, ApplicationCall>.withRole(
     minimum: Auth.PermissionLevel,
     route: PipelineContext<Unit, ApplicationCall>.(user: Auth.User) -> Unit
 ) {
-    // If there is no session. Normally not null, because authorization block comes before this
-    val session = call.sessions.get<Auth.UserSession>()
-    if(session == null) {
-        call.respond(HttpStatusCode.Forbidden)
-        return
-    }
-
-    val user = service.getPrivateUser(session)
+    val user = call.principal<Auth.User>()!!
 
     // If the user has the minimum permission level
     if (user.permissionLevel.int >= minimum.int) {
