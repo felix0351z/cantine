@@ -79,7 +79,7 @@ class AuthenticationService(
             username = request.user.username,
             name = request.user.name,
             permissionLevel = request.user.permissionLevel,
-            credit = "Hashing",
+            credit = Hashing.encryptCredit(request.user.credit),
             hash = Hashing.toHash(request.user.password)
         ))
     }

@@ -72,10 +72,10 @@ inline fun<reified T> HttpRequestBuilder.json(body: T) {
 /*
 Simulate login
  */
-suspend fun HttpClient.login(password: String = EXAMPLE_PASSWORD) = submitForm(
+suspend fun HttpClient.login(username: String = EXAMPLE_USERNAME, password: String = EXAMPLE_PASSWORD) = submitForm(
     url = "/login",
     formParameters = Parameters.build {
-        append("username", EXAMPLE_USERNAME)
+        append("username", username)
         append("password", password)
     }
 ) {

@@ -15,15 +15,48 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.junit.Test
-import kotlin.system.measureTimeMillis
-import kotlin.test.assertEquals
 
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
+import org.junit.jupiter.api.TestMethodOrder
+import kotlin.test.Test
+
+
+import kotlin.system.measureTimeMillis
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class ContentRoutesTest {
 
+    companion object {
+        var mealID: String = ""
+        var reportID: String = ""
+        val selectionName = "Soße"
+        val categoryName = "Mittagessen"
+    }
 
 
     @Test
+    @Order(1)
+    fun testAddMeal() = testModule {
+        it.login()
+        val meal = Json.encodeToString(exampleMeal)
+        println(meal)
+
+        val millis = measureTimeMillis {
+            val id = it.post("/content/meal") {
+                https()
+                json(exampleMeal)
+            }.bodyAsText()
+            println(id)
+            mealID = id
+        }
+
+        println("Taken time: $millis ms")
+    }
+
+    @Test
+    @Order(2)
     fun testGetMeals() = testModule {
         it.login()
 
@@ -38,60 +71,62 @@ class ContentRoutesTest {
     }
 
     @Test
+    @Order(3)
+    fun testUpdateMeal() = testModule {
+        it.login()
+
+        val response = it.put("/content/meal") {
+            https()
+            json(exampleMeal.copy(id = mealID, price = 100F))
+        }
+
+        assertEquals( HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    @Order(4)
     fun testGetMeal() = testModule {
         it.login()
 
-        val id = "63aefa039f5216472e65dfb7"
-        val meal: Meal = it.get("/content/meal/$id") {
+        val meal: Meal = it.get("/content/meal/$mealID") {
             https()
         }.body()
 
         println(meal)
     }
 
-    @Test
-    fun testAddMeal() = testModule {
-        it.login()
-        val meal = Json.encodeToString(exampleMeal)
-        println(meal)
-        
-        val millis = measureTimeMillis {
-            val id = it.post("/content/meal") {
-                https()
-                json(exampleMeal)
-            }.bodyAsText()
-            println(id)
-        }
-
-        println("Taken time: $millis ms")
-    }
 
     @Test
-    fun testUpdateMeal() = testModule {
-        it.login()
-
-        val response = it.put("/content/meal") {
-            https()
-            json(exampleMeal.copy(id = "63aefb63e24dbe74936c8b60", price = 100F))
-        }
-
-        assertEquals(HttpStatusCode.OK, response.status)
-    }
-
-    @Test
+    @Order(5)
     fun testDeleteMeal() = testModule {
         it.login()
 
-        val id = "63aefa039f5216472e65dfb7"
-        val response = it.delete("/content/meal/$id") {
+        val response = it.delete("/content/meal/$mealID") {
             https()
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
     }
 
+    //Reports
 
     @Test
+    @Order(6)
+    fun testAddReport() = testModule {
+        it.login()
+
+        val id = it.post("/content/report") {
+            https()
+            json(exampleReport)
+        }.bodyAsText()
+
+        println(id)
+        reportID = id
+    }
+
+
+    @Test
+    @Order(7)
     fun testGetReports() = testModule {
         it.login()
 
@@ -103,11 +138,24 @@ class ContentRoutesTest {
     }
 
     @Test
+    @Order(8)
+    fun testUpdateReport() = testModule {
+        it.login()
+
+        val response = it.put("/content/report") {
+            https()
+            json(exampleReport.copy(id = reportID, description = "Nichts wichtiges"))
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    @Order(9)
     fun testGetReport() = testModule {
         it.login()
 
-        val id = "63af09ddcc84482c5951d945"
-        val report: Report = it.get("/content/report/$id") {
+        val report: Report = it.get("/content/report/$reportID") {
             https()
         }.body()
 
@@ -115,46 +163,24 @@ class ContentRoutesTest {
     }
 
     @Test
-    fun testAddReport() = testModule {
-        it.login()
-
-        val id = it.post("/content/report") {
-            https()
-            json(exampleReport)
-        }.bodyAsText()
-
-        println(id)
-    }
-
-    @Test
-    fun testUpdateReport() = testModule {
-        it.login()
-
-        val response = it.put("/content/report") {
-            https()
-            json(exampleReport.copy(id = "63af09ddcc84482c5951d945", description = "Nichts wichtiges"))
-        }
-
-        assertEquals(HttpStatusCode.OK, response.status)
-    }
-
-    @Test
+    @Order(10)
     fun testDeleteReport() = testModule {
         it.login()
 
-        val id = "63af09ddcc84482c5951d945"
-        val response = it.delete("/content/report/$id") {
+        val response = it.delete("/content/report/$reportID") {
             https()
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
     }
 
+
     @Test
+    @Order(11)
     fun addCategory() = testModule {
         it.login()
 
-        val category = Content.Category(name = "Mittagessen")
+        val category = Content.Category(name = categoryName)
         val response = it.post("/content/category") {
             https()
             json(category)
@@ -164,6 +190,7 @@ class ContentRoutesTest {
     }
 
     @Test
+    @Order(12)
     fun getCategories() = testModule {
         it.login()
 
@@ -175,24 +202,25 @@ class ContentRoutesTest {
     }
 
     @Test
+    @Order(13)
     fun deleteCategory() = testModule {
         it.login()
 
-        val category = "Mittagessen"
         val response = it.delete("/content/category") {
             https()
-            json(category)
+            json(categoryName)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
     }
 
     @Test
+    @Order(14)
     fun addSelection() = testModule {
         it.login()
 
         val category = Content.SelectionGroup(
-            name = "Soße",
+            name = selectionName,
             elements = listOf(
                 Content.Selection(
                     name = "Ketchup",
@@ -218,6 +246,7 @@ class ContentRoutesTest {
     }
 
     @Test
+    @Order(15)
     fun getSelections() = testModule {
         it.login()
 
@@ -229,13 +258,13 @@ class ContentRoutesTest {
     }
 
     @Test
+    @Order(16)
     fun deleteSelection() = testModule {
         it.login()
 
-        val name = "Soße"
         val response = it.delete("/content/selection") {
             https()
-            json(name)
+            json(selectionName)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)

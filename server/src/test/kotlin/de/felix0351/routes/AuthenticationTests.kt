@@ -8,13 +8,29 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
+import org.junit.jupiter.api.Order
+import org.junit.jupiter.api.TestMethodOrder
+import kotlin.test.Test
+
+@TestMethodOrder(OrderAnnotation::class)
 class AuthenticationTests {
 
+    companion object {
+        var testUser = Auth.PublicUser(
+            username = "hanss",
+            name = "Hans Peter",
+            permissionLevel = Auth.PermissionLevel.ADMIN,
+            credit = 10F,
+            password = "SicheresPassword"
+        )
+    }
+
    @Test
+   @Order(1)
    fun testBCrypt() {
        testUtils()
 
@@ -24,12 +40,14 @@ class AuthenticationTests {
    }
 
     @Test
+    @Order(2)
     fun testUtils() {
         FileHandler.load()
         //DatabaseService.init()
     }
 
     @Test
+    @Order(3)
     fun testRoot() = testModule {
         val response = client.get("/")
 
@@ -38,6 +56,7 @@ class AuthenticationTests {
     }
 
     @Test
+    @Order(4)
     fun testLogin() = testModule {
         val response = it.login()
 
@@ -45,6 +64,7 @@ class AuthenticationTests {
     }
 
     @Test
+    @Order(5)
     fun testLogout() = testModule {
         it.login()
         val response = it.logout()
@@ -54,68 +74,23 @@ class AuthenticationTests {
     }
 
     @Test
-    fun testStatusPages() = testModule {
-        val loginResponse = it.login("NichtRichtig")
+    @Order(6)
+    fun testLoginFail() = testModule {
+        val loginResponse = it.login("NichtRichtig", "hgfgfhhg")
         val logoutResponse = it.logout()
 
-        assertEquals("401: Password or Username incorrect", loginResponse.bodyAsText())
-        assertEquals("403: No valid session", logoutResponse.bodyAsText())
+        assertEquals(HttpStatusCode.Unauthorized, loginResponse.status)
+        assertEquals(HttpStatusCode.Forbidden, logoutResponse.status)
     }
 
     @Test
-    fun testUsers() = testModule {
-        it.login()
-
-        val list: List<Auth.PublicUser> = it.get("/users") {
-            https()
-        }.body()
-
-        println(list)
-    }
-
-    @Test
-    fun testGetAccount() = testModule {
-        it.login()
-
-        val self: Auth.PublicUser = it.get("/account") {
-            https()
-        }.body()
-
-        println(self)
-    }
-
-    @Test
-    fun testChangeOwnPassword() = testModule {
-        it.login()
-
-        val request = PasswordChangeRequest(
-            username = null,
-            password = EXAMPLE_PASSWORD,
-            newPassword = EXAMPLE_PASSWORD
-        )
-
-        val response =it.post("/account/password") {
-            https()
-            json(request)
-        }
-
-        assertEquals(HttpStatusCode.OK, response.status)
-    }
-
-    @Test
+    @Order(7)
     fun testAddUser() = testModule {
         it.login()
 
-
         val request = UserAddRequest(
             password = EXAMPLE_PASSWORD,
-            user = Auth.PublicUser(
-                username = "hanss",
-                name = "Hans Peter",
-                permissionLevel = Auth.PermissionLevel.ADMIN,
-                credit = 10F,
-                password = "SicheresPassword"
-            )
+            user = testUser
         )
 
         val response = it.post("/user") {
@@ -127,11 +102,35 @@ class AuthenticationTests {
     }
 
     @Test
+    @Order(8)
+    fun testGetUsers() = testModule {
+        it.login()
+
+        val list: List<Auth.PublicUser> = it.get("/users") {
+            https()
+        }.body()
+
+        println(list)
+    }
+
+    @Test
+    @Order(9)
+    fun testGetAccount() = testModule {
+        it.login()
+
+        val self: Auth.PublicUser = it.get("/account") {
+            https()
+        }.body()
+
+        println(self)
+    }
+
+    @Test
+    @Order(10)
     fun testGetUser() = testModule {
         it.login()
-        val username = "hanss"
 
-        val user: Auth.PublicUser = it.get("/user/$username") {
+        val user: Auth.PublicUser = it.get("/user/${testUser.username}") {
             https()
         }.body()
 
@@ -139,29 +138,33 @@ class AuthenticationTests {
     }
 
     @Test
-    fun testDeleteUser() = testModule {
-        it.login()
+    @Order(11)
+    fun testChangeOwnPassword() = testModule {
+        it.login(username = testUser.username, password = testUser.password!!)
+        val newPassword = "NeuesPasswort"
 
-        val request = UserDeleteRequest(
-            EXAMPLE_PASSWORD,
-            "hanss"
+        val request = PasswordChangeRequest(
+            username = null,
+            password = testUser.password!!,
+            newPassword = newPassword
         )
-
-        val response = it.delete("/user") {
+        val response =it.post("/account/password") {
             https()
             json(request)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
+        testUser = testUser.copy(password = newPassword)
     }
 
     @Test
+    @Order(12)
     fun testChangeUserName() = testModule {
         it.login()
 
         val request = NameChangeRequest(
             EXAMPLE_PASSWORD,
-            "hanss",
+            testUser.username,
             "Günter Hans"
         )
 
@@ -174,12 +177,13 @@ class AuthenticationTests {
     }
 
     @Test
+    @Order(13)
     fun testChangeUserPassword() = testModule {
         it.login()
 
         val request = PasswordChangeRequest(
             EXAMPLE_PASSWORD,
-            "hanss",
+            testUser.username,
             "123456passwort"
         )
 
@@ -192,16 +196,35 @@ class AuthenticationTests {
     }
 
     @Test
+    @Order(14)
     fun testChangeUserPermission() = testModule {
         it.login()
 
         val request = PermissionChangeRequest(
             EXAMPLE_PASSWORD,
-            "hanss",
+            testUser.username,
             Auth.PermissionLevel.WORKER
         )
 
         val response = it.post("/user/permission") {
+            https()
+            json(request)
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    @Order(15)
+    fun testDeleteUser() = testModule {
+        it.login()
+
+        val request = UserDeleteRequest(
+            EXAMPLE_PASSWORD,
+            testUser.username
+        )
+
+        val response = it.delete("/user") {
             https()
             json(request)
         }

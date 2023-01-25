@@ -11,6 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import org.koin.ktor.ext.inject
+import org.litote.kmongo.Id
 
 
 private fun Route.with(route: Route.(service: PaymentService) -> Unit) {
@@ -82,18 +83,18 @@ fun Route.order() = with { service ->
 
             withRole(Auth.PermissionLevel.USER) {
                 val request = call.receive<CreateOrderRequest>()
-                service.createOrder(it, request)
+                val order = service.createOrder(it, request)
 
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.OK, order)
             }
 
         }
         delete {
 
             withRole(Auth.PermissionLevel.USER) {
-                val request = call.receive<DeleteOrderRequest>()
+                val id = call.receive<Id<Content.Order>>()
 
-                service.cancelOrder(it, request)
+                service.cancelOrder(it, id)
                 call.respond(HttpStatusCode.OK)
             }
 
@@ -132,7 +133,7 @@ fun Route.purchases() = with { service ->
  *
  */
 fun Route.purchase() = with { service ->
-    post("/purchase/") {
+    post("/purchase") {
 
         withRole(Auth.PermissionLevel.WORKER) {
             val request = call.receive<VerifyOrderRequest>()
@@ -149,7 +150,7 @@ fun Application.paymentRoutes() {
     routing {
 
         // All payment routes needs an active user session
-        authenticate("sessions") {
+        authenticate("session") {
             route("/payment") {
                 credit()
                 orders()

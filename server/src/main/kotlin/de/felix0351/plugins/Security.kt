@@ -108,7 +108,10 @@ private fun AuthenticationConfig.configureFormAuthentication(service: Authentica
         }
 
         challenge {
-            call.respond(HttpStatusCode.Unauthorized)
+            call.respond(HttpStatusCode.Unauthorized, RouteError(
+                id = ErrorCode.Unauthorized.code,
+                description = "Password or Username incorrect"
+            ))
         }
 
     }

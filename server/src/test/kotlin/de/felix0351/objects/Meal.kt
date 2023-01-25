@@ -9,7 +9,7 @@ data class Meal(
     val name: String,
     val description: String,
     val price: Float,
-    val deposit: Float?,
+    val deposit: Float,
     val day: String?,
     val selections: List<SelectionGroup>,
     val picture: String?,
@@ -27,13 +27,26 @@ data class Selection(
     val price: Float
 )
 
+@Serializable
+data class CreateOrderRequest(
+    val meals: List<CreateOrderRequestMeal>
+)
+
+@Serializable
+data class CreateOrderRequestMeal(
+    val id: String,
+    val selections: List<String>
+)
+
+
+
 val exampleMeal = Meal(
     id = null,
     category = "dfgfd",
     name = "Pommes",
     description = "Frittierte Kartoffeln in Stangenform lol",
     price = 2.2F,
-    deposit = null,
+    deposit = 0F,
     day = null,
     selections = listOf(
         SelectionGroup(

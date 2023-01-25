@@ -31,7 +31,7 @@ object InstantSerializer : KSerializer<Instant> {
         val long = decoder.decodeNullableSerializableValue(Long.serializer().nullable)
 
         return if (long == null) Instant.now()
-        else Instant.ofEpochMilli(decoder.decodeLong())
+        else Instant.ofEpochMilli(long)
     }
 
     override fun serialize(encoder: Encoder, value: Instant) =

@@ -95,14 +95,9 @@ data class CreateOrderRequestMeal(
 )
 
 @Serializable
-data class DeleteOrderRequest(
-    val order: Id<Content.Order>
-)
-
-@Serializable
 data class VerifyOrderRequest(
     val username: String,
-    val orderId: Id<Content.Order>
+    @Serializable(with = CustomIDSerializer::class) val orderId: Id<Content.Order>
 )
 
 @Serializable

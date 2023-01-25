@@ -12,8 +12,7 @@ plugins {
 }
 
 tasks.test {
-    useJUnit()
-    ignoreFailures = true
+    useJUnitPlatform()
 }
 
 group = "de.felix0351"
@@ -71,5 +70,5 @@ dependencies {
     //JUnit als Test Library
     testImplementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
 }

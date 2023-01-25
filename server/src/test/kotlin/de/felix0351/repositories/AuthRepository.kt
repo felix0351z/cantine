@@ -4,9 +4,8 @@ import de.felix0351.getAuthRepo
 import de.felix0351.models.objects.Auth
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import java.time.Instant
-import kotlin.test.assertNotEquals
-
 class AuthRepository {
 
 

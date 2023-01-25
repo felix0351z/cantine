@@ -197,7 +197,7 @@ fun Route.categories() = with { repo ->
 fun Route.category() = with { repo ->
     route("/category") {
         post {
-            with(Auth.PermissionLevel.WORKER) {
+            withRole(Auth.PermissionLevel.WORKER) {
                 val category = call.receive<Content.Category>()
                 repo.addCategory(category)
 

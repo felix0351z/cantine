@@ -8,6 +8,7 @@ import de.felix0351.models.objects.*
 import de.felix0351.repository.AuthenticationRepository
 import de.felix0351.repository.PaymentRepository
 import de.felix0351.utils.Hashing
+import org.litote.kmongo.Id
 
 import org.litote.kmongo.newId
 import java.time.Instant
@@ -30,7 +31,7 @@ class PaymentService(
      *
      */
     @Throws(IncorrectOrderException::class, DatabaseException.NotFoundException::class)
-    suspend fun createOrder(self: Auth.User, request: CreateOrderRequest) {
+    suspend fun createOrder(self: Auth.User, request: CreateOrderRequest): Content.Order {
         // Serialize order (check for meals if their exists) -> Update credit -> Add Order to db
 
         // All selected meals by the user as id
@@ -67,17 +68,21 @@ class PaymentService(
             throw NotEnoughMoneyException(currentCredit)
         }
 
+        val finalOrder = Content.Order(
+            id = newId(),
+            user = self.username,
+            meals = orderMeals,
+            price = fullPrice,
+            deposit = fullDeposit,
+            orderTime = Instant.now()
+        )
+
         paymentRepo.addOrder(
-            order = Content.Order(
-                id = newId(),
-                user = self.username,
-                meals = orderMeals,
-                price = fullPrice,
-                deposit = fullDeposit,
-                orderTime = Instant.now()
-            ),
+            order = finalOrder,
             username = self.username,
             credit = Hashing.encryptCredit(currentCredit))
+
+        return finalOrder
     }
 
     /**
@@ -103,20 +108,20 @@ class PaymentService(
      * Remove the order and give the user back his credit
 
      * @param self The user which called the route
-     * @param request The create request
+     * @param id ID of the order
      * @see DeleteOrderRequest
      */
     @Throws(DatabaseException.NotFoundException::class)
-    suspend fun cancelOrder(self: Auth.User, request: DeleteOrderRequest) {
+    suspend fun cancelOrder(self: Auth.User, id: Id<Content.Order>) {
         // Update credit ->  Cancel order
-        val order = paymentRepo.getOrder(request.order)
+        val order = paymentRepo.getOrder(id)
 
         var currentCredit = Hashing.decryptCredit(self.credit)
         currentCredit += order.price
 
         paymentRepo.cancelOrder(
             username = self.username,
-            id = request.order,
+            id = id,
             credit = Hashing.encryptCredit(currentCredit)
         )
     }
