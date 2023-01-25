@@ -14,12 +14,10 @@ sealed class Content {
     /**
      *  Used to categorize the meals
      *
-     * @property id Unique id of the category
      * @property name Name of the category
      */
     @Serializable
     data class Category(
-        @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Category>,
         val name: String
     )
 

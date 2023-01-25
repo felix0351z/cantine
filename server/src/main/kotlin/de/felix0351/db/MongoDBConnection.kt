@@ -229,6 +229,18 @@ class MongoDBConnection {
     inline fun<T> callToReportsCollection(fn: (col: CoroutineCollection<Content.Report>) -> T): T {
         return callToCollection(Collections.REPORTS, fn)
     }
+    /**
+     *  Wrapper around the normal callToCollection function
+     *
+     *  @see callToCollection
+     *  @throws InternalException
+     */
+    @Throws(InternalException::class)
+    inline fun<T> callToSelectionsCollection(fn: (col: CoroutineCollection<Content.SelectionGroup>) -> T): T {
+        return callToCollection(Collections.SELECTIONS, fn)
+    }
+
+
 
 
     companion object {

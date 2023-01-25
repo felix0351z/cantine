@@ -172,6 +172,94 @@ fun Route.report() = with { contentRepo ->
     }
 }
 
+/**
+ *  Get all category templates
+ *  GET /content/categories
+ *
+ */
+fun Route.categories() = with { repo ->
+    get("/categories") {
+        withRole(Auth.PermissionLevel.WORKER) {
+            val categories = repo.getCategories()
+
+            call.respond(HttpStatusCode.OK, categories)
+        }
+    }
+}
+
+/**
+ *  Add or delete a category template
+ *
+ *  POST/DELETE /content/category
+ *
+ *
+ */
+fun Route.category() = with { repo ->
+    route("/category") {
+        post {
+            with(Auth.PermissionLevel.WORKER) {
+                val category = call.receive<Content.Category>()
+                repo.addCategory(category)
+
+                call.respond(HttpStatusCode.OK)
+            }
+
+        }
+        delete {
+            withRole(Auth.PermissionLevel.WORKER) {
+                val categoryName = call.receive<String>()
+                repo.deleteCategory(categoryName)
+
+                call.respond(HttpStatusCode.OK)
+            }
+
+        }
+
+
+    }
+
+}
+
+/**
+ * Get all selection templates
+ * GET /content/selections
+ */
+fun Route.selections() = with { repo ->
+    get("/selections") {
+        withRole(Auth.PermissionLevel.WORKER) {
+            val selections = repo.getSelections()
+            call.respond(HttpStatusCode.OK, selections)
+        }
+    }
+}
+
+/**
+ * Add/Delete a selection template
+ * POST/DELETE /content/selection
+ *
+ */
+fun Route.selection() = with { repo ->
+    route("/selection") {
+        post {
+            withRole(Auth.PermissionLevel.WORKER){
+                val selections = call.receive<Content.SelectionGroup>()
+                repo.addSelections(selections)
+
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+
+        delete {
+            withRole(Auth.PermissionLevel.WORKER) {
+                val selectionName = call.receive<String>()
+                repo.deleteSelection(selectionName)
+
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+    }
+}
+
 
 
 fun Application.contentRoutes() {
@@ -184,6 +272,10 @@ fun Application.contentRoutes() {
                 meal()
                 reports()
                 report()
+                categories()
+                category()
+                selections()
+                selection()
             }
         }
 
