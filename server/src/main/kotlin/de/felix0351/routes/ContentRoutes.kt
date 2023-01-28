@@ -42,6 +42,17 @@ fun Route.meals() = with { contentRepo ->
 fun Route.meal() = with { contentRepo ->
 
     route("/meal") {
+        // Get the meal <id>
+        get {
+
+            val id = call.receive<String>()
+            val meal = contentRepo.getMeal(id.asBsonObjectId())
+
+            call.respond(HttpStatusCode.OK, meal)
+
+        }
+
+
         // Create a meal
         post {
             //Worker Permission is needed
@@ -66,31 +77,19 @@ fun Route.meal() = with { contentRepo ->
             }
         }
 
-        route("/{id}") {
+        //Remove the meal
+        delete {
+            //Worker Permission is needed
+            withRole(Auth.PermissionLevel.WORKER) {
+                val id = call.receive<String>()
+                contentRepo.deleteMeal(id.asBsonObjectId())
 
-
-            // Get the meal <id>
-            get {
-
-                val id = call.parameters["id"]!!
-                val meal = contentRepo.getMeal(id.asBsonObjectId())
-
-                call.respond(HttpStatusCode.OK, meal)
-
+                call.respond(HttpStatusCode.OK)
             }
 
-            //Remove the meal <id>
-            delete {
-
-                val id = call.parameters["id"]!!
-                //Worker Permission is needed
-                withRole(Auth.PermissionLevel.WORKER) {
-                    contentRepo.deleteMeal(id.asBsonObjectId())
-                    call.respond(HttpStatusCode.OK)
-                }
-
-            }
         }
+
+
     }
 }
 
@@ -120,6 +119,15 @@ fun Route.reports() = with { contentRepo ->
 fun Route.report() = with { contentRepo ->
     route("/report") {
 
+        // Get the report
+        get {
+
+            val id = call.receive<String>()
+            val report = contentRepo.getReport(id.asBsonObjectId())
+
+            call.respond(HttpStatusCode.OK, report)
+        }
+
         // Add a report
         post {
             //Worker permission is needed
@@ -145,30 +153,20 @@ fun Route.report() = with { contentRepo ->
             }
         }
 
-        route("/{id}") {
+        // Delete the report
+        delete {
 
-            // Get the report <id>
-            get {
+            val id = call.receive<String>()
+            // Worker permission needed
+            withRole(Auth.PermissionLevel.WORKER) {
 
-                val id = call.parameters["id"]!!
-                val report = contentRepo.getReport(id.asBsonObjectId())
-
-                call.respond(HttpStatusCode.OK, report)
+                contentRepo.deleteReport(id.asBsonObjectId())
+                call.respond(HttpStatusCode.OK)
             }
 
-            // Delete the report <id>
-            delete {
-
-                val id = call.parameters["id"]!!
-                // Worker permission needed
-                withRole(Auth.PermissionLevel.WORKER) {
-
-                    contentRepo.deleteReport(id.asBsonObjectId())
-                    call.respond(HttpStatusCode.OK)
-                }
-
-            }
         }
+
+
     }
 }
 
@@ -201,7 +199,7 @@ fun Route.category() = with { repo ->
                 val category = call.receive<Content.Category>()
                 repo.addCategory(category)
 
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.OK, category.name)
             }
 
         }
@@ -245,7 +243,7 @@ fun Route.selection() = with { repo ->
                 val selections = call.receive<Content.SelectionGroup>()
                 repo.addSelections(selections)
 
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.OK, selections.name)
             }
         }
 

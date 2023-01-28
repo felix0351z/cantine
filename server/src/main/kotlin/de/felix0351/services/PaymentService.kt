@@ -109,10 +109,9 @@ class PaymentService(
 
      * @param self The user which called the route
      * @param id ID of the order
-     * @see DeleteOrderRequest
      */
     @Throws(DatabaseException.NotFoundException::class)
-    suspend fun cancelOrder(self: Auth.User, id: Id<Content.Order>) {
+    suspend fun cancelOrder(self: Auth.User, id: Id<Content.Order>): Content.Order {
         // Update credit ->  Cancel order
         val order = paymentRepo.getOrder(id)
 
@@ -124,6 +123,8 @@ class PaymentService(
             id = id,
             credit = Hashing.encryptCredit(currentCredit)
         )
+
+        return order
     }
 
     /**

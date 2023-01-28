@@ -94,8 +94,8 @@ fun Route.order() = with { service ->
             withRole(Auth.PermissionLevel.USER) {
                 val id = call.receive<Id<Content.Order>>()
 
-                service.cancelOrder(it, id)
-                call.respond(HttpStatusCode.OK)
+                val canceledOrder = service.cancelOrder(it, id)
+                call.respond(HttpStatusCode.OK, canceledOrder)
             }
 
         }

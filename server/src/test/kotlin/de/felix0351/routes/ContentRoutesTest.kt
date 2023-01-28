@@ -88,8 +88,9 @@ class ContentRoutesTest {
     fun testGetMeal() = testModule {
         it.login()
 
-        val meal: Meal = it.get("/content/meal/$mealID") {
+        val meal: Meal = it.get("/content/meal") {
             https()
+            json(mealID)
         }.body()
 
         println(meal)
@@ -101,8 +102,9 @@ class ContentRoutesTest {
     fun testDeleteMeal() = testModule {
         it.login()
 
-        val response = it.delete("/content/meal/$mealID") {
+        val response = it.delete("/content/meal") {
             https()
+            json(mealID)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -155,8 +157,9 @@ class ContentRoutesTest {
     fun testGetReport() = testModule {
         it.login()
 
-        val report: Report = it.get("/content/report/$reportID") {
+        val report: Report = it.get("/content/report") {
             https()
+            json(reportID)
         }.body()
 
         println(report)
@@ -167,8 +170,9 @@ class ContentRoutesTest {
     fun testDeleteReport() = testModule {
         it.login()
 
-        val response = it.delete("/content/report/$reportID") {
+        val response = it.delete("/content/report") {
             https()
+            json(reportID)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)

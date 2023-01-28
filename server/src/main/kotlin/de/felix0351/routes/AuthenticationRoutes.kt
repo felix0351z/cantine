@@ -108,10 +108,10 @@ fun Route.user() = with { service ->
     route("/user") {
 
         // Get user
-        get("/{username}") {
+        get {
 
             withRole(Auth.PermissionLevel.ADMIN) {
-                val name = call.parameters["username"]!!
+                val name = call.receive<String>()
                 call.respond(HttpStatusCode.OK, service.getUser(name))
             }
 

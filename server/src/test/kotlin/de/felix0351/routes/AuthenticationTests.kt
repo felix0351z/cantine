@@ -130,8 +130,9 @@ class AuthenticationTests {
     fun testGetUser() = testModule {
         it.login()
 
-        val user: Auth.PublicUser = it.get("/user/${testUser.username}") {
+        val user: Auth.PublicUser = it.get("/user") {
             https()
+            json(testUser.username)
         }.body()
 
         println(user)
