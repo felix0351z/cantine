@@ -1,22 +1,21 @@
 val ktor_version: String by project
 val kotlin_version: String by project
-val logback_version: String by project
-val exposed_version: String by project
-
-
-plugins {
-    application
-    kotlin("jvm") version "1.7.10"
-    id("io.ktor.plugin") version "2.1.2"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
 
 group = "de.felix0351"
 version = "0.0.1"
+
+plugins {
+    application
+    kotlin("jvm") version "1.8.0"
+    id("io.ktor.plugin") version "2.2.2"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
+}
+
+tasks.test {
+    // Use Junit5 for tests
+    useJUnitPlatform()
+}
+
 application {
     mainClass.set("de.felix0351.ApplicationKt")
 
@@ -25,50 +24,57 @@ application {
 }
 
 repositories {
+    // All dependencies are available from maven central
     mavenCentral()
 }
 
 
 dependencies {
-    val kaml_version = "0.49.0"
-    val kmongo_version = "4.8.0"
-    val koin_version = "3.2.2"
 
-    //Ktor Server Core Library mit Netty als Network Framework
+    //Ktor Server Core Library with Netty as Engine
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
 
-    // Dependency Injection mit Koin
+    // Dependency Injection with Koin
+    val koin_version = "3.2.2"
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
-    //Session Authentifizierung
+    //Session Authentication and Authorization
     implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-sessions-jvm:$ktor_version")
 
+    // Status pages for exceptions and errors
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktor_version")
 
-    //Hashing with BCrypt
-    //implementation("at.favre.lib:bcrypt:0.9.0")
+    //Password Hashing with BCrypt
     implementation("org.mindrot:jbcrypt:0.4")
 
-    //Serialization
+    //Serialization with KotlinX
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+
+    // KAML for yaml config serialization
+    val kaml_version = "0.49.0"
     implementation("com.charleskorn.kaml:kaml:$kaml_version")
 
-    //Logback als Logger
+    //Logback as logger
+    val logback_version = "1.4.3"
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
-    //MongoDB
-    //implementation("org.litote.kmongo:kmongo:$kmongo_version")
+    //MongoDB as database
+    val kmongo_version = "4.8.0"
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
 
+}
 
-    //JUnit als Test Library
+dependencies {
+    //Test dependencies for the ktor server
     testImplementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
+
+    //JUnit5 als Test Library
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
 }
