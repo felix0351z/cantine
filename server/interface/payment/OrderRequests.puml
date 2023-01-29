@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+
+object CreateOrderRequest <<Serializable>> {
+    + meals: List<CreateOrderRequestMeal>
+}
+
+object CreateOrderRequestMeal <<Serializable>> {
+    + id: String
+    + selections: List<String>
+}
+
+object VerifyOrderRequest <<Serializable>> {
+    + username: String
+    + orderID: String
+}
+
+
+@enduml
