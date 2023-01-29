@@ -88,18 +88,34 @@ data class CreateOrderRequest(
     val meals: List<CreateOrderRequestMeal>
 )
 
+/** Represents a selected meal
+ * @property id id of the meal
+ * @property selections Individual selections from the user
+ */
 @Serializable
 data class CreateOrderRequestMeal(
     @Serializable(with = CustomIDSerializer::class) val id: Id<Content.Meal>,
     val selections: List<String>
 )
 
+/**
+ * Request to verify a purchase at the mensa
+ * @property username Name of the user
+ * @property orderId Order of the user
+ *
+ */
 @Serializable
 data class VerifyOrderRequest(
     val username: String,
     @Serializable(with = CustomIDSerializer::class) val orderId: Id<Content.Order>
 )
 
+/**
+ * Request to increase the amount of the user
+ * @property password Password of the Worker/Admin
+ * @property username User, which will get the new credit
+ * @property credit Amount of the new credit
+ */
 @Serializable
 data class AddCreditRequest(
     val password: String,

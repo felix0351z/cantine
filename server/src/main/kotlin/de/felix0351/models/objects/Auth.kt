@@ -61,6 +61,11 @@ sealed class Auth {
         @Serializable(with = InstantSerializer::class) val creationTime: Instant
     )
 
+    /** PermissionLevel represents 3 different groups which a user can have.
+     * @property ADMIN The user has any permissions
+     * @property WORKER The user has access to worker related functions, such as verify an order or add a new meal. But he can't do auth related function like add a user.
+     * @property USER The user has access to standard functions. See the menu, add an order. He can't create new meals or reports etc.
+     */
     enum class PermissionLevel(val int: Int) {
         ADMIN(2),
         WORKER(1),
