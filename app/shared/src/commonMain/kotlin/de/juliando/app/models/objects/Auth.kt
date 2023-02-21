@@ -13,6 +13,14 @@ sealed class Auth {
         val password: String? = null
     )
 
+    @Serializable
+    data class Payment(
+        val user: String,
+        val meals: List<String>,
+        val price: Float,
+        val creationTime: String
+    )
+
     enum class PermissionLevel(val int: Int) {
         ADMIN(2),
         WORKER(1),

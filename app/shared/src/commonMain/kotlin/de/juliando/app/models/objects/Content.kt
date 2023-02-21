@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 sealed class Content {
 
-
     @Serializable
     data class Category(
         val name: String
@@ -24,7 +23,7 @@ sealed class Content {
 
     @Serializable
     data class Meal(
-        val id: String,
+        val id: String?,
         val category: String?,
         val name: String,
         val description: String,
@@ -58,10 +57,10 @@ sealed class Content {
 
     @Serializable
     data class Report(
-        val id: String,
+        val id: String?,
         val title: String,
         val description: String,
         val picture: String,
-        val creationTime: String
+        val creationTime: Long?
     )
 }
