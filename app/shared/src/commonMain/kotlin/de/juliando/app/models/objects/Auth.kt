@@ -1,16 +1,17 @@
 package de.juliando.app.models.objects
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 sealed class Auth {
 
     @Serializable
-    data class PublicUser(
+    data class User(
         val username: String,
         val name: String,
         val permissionLevel: PermissionLevel,
         val credit: Float,
-        val password: String? = null
+        val password: String?
     )
 
     @Serializable
@@ -18,7 +19,7 @@ sealed class Auth {
         val user: String,
         val meals: List<String>,
         val price: Float,
-        val creationTime: String
+        val creationTime: Instant
     )
 
     enum class PermissionLevel(val int: Int) {

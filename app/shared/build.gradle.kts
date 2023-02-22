@@ -36,6 +36,8 @@ kotlin {
                 //Multiplatform Settings(local data store)
                 implementation("com.russhwolf:multiplatform-settings-no-arg:$multiplatformSettings")
                 implementation("com.russhwolf:multiplatform-settings-serialization:$multiplatformSettings")
+                //Time
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
         val commonTest by getting {

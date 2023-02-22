@@ -11,7 +11,7 @@ data class UserDeleteRequest(
 @Serializable
 data class UserAddRequest(
     val password: String,
-    val user: Auth.PublicUser
+    val user: Auth.User
 )
 
 @Serializable

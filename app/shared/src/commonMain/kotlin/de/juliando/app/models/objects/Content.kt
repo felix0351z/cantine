@@ -1,5 +1,6 @@
 package de.juliando.app.models.objects
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 sealed class Content {
@@ -23,7 +24,7 @@ sealed class Content {
 
     @Serializable
     data class Meal(
-        val id: String?,
+        val id: String,
         val category: String?,
         val name: String,
         val description: String,
@@ -52,7 +53,7 @@ sealed class Content {
         val meals: List<OrderedMeal>,
         val price: Float,
         val deposit: Float,
-        val orderTime: String
+        val orderTime: Instant
     )
 
     @Serializable
@@ -61,6 +62,6 @@ sealed class Content {
         val title: String,
         val description: String,
         val picture: String,
-        val creationTime: Long?
+        val creationTime: Instant?
     )
 }
