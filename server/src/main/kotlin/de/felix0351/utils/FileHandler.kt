@@ -21,6 +21,8 @@ object FileHandler {
 
             logger.info("Creating config.yaml file")
             initConfig(config)
+
+            fail(RuntimeException("Config not configured!"))
         }
 
         configuration = Yaml.default.decodeFromStream(ConfigFile.serializer(), config.inputStream())
