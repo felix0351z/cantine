@@ -23,6 +23,12 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+ktor {
+    fatJar {
+        archiveFileName.set("cantine-server.jar")
+    }
+}
+
 repositories {
     // All dependencies are available from maven central
     mavenCentral()
