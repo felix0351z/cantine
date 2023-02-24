@@ -5,12 +5,36 @@ import de.felix0351.models.errors.NoPasswordException
 import de.felix0351.models.errors.WrongPasswordException
 import de.felix0351.models.objects.*
 import de.felix0351.repository.AuthenticationRepository
+import de.felix0351.utils.FileHandler
 import de.felix0351.utils.Hashing
+import de.felix0351.utils.getLogger
+import kotlinx.coroutines.runBlocking
 import kotlin.jvm.Throws
 
 class AuthenticationService(
-    private val authRepo: AuthenticationRepository
+    private val authRepo: AuthenticationRepository,
 ) {
+
+    private val logger = getLogger()
+    init {
+        runBlocking {
+            // Create the default user if no one exists
+            if (authRepo.getUserCount() == 0L) {
+
+                val startUser = FileHandler.configuration.authentication.startUser
+                authRepo.addUser(Auth.User(
+                    username = startUser.username,
+                    name = startUser.name,
+                    permissionLevel = Auth.PermissionLevel.ADMIN,
+                    credit = Hashing.encryptCredit(startUser.credit),
+                    hash = Hashing.toHash(startUser.password)
+                ))
+
+                logger.info("Default user ${startUser.username} created, Please change the default password immediately!")
+            }
+
+        }
+    }
 
 
     suspend fun getPrivateUser(session: Auth.UserSession): Auth.User =

@@ -15,6 +15,8 @@ interface AuthenticationRepository {
 
     suspend fun getUsers(): List<User>
 
+    suspend fun getUserCount(): Long
+
     @Throws(ValueAlreadyExistsException::class)
     suspend fun addUser(user: User)
 

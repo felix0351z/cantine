@@ -4,6 +4,7 @@ import com.charleskorn.kaml.Yaml
 import de.felix0351.models.AuthenticationProperties
 import de.felix0351.models.ConfigFile
 import de.felix0351.models.DatabaseProperties
+import de.felix0351.models.DefaultAdmin
 import java.io.File
 
 object FileHandler {
@@ -55,6 +56,12 @@ object FileHandler {
             sign_key = randomString(28),
             auth_key = randomString(32),
             pepper = randomString(16, complexCharset = true),
+            startUser = DefaultAdmin(
+                username = "admin",
+                name = "Admin",
+                password = "admin",
+                credit = 100F
+            )
         )
     )
 

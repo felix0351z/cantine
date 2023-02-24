@@ -52,5 +52,15 @@ data class AuthenticationProperties(
     val session_age: Int,
     val sign_key: String,
     val auth_key: String,
-    val pepper: String
+    val pepper: String,
+    val startUser: DefaultAdmin
 )
+
+@Serializable
+data class DefaultAdmin(
+    val username: String,
+    val name: String,
+    val password: String,
+    val credit: Float
+)
+

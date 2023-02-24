@@ -23,6 +23,10 @@ class AuthenticationRepositoryMongoDB(private val con: MongoDBConnection) : Auth
         it.find().toList()
     }
 
+    override suspend fun getUserCount(): Long = con.callToUserCollection {
+        it.countDocuments()
+    }
+
     override suspend fun addUser(user: User): Unit = con.callToUserCollection {
         if (getUserByUsername(user.username) != null) throw ValueAlreadyExistsException()
         it.insertOne(user)
