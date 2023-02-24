@@ -5,6 +5,8 @@ import com.russhwolf.settings.get
 import com.russhwolf.settings.set
 import de.juliando.app.models.objects.Auth
 import de.juliando.app.models.objects.Content
+import de.juliando.app.utils.CookieSerializable
+import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -107,4 +109,25 @@ class LocalDataStoreImpl : LocalDataStore {
             null
         }
     }
+
+    /**
+     * Functions to store and get a Cookie
+     */
+    override fun storeCookie(cookie: Cookie?) {
+        if (cookie != null){
+            settings[StorageKeys.COOKIE.key] = CookieSerializable.serializeCookie(cookie)
+        }else {
+            settings.remove(StorageKeys.COOKIE.key)
+        }
+    }
+    override fun getCookie(): Cookie? {
+        var cookie: String? = settings[StorageKeys.PAYMENT.key]
+        return if (cookie != null){
+            CookieSerializable.deserializeCookie(cookie)
+        }else {
+            null
+        }
+    }
+
+
 }

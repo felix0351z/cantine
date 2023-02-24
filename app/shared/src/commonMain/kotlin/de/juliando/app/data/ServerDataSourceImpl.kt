@@ -15,7 +15,9 @@ import kotlinx.serialization.json.Json
 class ServerDataSourceImpl(
 
     private val httpClient: HttpClient = HttpClient {
-        install(HttpCookies)
+        install(HttpCookies) {
+            storage = CustomCookiesStorage()
+        }
         install(ContentNegotiation){
             json(Json {
                 prettyPrint = true
@@ -23,7 +25,7 @@ class ServerDataSourceImpl(
             })
         }
     },
-    private val BASE_URL: String = "https://..."
+    private val BASE_URL: String = "http://185.215.180.245:8080"
 
 ) : ServerDataSource {
 
