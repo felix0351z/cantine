@@ -68,7 +68,9 @@ dependencies {
 
     //Logback as logger
     val logback_version = "1.4.3"
+    val janino_version = "3.1.9"
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("org.codehaus.janino:janino:$janino_version")
 
     //MongoDB as database
     val kmongo_version = "4.8.0"
