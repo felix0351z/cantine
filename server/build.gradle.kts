@@ -41,6 +41,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-forwarded-header:$ktor_version")
 
     // Dependency Injection with Koin
     val koin_version = "3.2.2"
@@ -79,7 +80,7 @@ dependencies {
 }
 
 dependencies {
-    //Test dependencies for the ktor server
+    implementation("io.ktor:ktor-server-forwarded-header-jvm:2.2.2")//Test dependencies for the ktor server
     testImplementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
 
