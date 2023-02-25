@@ -38,7 +38,7 @@ class ServerDataSourceTests {
 
     @Test
     fun testConnection() = testModule {
-        val response = it.get(SERVER_TEST_URL) {https()}
+        val response = it.get(SERVER_TEST_URL)
 
         assertEquals(response.status, HttpStatusCode.OK)
         println(response.bodyAsText())

@@ -31,9 +31,6 @@ fun testModule(func: suspend (client: HttpClient) -> Unit) = runBlocking {
     func(client)
 }
 
-fun HttpRequestBuilder.https() =
-    url { protocol = URLProtocol.HTTPS }
-
 inline fun<reified T> HttpRequestBuilder.setJson(body: T) {
     contentType(ContentType.Application.Json)
     setBody(body)
@@ -45,8 +42,8 @@ suspend fun HttpClient.login(username: String, password: String) = submitForm(
         append("username", username)
         append("password", password)
     }
-) { https() }
+)
 
-suspend fun HttpClient.logout() = get("/logout") { https() }
+suspend fun HttpClient.logout() = get("/logout")
 
 
