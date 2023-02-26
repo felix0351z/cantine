@@ -1,5 +1,6 @@
 package de.juliando.app.models.objects
 
+import de.juliando.app.utils.InstantSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -19,7 +20,7 @@ sealed class Auth {
         val user: String,
         val meals: List<String>,
         val price: Float,
-        val creationTime: Instant
+        @Serializable(with = InstantSerializer::class) val creationTime: Instant
     )
 
     enum class PermissionLevel(val int: Int) {
