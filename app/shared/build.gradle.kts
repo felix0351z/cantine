@@ -5,81 +5,90 @@ plugins {
 }
 
 kotlin {
+    // Shared-Module Dokumentation
+    // https://kotlinlang.org/docs/multiplatform-share-on-platforms.html
+
+    // In Android wird das SharedModule als Dependency direkt integriert
     android {
+        // Kotlin-Kompilierung-support für Java 8
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
             }
         }
     }
-    
-    listOf(
-        //iosX64(),
-        iosArm64(),
-        //iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "shared"
+
+    // In iOS wird das SharedModule als Framework kompiliert
+    ios() {
+        // Erstellt  vorkonfigurierte SourceSets für iOsArm64 und iOSX64
+        binaries {
+            framework {
+                baseName = "shared" // Name der Framework-Datei, welche von dem Shared-Module kompiliert wird
+            }
         }
     }
+    iosSimulatorArm64() // SourceSet für den MacBook iOS-Visualizer
 
     val ktorVersion = "2.2.3"
     val multiplatformSettings = "1.0.0"
     sourceSets {
+        // Neue Source-Set Namensgebung in Kotlin 1.8.0
+        // https://kotlinlang.org/docs/whatsnew18.html#kotlinsourceset-naming-schema
+
+        // SourceSet für geteilten Code
         val commonMain by getting {
             dependencies {
+
                 // Ktor
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 //Multiplatform Settings(local data store)
+
                 implementation("com.russhwolf:multiplatform-settings-no-arg:$multiplatformSettings")
                 implementation("com.russhwolf:multiplatform-settings-serialization:$multiplatformSettings")
                 //Time
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
+
+        // SourceSet für geteilten Test-Code
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
             }
         }
+
+        // SourceSet für spezifischen Android-Code
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
             }
         }
-        val androidUnitTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
-                implementation("io.ktor:ktor-client-cio:$ktorVersion")
-            }
-        }
-        //val iosX64Main by getting
-        val iosArm64Main by getting
-        //val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            //iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            //iosSimulatorArm64Main.dependsOn(this)
 
+        // SourceSet für spezifische AndroidUnitTest
+        // (IntegrationsTest nicht! -> Anderes SourceSet)
+        val androidUnitTest by getting
+
+        // SourceSet für iOS spezificher Code (ios64Main, iosX64Main, iosSimulator64Main)
+        val iosMain by sourceSets.getting {
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:$ktorVersion")
             }
         }
-        //val iosX64Test by getting
-        val iosArm64Test by getting
-        //val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            //iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            //iosSimulatorArm64Test.dependsOn(this)
-        }
+
+        // SourceSet für iOS spezificher Test-Code (ios64Main, iosX64Main, iosSimulator64Main)
+        val iosTest by sourceSets.getting
+
+
+        // Integration des iOS-Simulators auf M1/M2 Macbooks zumm iosMain/iosTest SourceSet
+        val iosSimulatorArm64Main by sourceSets.getting
+        val iosSimulatorArm64Test by sourceSets.getting
+        iosSimulatorArm64Main.dependsOn(iosMain)
+        iosSimulatorArm64Test.dependsOn(iosTest)
+
     }
 }
 
