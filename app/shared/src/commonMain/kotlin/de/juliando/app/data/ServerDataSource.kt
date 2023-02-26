@@ -19,7 +19,7 @@ interface ServerDataSource {
     @Throws(Exception::class)
     suspend fun createOrderRequest(request: CreateOrderRequest): Content.Order
     @Throws(Exception::class)
-    suspend fun deleteOrder(id: String): Content.Order
+    suspend fun cancelOrder(id: String): Content.Order
     @Throws(Exception::class)
     suspend fun getPurchases(): List<Auth.Payment>
     @Throws(Exception::class)
@@ -48,7 +48,7 @@ interface ServerDataSource {
     @Throws(Exception::class)
     suspend fun deleteReport(id: String)
     @Throws(Exception::class)
-    suspend fun editReport(id: String)
+    suspend fun editReport(report: Content.Report)
     @Throws(Exception::class)
     suspend fun getCategories(): List<Content.Category>
     @Throws(Exception::class)
@@ -60,13 +60,13 @@ interface ServerDataSource {
     @Throws(Exception::class)
     suspend fun newSelection(selection: Content.SelectionGroup): String
     @Throws(Exception::class)
-    suspend fun deleteSelection(selectionName: String)
+    suspend fun deleteSelection(selectionGroupName: String)
 
     //Permission admin
     @Throws(Exception::class)
     suspend fun getUsers(): List<Auth.User>
     @Throws(Exception::class)
-    suspend fun getUser(id: String): List<Auth.User>
+    suspend fun getUser(username: String): List<Auth.User>
     @Throws(Exception::class)
     suspend fun addUser(request: UserAddRequest)
     @Throws(Exception::class)

@@ -8,6 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
@@ -25,7 +26,8 @@ class ServerDataSourceImpl(
             })
         }
     },
-    private val BASE_URL: String = "http://185.215.180.245:8080"
+    //Test Server
+    private val BASE_URL: String = "https://185.215.180.245"
 
 ) : ServerDataSource {
 
@@ -40,9 +42,19 @@ class ServerDataSourceImpl(
             append("username", username)
             append("password", password)
         }
-    )
+    ){
+        https()
+    }
 
-    suspend fun HttpClient.logout() = get("$BASE_URL/logout")
+    suspend fun HttpClient.logout() = get("$BASE_URL/logout"){
+        https()
+    }
+
+    private fun HttpRequestBuilder.https() {
+        url {
+            protocol = URLProtocol.HTTPS
+        }
+    }
 
     override suspend fun getMeals(): List<Content.Meal> {
         val response = httpClient.get("$BASE_URL/content/meals")
@@ -55,131 +67,362 @@ class ServerDataSourceImpl(
     }
 
     override suspend fun getAccount(): Auth.User {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/account")
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun changePassword(request: PasswordChangeRequest) {
-        TODO("Not yet implemented")
+        val response = httpClient.post("$BASE_URL/account/password") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getCredit(): Float {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/payment/credit")
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getOrders(): List<Content.Order> {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/payment/orders")
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun createOrderRequest(request: CreateOrderRequest): Content.Order {
-        TODO("Not yet implemented")
+        val response = httpClient.post("$BASE_URL/payment/order") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
-    override suspend fun deleteOrder(id: String): Content.Order {
-        TODO("Not yet implemented")
+    override suspend fun cancelOrder(id: String): Content.Order {
+        val response = httpClient.delete("$BASE_URL/payment/order") {
+            contentType(ContentType.Application.Json)
+            setBody(id)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getPurchases(): List<Auth.Payment> {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/payment/purchases")
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun deletePurchases() {
-        TODO("Not yet implemented")
+        val response = httpClient.delete("$BASE_URL/payment/purchases")
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getMeal(id: String): Content.Meal {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/content/meal"){
+            contentType(ContentType.Application.Json)
+            setBody(id)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getReports(): List<Content.Report> {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/content/reports")
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getReport(id: String): Content.Report {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/content/report"){
+            contentType(ContentType.Application.Json)
+            setBody(id)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun addUserCredit(request: AddCreditRequest) {
-        TODO("Not yet implemented")
+        val response: HttpResponse = httpClient.post("$BASE_URL/payment/credit") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun verifyOrder(request: VerifyOrderRequest) {
-        TODO("Not yet implemented")
+        val response: HttpResponse = httpClient.post("$BASE_URL/payment/purchase") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun addMeal(newMeal: Content.Meal): String {
-        TODO("Not yet implemented")
+        val response: HttpResponse = httpClient.post("$BASE_URL/content/meal") {
+            contentType(ContentType.Application.Json)
+            setBody(newMeal)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else {
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun deleteMeal(id: String) {
-        TODO("Not yet implemented")
+        val response = httpClient.delete("$BASE_URL/content/meal"){
+            contentType(ContentType.Application.Json)
+            setBody(id)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun editMeal(meal: Content.Meal) {
-        TODO("Not yet implemented")
+        val response: HttpResponse = httpClient.put("$BASE_URL/content/meal") {
+            contentType(ContentType.Application.Json)
+            setBody(meal)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun newReport(report: Content.Report): String {
-        TODO("Not yet implemented")
+        val response: HttpResponse = httpClient.post("$BASE_URL/content/report") {
+            contentType(ContentType.Application.Json)
+            setBody(report)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else {
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun deleteReport(id: String) {
-        TODO("Not yet implemented")
+        val response = httpClient.delete("$BASE_URL/content/report"){
+            contentType(ContentType.Application.Json)
+            setBody(id)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
-    override suspend fun editReport(id: String) {
-        TODO("Not yet implemented")
+    override suspend fun editReport(report: Content.Report) {
+        val response: HttpResponse = httpClient.put("$BASE_URL/content/report") {
+            contentType(ContentType.Application.Json)
+            setBody(report)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getCategories(): List<Content.Category> {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/content/categories")
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun newCategory(category: Content.Category): String {
-        TODO("Not yet implemented")
+        val response: HttpResponse = httpClient.post("$BASE_URL/content/category") {
+            contentType(ContentType.Application.Json)
+            setBody(category)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else {
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun deleteCategory(categoryName: String) {
-        TODO("Not yet implemented")
+        val response = httpClient.delete("$BASE_URL/content/category"){
+            contentType(ContentType.Application.Json)
+            setBody(categoryName)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getSelections(): List<Content.SelectionGroup> {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/content/selections")
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun newSelection(selection: Content.SelectionGroup): String {
-        TODO("Not yet implemented")
+        val response: HttpResponse = httpClient.post("$BASE_URL/content/selection") {
+            contentType(ContentType.Application.Json)
+            setBody(selection)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else {
+            throw checkStatusCode(httpStatus)
+        }
     }
 
-    override suspend fun deleteSelection(selectionName: String) {
-        TODO("Not yet implemented")
+    override suspend fun deleteSelection(selectionGroupName: String) {
+        val response = httpClient.delete("$BASE_URL/content/selection"){
+            contentType(ContentType.Application.Json)
+            setBody(selectionGroupName)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun getUsers(): List<Auth.User> {
-        TODO("Not yet implemented")
+        val response = httpClient.get("$BASE_URL/users")
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
-    override suspend fun getUser(id: String): List<Auth.User> {
-        TODO("Not yet implemented")
+    override suspend fun getUser(username: String): List<Auth.User> {
+        val response = httpClient.get("$BASE_URL/user"){
+            contentType(ContentType.Application.Json)
+            setBody(username)
+        }
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            response.body()
+        }else{
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun addUser(request: UserAddRequest) {
-        TODO("Not yet implemented")
+        val response = httpClient.post("$BASE_URL/user") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun deleteUser(request: UserDeleteRequest) {
-        TODO("Not yet implemented")
+        val response = httpClient.delete("$BASE_URL/user"){
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun changeUserName(request: NameChangeRequest) {
-        TODO("Not yet implemented")
+        val response = httpClient.post("$BASE_URL/user/name") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun setUserPassword(request: PasswordChangeRequest) {
-        TODO("Not yet implemented")
+        val response = httpClient.post("$BASE_URL/user/password") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     override suspend fun changeUserPermission(request: PermissionChangeRequest) {
-        TODO("Not yet implemented")
+        val response = httpClient.post("$BASE_URL/user/permission") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val httpStatus = response.status.value
+        if (httpStatus !in 200..299){
+            throw checkStatusCode(httpStatus)
+        }
     }
 
     /**
@@ -188,7 +431,6 @@ class ServerDataSourceImpl(
      * @return exception for that status code
      */
     private fun checkStatusCode(statusCode: Int): Exception{
-        TODO()
         return when(statusCode){
             500 -> InternalDatabaseErrorException()
             400 -> ContentTransformationErrorException()
