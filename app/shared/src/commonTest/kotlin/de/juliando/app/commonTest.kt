@@ -1,7 +1,8 @@
 package de.juliando.app
 
 import kotlin.test.Test
-import kotlin.test.assertTrue
+
+expect fun hello()
 
 class CommonGreetingTest {
 
