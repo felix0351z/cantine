@@ -39,11 +39,33 @@ android {
 }
 
 dependencies {
+    // Shared module als Abhänigkeiten
     implementation(project(":shared"))
-    implementation("androidx.compose.ui:ui:1.3.1")
-    implementation("androidx.compose.ui:ui-tooling:1.3.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.3.1")
-    implementation("androidx.compose.foundation:foundation:1.3.1")
-    implementation("androidx.compose.material:material:1.3.1")
+
+    val navVersion = "2.5.3"
+    val composeVersion = "1.3.1"
+
+    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
+    implementation(composeBom)
+
+    // Jetpack Compose
     implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.compose.ui:ui:$composeVersion")
+    implementation("androidx.compose.ui:ui-tooling:$composeVersion")
+    implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
+    implementation("androidx.compose.foundation:foundation:$composeVersion")
+
+    // Compose Navigation
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+
+    // Use Material UI 3
+    implementation("androidx.compose.material3:material3:1.0.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
+
+    // More material icons
+    implementation("androidx.compose.material:material-icons-extended")
+
+
+
+
 }
