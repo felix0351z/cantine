@@ -4,44 +4,47 @@ import de.juliando.app.data.LocalDataStoreImpl
 import de.juliando.app.data.ServerDataSourceImpl
 import de.juliando.app.models.objects.*
 
+/**
+ * This repository handles the authentication data.
+ */
+
 class AuthenticationRepositoryImpl(
     private val server: ServerDataSourceImpl = ServerDataSourceImpl(),
-    private val cache: LocalDataStoreImpl = LocalDataStoreImpl()
 ) : AuthenticationRepository {
 
     override suspend fun getAccount(): Auth.User {
-        TODO("Not yet implemented")
+        return server.getObject("/account")
     }
 
     override suspend fun changePassword(request: PasswordChangeRequest) {
-        TODO("Not yet implemented")
+        server.post<PasswordChangeRequest, String>("/account/password", request)
     }
 
     override suspend fun getUsers(): List<Auth.User> {
-        TODO("Not yet implemented")
+        return server.getList("/users")
     }
 
     override suspend fun getUser(username: String): List<Auth.User> {
-        TODO("Not yet implemented")
+        return server.getObject("/user", username)
     }
 
     override suspend fun addUser(request: UserAddRequest) {
-        TODO("Not yet implemented")
+        server.post<UserAddRequest, String>("/content/meal", request)
     }
 
     override suspend fun deleteUser(request: UserDeleteRequest) {
-        TODO("Not yet implemented")
+        server.delete<UserDeleteRequest, String>("/content/meal", request)
     }
 
     override suspend fun changeUserName(request: NameChangeRequest) {
-        TODO("Not yet implemented")
+        server.post<NameChangeRequest, String>("/user/name", request)
     }
 
     override suspend fun setUserPassword(request: PasswordChangeRequest) {
-        TODO("Not yet implemented")
+        server.post<PasswordChangeRequest, String>("/user/password", request)
     }
 
     override suspend fun changeUserPermission(request: PermissionChangeRequest) {
-        TODO("Not yet implemented")
+        server.post<PermissionChangeRequest, String>("/user/permission", request)
     }
 }

@@ -2,6 +2,11 @@ package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
 
+/**
+ * This repository handles the payment data.
+ * It decides whether the data comes from the server or from local storage.
+ */
+
 interface PaymentRepository {
 
     //Credit
@@ -12,9 +17,9 @@ interface PaymentRepository {
     @Throws(Exception::class)
     suspend fun getOrders(): List<Content.Order>
     @Throws(Exception::class)
-    suspend fun createOrderRequest(request: CreateOrderRequest): Content.Order
+    suspend fun createOrderRequest(request: CreateOrderRequest): Content.Order?
     @Throws(Exception::class)
-    suspend fun deleteOrder(id: String): Content.Order
+    suspend fun deleteOrder(id: String): Content.Order?
     @Throws(Exception::class)
     suspend fun verifyOrder(request: VerifyOrderRequest)
 
