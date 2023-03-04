@@ -39,6 +39,8 @@ data class CreateOrderRequestMeal(
 )
 
 
+const val testImage = "test-image.jpg"
+
 
 val exampleMeal = Meal(
     id = null,
@@ -57,5 +59,5 @@ val exampleMeal = Meal(
             )
         )
     ),
-    picture = "/var/blabla"
+    picture = null
 )

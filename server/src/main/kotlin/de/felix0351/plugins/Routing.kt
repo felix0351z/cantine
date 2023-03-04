@@ -5,18 +5,26 @@ import de.felix0351.routes.authenticationRoutes
 import de.felix0351.routes.contentRoutes
 import de.felix0351.routes.paymentRoutes
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.forwardedheaders.*
+import io.ktor.server.plugins.partialcontent.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
 import io.ktor.server.request.ContentTransformationException
 import io.ktor.server.response.*
+import io.ktor.util.pipeline.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.bson.types.ObjectId
 import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
+import kotlin.reflect.typeOf
 
 fun Application.configureRouting() {
     install(XForwardedHeaders)
+    install(PartialContent)
 
     install(StatusPages) {
 
@@ -97,6 +105,15 @@ fun Application.configureRouting() {
             )
         }
 
+        exception<FileIOException> { call, _ ->
+            call.respond(
+                HttpStatusCode.InternalServerError, RouteError(
+                    id = ErrorCode.FileIOException.code,
+                    description = "Failed to write the provided file into the storage"
+                )
+            )
+        }
+
 
         // Kotlinx Transformation errors
 
@@ -109,15 +126,13 @@ fun Application.configureRouting() {
             )
         }
 
-        exception<BadRequestException> { call, _ ->
+        exception<BadRequestException> { call, err ->
             call.respond(
                 HttpStatusCode.BadRequest, RouteError(
                     id = ErrorCode.ContentTransformationError.code,
-                    description = "The data of the request isn't correct"
+                    description = "The data of the request isn't correct: ${err.message}"
                 )
             )
-
-
         }
 
 
@@ -135,6 +150,49 @@ fun <T> String.asBsonObjectId(): Id<T> {
         return ObjectId(this).toId()
     } catch (ex: IllegalArgumentException) {
         throw IllegalIdException()
+    }
+}
+
+suspend inline fun <reified T> PipelineContext<Unit, ApplicationCall>.receiveRequestWithImage(
+    func: PipelineContext<Unit, ApplicationCall>.(body: T, image: PartData.FileItem?) -> Unit
+) {
+    val multipart = call.receiveMultipart()
+
+    var json: String? = null
+    var content: PartData.FileItem? = null
+    var count = 0
+
+    multipart.forEachPart {
+        when (it) {
+            is PartData.FileItem -> {
+                if (it.contentType != ContentType.Image.JPEG) throw BadRequestException("Unknown content type")
+                content = it
+                count++
+            }
+
+            is PartData.FormItem -> {
+                if (it.contentType != ContentType.Application.Json) throw BadRequestException("Unknown content type")
+                json = it.value
+                count++
+            }
+
+            else -> {
+                throw BadRequestException("Unknown PartData provided")
+            }
+        }
+    }
+
+    if ((json != null) && (count <= 2)) {
+
+        val body: T = try {
+            Json.decodeFromString(json!!)
+        } catch (ex: RuntimeException) {
+            throw CannotTransformContentToTypeException(typeOf<T>())
+        }
+
+        func(body, content)
+    } else {
+        throw BadRequestException("A MultipartRequest must provide one json FormItem and only one image FileItem. You provided $count items!")
     }
 }
 

@@ -5,16 +5,24 @@ import de.felix0351.models.AuthenticationProperties
 import de.felix0351.models.ConfigFile
 import de.felix0351.models.DatabaseProperties
 import de.felix0351.models.DefaultAdmin
+import de.felix0351.models.errors.FileIOException
+import de.felix0351.models.objects.Collections
+import io.ktor.http.content.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 import java.io.File
 
 object FileHandler {
 
     private val logger = getLogger()
     private const val FILE_NAME = "config.yaml"
+    private const val CONTENT_FOLDER_NAME = "content"
 
     lateinit var configuration: ConfigFile
 
     fun load() {
+        File(CONTENT_FOLDER_NAME).mkdir()
         val config = File(FILE_NAME)
 
         if(!config.exists()) {
@@ -65,4 +73,44 @@ object FileHandler {
         )
     )
 
+    private suspend fun saveContentFile(file: PartData.FileItem, path: String) = withContext(Dispatchers.IO) {
+        val bytes = file.streamProvider().readBytes()
+        File("$CONTENT_FOLDER_NAME/$path").writeBytes(bytes)
+    }
+
+    fun createPathForContentFile(id: String, collection: Collections): String {
+        File("$CONTENT_FOLDER_NAME/${collection.name}").mkdir()
+        // Collection name + object id
+        return "${collection.name}/$id"
+    }
+
+    fun getContentFile(dir: String, id: String): File = File("$CONTENT_FOLDER_NAME/$dir/$id")
+
+    fun deleteContentFile(path: String) = File("$CONTENT_FOLDER_NAME/$path").delete()
+
+    /**
+     * Saves the file
+     **/
+    suspend fun savePicture(file: PartData.FileItem, path: String) {
+        try {
+            saveContentFile(file, path)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw FileIOException()
+        }
+    }
+
+    /**
+     * Deletes the old content of the file and saves the new file.
+     * If an existing file can't be found, the new file will be added anyway.
+     */
+    suspend fun updatePicture(file: PartData.FileItem, path: String) {
+        try {
+            deleteContentFile(path)
+            saveContentFile(file, path)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw FileIOException()
+        }
+    }
 }

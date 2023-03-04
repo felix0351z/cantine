@@ -17,8 +17,8 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 
 
-const val EXAMPLE_USERNAME = "felix0351"
-const val EXAMPLE_PASSWORD = "Pommes"
+const val EXAMPLE_USERNAME = "admin"
+const val EXAMPLE_PASSWORD = "admin"
 
 /*
 Simulate a normal server start
