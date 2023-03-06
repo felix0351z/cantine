@@ -49,7 +49,7 @@ class ServerDataSourceImpl(
     }
 
     /**
-     * Logout from current session
+     * Logout from current session.
      */
     private suspend fun HttpClient.logout() = get("$BASE_URL/logout"){
         https()
@@ -64,53 +64,74 @@ class ServerDataSourceImpl(
         }
     }
 
+    /**
+     * Generic function to get a List from the server.
+     *
+     * @param route Route to the server
+     * @return if successful returns the list from the server
+     *
+     */
     suspend inline fun <reified T> getList(route: String): List<T> {
         val response = httpClient.get("$BASE_URL$route")
-        val httpStatus = response.status.value
-        return if (httpStatus in 200..299){
-            response.body()
-        }else{
-            throw checkStatusCode(httpStatus)
-        }
+        return if(checkStatusCode(response)) response.body()
+        else                                 throw Exception()
     }
 
-    suspend inline fun <reified T> getObject(route: String, id: String? = null): T {
+    /**
+     * Generic function to get a object from the server.
+     *
+     * @param route Route to the server
+     * @param id Id from the requested object(can be null)
+     * @return if successful returns the object from the server
+     *
+     */
+    suspend inline fun <reified T> get(route: String, id: String? = null): T {
         val response = httpClient.get("$BASE_URL$route"){
             contentType(ContentType.Application.Json)
             setBody(id)
         }
-        val httpStatus = response.status.value
-        return if (httpStatus in 200..299){
-            response.body()
-        }else{
-            throw checkStatusCode(httpStatus)
-        }
+        return if(checkStatusCode(response)) response.body()
+        else                                 throw Exception()
     }
 
+    /**
+     * Generic function to send a request to the server.
+     *
+     * @param route Route to the server
+     * @param request Request to send to the server
+     * @return returns the response from the server(can be null)
+     *
+     */
     suspend inline fun <reified T,reified R> post(route: String, request: T): R?{
         val response = httpClient.post("$BASE_URL$route") {
             contentType(ContentType.Application.Json)
             setBody(request)
         }
-        val httpStatus = response.status.value
         return try {
-            if (httpStatus in 200..299) response.body()
-            else                              throw checkStatusCode(httpStatus)
+            return if(checkStatusCode(response)) response.body()
+            else                                 throw Exception()
         }catch (e: Exception){
             return null
         }
     }
 
+    /**
+     * Generic function to delete a object from the server.
+     *
+     * @param route Route to the server
+     * @param id Id from the requested object(can be null)
+     * @return returns the response from the server(can be null)
+     *
+     */
     suspend inline fun <reified T, reified R> delete(route: String, id: T? = null): R? {
         if(id!=null) {
             val response = httpClient.delete("$BASE_URL$route") {
                 contentType(ContentType.Application.Json)
                 setBody(id)
             }
-            val httpStatus = response.status.value
             return try {
-                if (httpStatus in 200..299) response.body()
-                else throw checkStatusCode(httpStatus)
+                return if(checkStatusCode(response)) response.body()
+                else                                 throw Exception()
             } catch (e: Exception) {
                 return null
             }
@@ -120,31 +141,42 @@ class ServerDataSourceImpl(
         }
     }
 
+    /**
+     * Generic function to change a object from the server.
+     *
+     * @param route Route to the server
+     * @param toPut The changed object
+     * @return returns the response from the server(can be null)
+     *
+     */
     suspend inline fun <reified T> put(route: String, toPut: T){
         val response: HttpResponse = httpClient.put("$BASE_URL$route") {
             contentType(ContentType.Application.Json)
             setBody(toPut)
         }
-        val httpStatus = response.status.value
-        if (httpStatus !in 200..299){
-            throw checkStatusCode(httpStatus)
-        }
+        checkStatusCode(response)
     }
 
     /**
      * Checks which Status code
      *
-     * @return exception for that status code
+     * @param response HttpResponse to check
+     * @return true if status code is ok else throws an Error
      */
-    fun checkStatusCode(statusCode: Int): Exception{
-        return when(statusCode){
-            500 -> InternalDatabaseErrorException()
-            400 -> ContentTransformationErrorException()
-            403 -> NoPermissionException()
-            409 -> AlreadyExistsException()
-            404 -> NotFoundException()
-            401 -> UnauthorizedException()
-            else -> {RuntimeException()}
+    fun checkStatusCode(response: HttpResponse): Boolean{
+        val httpStatus = response.status.value
+        return if (httpStatus in 200..299){
+            true
+        }else{
+            throw when(httpStatus){
+                500 -> InternalDatabaseErrorException()
+                400 -> ContentTransformationErrorException()
+                403 -> NoPermissionException()
+                409 -> AlreadyExistsException()
+                404 -> NotFoundException()
+                401 -> UnauthorizedException()
+                else -> {RuntimeException()}
+            }
         }
     }
 

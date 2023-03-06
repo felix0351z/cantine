@@ -13,7 +13,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
-import kotlin.jvm.JvmName
 
 /**
  * Serializer for the Instant object in kotlinx
@@ -37,6 +36,10 @@ object InstantSerializer : KSerializer<Instant> {
         encoder.encodeLong(value.toEpochMilliseconds())
 }
 
+/**
+ * Serializer for the Cookie object in ktor
+ *
+ */
 @Serializable
 data class CookieSerializable(
     val name: String,

@@ -2,7 +2,6 @@ package de.juliando.app.data
 
 import io.ktor.client.plugins.cookies.*
 import io.ktor.http.*
-import kotlinx.datetime.LocalDate
 
 class CustomCookiesStorage(
     private val localStorage: LocalDataStoreImpl = LocalDataStoreImpl()

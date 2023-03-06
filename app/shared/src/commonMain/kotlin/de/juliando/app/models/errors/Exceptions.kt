@@ -11,6 +11,6 @@ sealed class HttpStatusException: RuntimeException() {
     class WrongPasswordException : HttpStatusException()
     class NoPasswordException : HttpStatusException()
     class UnauthorizedException : HttpStatusException()
-    class NotEnoughMoneyException() : HttpStatusException()
+    class NotEnoughMoneyException : HttpStatusException()
 }
 

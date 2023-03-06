@@ -1,6 +1,5 @@
 package de.juliando.app.repository
 
-import de.juliando.app.data.LocalDataStoreImpl
 import de.juliando.app.data.ServerDataSourceImpl
 import de.juliando.app.models.objects.*
 
@@ -13,7 +12,7 @@ class AuthenticationRepositoryImpl(
 ) : AuthenticationRepository {
 
     override suspend fun getAccount(): Auth.User {
-        return server.getObject("/account")
+        return server.get("/account")
     }
 
     override suspend fun changePassword(request: PasswordChangeRequest) {
@@ -25,7 +24,7 @@ class AuthenticationRepositoryImpl(
     }
 
     override suspend fun getUser(username: String): List<Auth.User> {
-        return server.getObject("/user", username)
+        return server.get("/user", username)
     }
 
     override suspend fun addUser(request: UserAddRequest) {

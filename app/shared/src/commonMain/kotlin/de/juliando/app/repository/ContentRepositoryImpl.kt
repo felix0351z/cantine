@@ -17,16 +17,18 @@ class ContentRepositoryImpl(
 
     override suspend fun getMeals(): List<Content.Meal> {
         return try {
+            // Try to get the Data from the Server
             val meals = server.getList<Content.Meal>("/content/meals")
             cache.storeList(meals, StorageKeys.MEAL.key)
             meals
         } catch (e: Exception) {
+            // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
             cache.getList(StorageKeys.MEAL.key) ?: emptyList()
         }
     }
 
     override suspend fun getMeal(id: String): Content.Meal {
-        return server.getObject("/content/meal", id)
+        return server.get("/content/meal", id)
     }
 
     override suspend fun addMeal(newMeal: Content.Meal): String? {
@@ -43,16 +45,18 @@ class ContentRepositoryImpl(
 
     override suspend fun getReports(): List<Content.Report> {
         return try {
+            // Try to get the Data from the Server
             val reports = server.getList<Content.Report>("/content/reports")
             cache.storeList(reports, StorageKeys.REPORT.key)
             reports
         } catch (e: Exception) {
+            // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
             cache.getList(StorageKeys.REPORT.key) ?: emptyList()
         }
     }
 
     override suspend fun getReport(id: String): Content.Report {
-        return server.getObject("/content/report", id)
+        return server.get("/content/report", id)
     }
 
     override suspend fun newReport(report: Content.Report): String? {

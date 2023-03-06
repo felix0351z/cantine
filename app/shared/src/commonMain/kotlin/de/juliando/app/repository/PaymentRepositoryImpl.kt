@@ -16,15 +16,17 @@ class PaymentRepositoryImpl(
 ) : PaymentRepository {
 
     override suspend fun getCredit(): Float {
-        return server.getObject("/payment/credit")
+        return server.get("/payment/credit")
     }
 
     override suspend fun getOrders(): List<Content.Order> {
         return try {
+            // Try to get the Data from the Server
             val orders = server.getList<Content.Order>("/payment/orders")
             cache.storeList(orders, StorageKeys.ORDER.key)
             orders
         } catch (e: Exception) {
+            // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
             cache.getList(StorageKeys.ORDER.key) ?: emptyList()
         }
     }
@@ -43,10 +45,12 @@ class PaymentRepositoryImpl(
 
     override suspend fun getPurchases(): List<Auth.Payment> {
         return try {
+            // Try to get the Data from the Server
             val purchases = server.getList<Auth.Payment>("/payment/purchases")
             cache.storeList(purchases, StorageKeys.PAYMENT.key)
             purchases
         } catch (e: Exception) {
+            // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
             cache.getList(StorageKeys.PAYMENT.key) ?: emptyList()
         }
     }
