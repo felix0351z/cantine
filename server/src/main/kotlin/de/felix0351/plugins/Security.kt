@@ -43,7 +43,7 @@ private fun SessionsConfig.configureAuthCookie() {
     val signKey = hex(FileHandler.configuration.authentication.sign_key)
     val authKey = hex(FileHandler.configuration.authentication.auth_key)
 
-    cookie<Auth.UserSession>("user_session", SessionStorageMemory()) {
+    cookie<Auth.UserSession>("user_session", directorySessionStorage(File(FileHandler.SESSION_FILE_NAME))) {
 
         // Only transfer cookies via ssl encrypted connection
         cookie.secure = true

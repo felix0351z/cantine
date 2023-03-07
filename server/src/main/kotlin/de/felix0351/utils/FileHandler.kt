@@ -16,13 +16,15 @@ import java.io.File
 object FileHandler {
 
     private val logger = getLogger()
-    private const val FILE_NAME = "config.yaml"
-    private const val CONTENT_FOLDER_NAME = "content"
+    const val FILE_NAME = "config.yaml"
+    const val SESSION_FILE_NAME = ".sessions"
+    const val CONTENT_FOLDER_NAME = "content"
 
     lateinit var configuration: ConfigFile
 
     fun load() {
         File(CONTENT_FOLDER_NAME).mkdir()
+        File(SESSION_FILE_NAME).mkdir()
         val config = File(FILE_NAME)
 
         if(!config.exists()) {
