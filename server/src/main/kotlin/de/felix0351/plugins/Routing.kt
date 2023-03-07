@@ -4,6 +4,7 @@ import de.felix0351.models.errors.*
 import de.felix0351.routes.authenticationRoutes
 import de.felix0351.routes.contentRoutes
 import de.felix0351.routes.paymentRoutes
+import de.felix0351.utils.LoggingPlugin
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -20,11 +21,13 @@ import kotlinx.serialization.json.Json
 import org.bson.types.ObjectId
 import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
+import org.slf4j.event.*
 import kotlin.reflect.typeOf
 
 fun Application.configureRouting() {
     install(XForwardedHeaders)
     install(PartialContent)
+    install(LoggingPlugin)
 
     install(StatusPages) {
 

@@ -1,7 +1,5 @@
 package de.felix0351.utils
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 fun randomString(
     length: Int,
@@ -16,5 +14,3 @@ fun randomString(
         charset.random()
     }.joinToString("")
 }
-
-fun Any.getLogger(): Logger = LoggerFactory.getLogger(javaClass)

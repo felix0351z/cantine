@@ -4,7 +4,6 @@ import de.felix0351.db.MongoDBConnection
 import de.felix0351.models.errors.DatabaseException.*
 import de.felix0351.models.objects.Auth
 import de.felix0351.models.objects.Auth.User
-import de.felix0351.utils.getLogger
 
 import org.litote.kmongo.eq
 import org.litote.kmongo.setValue
@@ -12,8 +11,6 @@ import org.litote.kmongo.setValue
 
 
 class AuthenticationRepositoryMongoDB(private val con: MongoDBConnection) : AuthenticationRepository {
-
-    val logger = getLogger()
 
     override suspend fun getUserByUsername(username: String): User? = con.callToUserCollection {
         it.findOne(User::username eq username)

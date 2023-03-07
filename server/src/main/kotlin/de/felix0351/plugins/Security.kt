@@ -9,11 +9,13 @@ import io.ktor.http.*
 
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.sessions.*
 import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
+import java.io.File
 
 import kotlin.collections.set
 import kotlin.time.Duration.Companion.days
@@ -103,11 +105,15 @@ private fun AuthenticationConfig.configureFormAuthentication(service: Authentica
 
             val user = service.checkUserCredentials(credentials.name, credentials.password)
 
-            if (user != null) Auth.UserSession(user.username)
+            if (user != null) {
+                application.log.info("User successfully logged in")
+                Auth.UserSession(user.username)
+            }
             else null
         }
 
         challenge {
+            call.application.log.info("Password or username incorrect")
             call.respond(HttpStatusCode.Unauthorized, RouteError(
                 id = ErrorCode.Unauthorized.code,
                 description = "Password or Username incorrect"
@@ -128,6 +134,8 @@ suspend inline fun PipelineContext<Unit, ApplicationCall>.withRole(
     if (user.permissionLevel.int >= minimum.int) {
         route(user)
     } else {
+        application.log.info("Unauthorized call wit the permission level ${user.permissionLevel} to ${call.request.uri}")
+
         call.respond(
             HttpStatusCode.Forbidden,
             RouteError(

@@ -4,7 +4,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import de.felix0351.plugins.*
 import de.felix0351.utils.FileHandler
-import de.felix0351.utils.getLogger
+import io.ktor.server.application.*
 
 const val VERSION = 1.0
 
@@ -21,7 +21,7 @@ fun runServer(port: Int)  = embeddedServer(Netty, port = port, host = "0.0.0.0")
     configureSerialization()
     configureRouting()
 
-    getLogger().info("\n" +
+    log.info("\n" +
             " _________                __  .__                \n" +
             "\\_   ___ \\_____    _____/  |_|__| ____   ____   \n" +
             "/    \\  \\/\\__  \\  /    \\   __\\  |/    \\_/ __ \\  \n" +
