@@ -15,12 +15,19 @@ object CantineTheme {
     val backgroundColor = Color(0xFF0E0E0E)
     val surfaceColor = Color(0xFF1C1C1C)
 
+    val white = Color(0xFFFFFFFF)
     val grey1 = Color(0xFF9C9C9C)
     val grey2 = Color(0xFF585858)
 
     val primaryColor = Color(0xFFFFBA52)
 
-
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable fun largeTopAppBarColors() = TopAppBarDefaults.largeTopAppBarColors(
+        containerColor = backgroundColor,
+        titleContentColor = white,
+        actionIconContentColor = white,
+        navigationIconContentColor = white
+    )
     @Composable fun navigationBarItemColors() = NavigationBarItemDefaults.colors(
         selectedIconColor = primaryColor,
         selectedTextColor = primaryColor,

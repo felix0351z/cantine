@@ -62,7 +62,7 @@ sealed class Content {
         val id: String?,
         val title: String,
         val description: String,
-        val picture: String,
+        val picture: String?,
         @Serializable(with = InstantSerializer::class) val creationTime: Instant?
     )
 }

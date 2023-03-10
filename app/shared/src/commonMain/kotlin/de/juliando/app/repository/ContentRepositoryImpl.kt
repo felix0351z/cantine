@@ -4,8 +4,6 @@ import de.juliando.app.data.LocalDataStoreImpl
 import de.juliando.app.data.ServerDataSourceImpl
 import de.juliando.app.data.StorageKeys
 import de.juliando.app.models.objects.Content
-import de.juliando.app.models.objects.Result
-
 class ContentRepositoryImpl(
     private val server: ServerDataSourceImpl = ServerDataSourceImpl(),
     private val cache: LocalDataStoreImpl = LocalDataStoreImpl()

@@ -55,6 +55,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
     implementation("androidx.compose.foundation:foundation:$composeVersion")
 
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
+
+
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
