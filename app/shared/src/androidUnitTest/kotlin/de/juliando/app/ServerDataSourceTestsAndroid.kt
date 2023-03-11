@@ -58,6 +58,18 @@ class ServerDataSourceTests {
     }
 
     @Test
+    fun testCookieAccess() = testModule {
+        val cookie = it.login("admin", "admin").setCookie()[0]
+
+        val response = it.get("$SERVER_TEST_URL/content/meals") {
+            headers.append(HttpHeaders.Cookie, renderCookieHeader(cookie))
+        }
+
+        assertEquals(response.status, HttpStatusCode.OK)
+        println(response.bodyAsText())
+    }
+
+    @Test
     fun testPictureUpload() = testModule {
         val testImage = "C:\\Users\\felix\\Downloads\\burger.jpg"
         val report = Content.Report(
@@ -68,21 +80,22 @@ class ServerDataSourceTests {
             creationTime = null
         )
 
-        it.login("admin", "admin")
+        val cookie = it.login("admin", "admin").setCookie()[0]
 
         val request = it.post("$SERVER_TEST_URL/content/report") {
             setBody(MultiPartFormDataContent(
                 parts = formData {
-                    append("image", File(testImage).readBytes(), Headers.build {
+                    /*append("image", File(testImage).readBytes(), Headers.build {
                         append(HttpHeaders.ContentType, "image/jpeg")
-                        append(HttpHeaders.ContentDisposition, "filename=\"test-file.jpg\"")
-                    })
+                        append(HttpHeaders.ContentDisposition, "filename=\"burger.jpeg\"")
+                    })*/
                     append(FormPart("json", Json.encodeToString(report), Headers.build {
                         append(HttpHeaders.ContentType, "application/json")
                     }))
                 }
 
             ))
+            headers.append(HttpHeaders.Cookie, renderCookieHeader(cookie))
 
         }
         println(request.bodyAsText())
