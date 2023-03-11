@@ -14,6 +14,12 @@ import kotlinx.serialization.json.Json
 class LocalDataStoreImpl : LocalDataStore {
     val settings: Settings by lazy { Settings() }
 
+    /**
+     *Generic function to store a List with a key.
+     *
+     * @param toStore List to store in local storage
+     * @param key Key to access the storage
+     */
     inline fun <reified T> storeList(toStore: List<T>?, key: String) {
         if (toStore != null){
             settings[key] = Json.encodeToString(toStore)
@@ -22,6 +28,12 @@ class LocalDataStoreImpl : LocalDataStore {
         }
     }
 
+    /**
+     *Generic function to get a List with a key.
+     *
+     * @param key Key to access the storage
+     * @return List from the local storage
+     */
     inline fun <reified T> getList(key: String): List<T>? {
         var obj: String? = settings[key]
         return if (obj != null){
@@ -32,7 +44,12 @@ class LocalDataStoreImpl : LocalDataStore {
     }
 
     /**
-     * Functions to store and get a Cookie
+     * Functions to store and get a Cookie.
+     *
+     * @param cookie Cookie to store
+     * Serializes the cookie with the custom cookie serializer.
+     * If parameter is null, remove cookie from storage
+     *
      */
     override fun storeCookie(cookie: Cookie?) {
         if (cookie != null){
@@ -42,7 +59,7 @@ class LocalDataStoreImpl : LocalDataStore {
         }
     }
     override fun getCookie(): Cookie? {
-        var cookie: String? = settings[StorageKeys.PAYMENT.key]
+        var cookie: String? = settings[StorageKeys.COOKIE.key]
         return if (cookie != null){
             CookieSerializable.deserializeCookie(cookie)
         }else {

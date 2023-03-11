@@ -1,7 +1,5 @@
 package de.juliando.app.data
 
-import de.juliando.app.models.objects.Auth
-import de.juliando.app.models.objects.Content
 import io.ktor.http.*
 
 /**

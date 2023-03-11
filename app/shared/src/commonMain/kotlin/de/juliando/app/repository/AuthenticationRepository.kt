@@ -2,6 +2,10 @@ package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
 
+/**
+ * This repository handles the authentication data.
+ */
+
 interface AuthenticationRepository {
 
     //Account

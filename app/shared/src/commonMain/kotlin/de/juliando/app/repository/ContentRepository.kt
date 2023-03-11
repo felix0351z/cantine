@@ -2,6 +2,11 @@ package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
 
+/**
+ * This repository handles the content data.
+ * It decides whether the data comes from the server or from local storage.
+ */
+
 interface ContentRepository {
 
     //Meal
@@ -10,9 +15,9 @@ interface ContentRepository {
     @Throws(Exception::class)
     suspend fun getMeal(id: String): Content.Meal
     @Throws(Exception::class)
-    suspend fun addMeal(newMeal: Content.Meal): String
+    suspend fun addMeal(newMeal: Content.Meal): String?
     @Throws(Exception::class)
-    suspend fun deleteMeal(id: String)
+    suspend fun deleteMeal(id: String): Content.Meal?
     @Throws(Exception::class)
     suspend fun editMeal(meal: Content.Meal)
 
@@ -22,7 +27,7 @@ interface ContentRepository {
     @Throws(Exception::class)
     suspend fun getReport(id: String): Content.Report
     @Throws(Exception::class)
-    suspend fun newReport(report: Content.Report): String
+    suspend fun newReport(report: Content.Report): String?
     @Throws(Exception::class)
     suspend fun deleteReport(id: String)
     @Throws(Exception::class)
@@ -32,7 +37,7 @@ interface ContentRepository {
     //Category
     suspend fun getCategories(): List<Content.Category>
     @Throws(Exception::class)
-    suspend fun newCategory(category: Content.Category): String
+    suspend fun newCategory(category: Content.Category): String?
     @Throws(Exception::class)
     suspend fun deleteCategory(categoryName: String)
     @Throws(Exception::class)
@@ -40,7 +45,7 @@ interface ContentRepository {
     //Selection
     suspend fun getSelections(): List<Content.SelectionGroup>
     @Throws(Exception::class)
-    suspend fun newSelection(selection: Content.SelectionGroup): String
+    suspend fun newSelection(selection: Content.SelectionGroup): String?
     @Throws(Exception::class)
     suspend fun deleteSelection(selectionGroupName: String)
 
