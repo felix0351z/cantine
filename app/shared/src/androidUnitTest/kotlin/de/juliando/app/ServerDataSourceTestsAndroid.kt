@@ -85,10 +85,10 @@ class ServerDataSourceTests {
         val request = it.post("$SERVER_TEST_URL/content/report") {
             setBody(MultiPartFormDataContent(
                 parts = formData {
-                    /*append("image", File(testImage).readBytes(), Headers.build {
+                    append("image", File(testImage).readBytes(), Headers.build {
                         append(HttpHeaders.ContentType, "image/jpeg")
                         append(HttpHeaders.ContentDisposition, "filename=\"burger.jpeg\"")
-                    })*/
+                    })
                     append(FormPart("json", Json.encodeToString(report), Headers.build {
                         append(HttpHeaders.ContentType, "application/json")
                     }))
