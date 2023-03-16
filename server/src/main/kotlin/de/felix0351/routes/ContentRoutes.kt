@@ -165,7 +165,7 @@ fun Route.report() = with { contentRepo ->
                     if(image != null) {
                         val path = FileHandler.createPathForContentFile(id, Collections.REPORTS)
 
-                        contentRepo.addReport(body)
+                        contentRepo.addReport(body.copy(picture = path))
                         FileHandler.savePicture(image, path)
                     } else {
                         contentRepo.addReport(body)
