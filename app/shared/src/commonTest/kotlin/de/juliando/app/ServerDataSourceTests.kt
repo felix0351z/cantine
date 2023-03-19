@@ -1,41 +1,23 @@
 package de.juliando.app
 
+import de.juliando.app.data.createHttpClient
 import io.ktor.client.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.cookies.*
-import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
 
 const val SERVER_TEST_URL = "https://185.215.180.245"
 
-
-
-expect fun httpClient(config: HttpClientConfig<*>.() -> Unit): HttpClient
-
+/**
+ * Creates a test module with the normal pre configured httpclient
+ */
 fun testModule(func: suspend (client: HttpClient) -> Unit) = runBlocking {
-    val client = httpClient {
-        install(HttpCookies)
-        install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-            })
-        }
-
-    }
-
-    func(client)
+    func(createHttpClient())
 }
 
-inline fun<reified T> HttpRequestBuilder.setJson(body: T) {
-    contentType(ContentType.Application.Json)
-    setBody(body)
-}
-
+/**
+ * Test method for a login
+ */
 suspend fun HttpClient.login(username: String, password: String) = submitForm(
     url = "$SERVER_TEST_URL/login",
     formParameters = Parameters.build {
@@ -43,7 +25,5 @@ suspend fun HttpClient.login(username: String, password: String) = submitForm(
         append("password", password)
     }
 )
-
-suspend fun HttpClient.logout() = get("/logout")
 
 
