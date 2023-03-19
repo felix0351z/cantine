@@ -93,7 +93,7 @@ class AuthenticationTests {
             user = testUser
         )
 
-        val response = it.post("/user") {
+        val response = it.post("/api/user") {
             https()
             json(request)
         }
@@ -106,7 +106,7 @@ class AuthenticationTests {
     fun testGetUsers() = testModule {
         it.login()
 
-        val list: List<Auth.PublicUser> = it.get("/users") {
+        val list: List<Auth.PublicUser> = it.get("/api/users") {
             https()
         }.body()
 
@@ -118,7 +118,7 @@ class AuthenticationTests {
     fun testGetAccount() = testModule {
         it.login()
 
-        val self: Auth.PublicUser = it.get("/account") {
+        val self: Auth.PublicUser = it.get("/api/account") {
             https()
         }.body()
 
@@ -130,7 +130,7 @@ class AuthenticationTests {
     fun testGetUser() = testModule {
         it.login()
 
-        val user: Auth.PublicUser = it.get("/user") {
+        val user: Auth.PublicUser = it.get("/api/user") {
             https()
             json(testUser.username)
         }.body()
@@ -149,7 +149,7 @@ class AuthenticationTests {
             password = testUser.password!!,
             newPassword = newPassword
         )
-        val response =it.post("/account/password") {
+        val response =it.post("/api/account/password") {
             https()
             json(request)
         }
@@ -169,7 +169,7 @@ class AuthenticationTests {
             "Günter Hans"
         )
 
-        val response = it.post("/user/name") {
+        val response = it.post("/api/user/name") {
             https()
             json(request)
         }
@@ -188,7 +188,7 @@ class AuthenticationTests {
             "123456passwort"
         )
 
-        val response = it.post("/user/password") {
+        val response = it.post("/api/user/password") {
             https()
             json(request)
         }
@@ -207,7 +207,7 @@ class AuthenticationTests {
             Auth.PermissionLevel.WORKER
         )
 
-        val response = it.post("/user/permission") {
+        val response = it.post("/api/user/permission") {
             https()
             json(request)
         }
@@ -225,7 +225,7 @@ class AuthenticationTests {
             testUser.username
         )
 
-        val response = it.delete("/user") {
+        val response = it.delete("/api/user") {
             https()
             json(request)
         }

@@ -45,7 +45,7 @@ class ContentRoutesTest {
         val meal = Json.encodeToString(exampleMeal)
 
         val millis = measureTimeMillis {
-            val id = it.post("/content/meal") {
+            val id = it.post("/api/content/meal") {
                 setBody(MultiPartFormDataContent(
                     parts = formData {
                         append("image", File(testImage).readBytes(), Headers.build {
@@ -76,7 +76,7 @@ class ContentRoutesTest {
     fun testGetImage() = testModule {
         it.login()
 
-        val response = it.get("/content/image/MEALS/$mealID") {
+        val response = it.get("/api/content/image/MEALS/$mealID") {
             https()
         }
 
@@ -94,7 +94,7 @@ class ContentRoutesTest {
         it.login()
 
         val millis = measureTimeMillis {
-            val meals: List<Meal> = it.get("/content/meals") {
+            val meals: List<Meal> = it.get("/api/content/meals") {
                 https()
             }.body()
 
@@ -109,7 +109,7 @@ class ContentRoutesTest {
         it.login()
         val body = Json.encodeToString(exampleMeal.copy(id = mealID, price = 100F))
 
-        val response = it.put("/content/meal") {
+        val response = it.put("/api/content/meal") {
             setBody(MultiPartFormDataContent(
                 parts = formData {
                     append(FormPart("json", body, Headers.build {
@@ -128,7 +128,7 @@ class ContentRoutesTest {
     fun testGetMeal() = testModule {
         it.login()
 
-        val meal: Meal = it.get("/content/meal") {
+        val meal: Meal = it.get("/api/content/meal") {
             https()
             json(mealID)
         }.body()
@@ -142,7 +142,7 @@ class ContentRoutesTest {
     fun testDeleteMeal() = testModule {
         it.login()
 
-        val response = it.delete("/content/meal") {
+        val response = it.delete("/api/content/meal") {
             https()
             json(mealID)
         }
@@ -159,7 +159,7 @@ class ContentRoutesTest {
 
         val report = Json.encodeToString(exampleReport)
 
-        val id = it.post("/content/report") {
+        val id = it.post("/api/content/report") {
             setBody(MultiPartFormDataContent(
                 parts = formData {
                     append("image", File(testImage).readBytes(), Headers.build {
@@ -184,7 +184,7 @@ class ContentRoutesTest {
     fun testGetReports() = testModule {
         it.login()
 
-        val reports: List<Report> = it.get("/content/reports") {
+        val reports: List<Report> = it.get("/api/content/reports") {
             https()
         }.body()
 
@@ -198,7 +198,7 @@ class ContentRoutesTest {
 
         val report = Json.encodeToString(exampleReport.copy(id = reportID, description = "Nichts wichtiges"))
 
-        val response = it.put("/content/report") {
+        val response = it.put("/api/content/report") {
 
             setBody(MultiPartFormDataContent(
                 parts = formData {
@@ -219,7 +219,7 @@ class ContentRoutesTest {
     fun testGetReport() = testModule {
         it.login()
 
-        val report: Report = it.get("/content/report") {
+        val report: Report = it.get("/api/content/report") {
             https()
             json(reportID)
         }.body()
@@ -232,7 +232,7 @@ class ContentRoutesTest {
     fun testDeleteReport() = testModule {
         it.login()
 
-        val response = it.delete("/content/report") {
+        val response = it.delete("/api/content/report") {
             https()
             json(reportID)
         }
@@ -247,7 +247,7 @@ class ContentRoutesTest {
         it.login()
 
         val category = Content.Category(name = categoryName)
-        val response = it.post("/content/category") {
+        val response = it.post("/api/content/category") {
             https()
             json(category)
         }
@@ -260,7 +260,7 @@ class ContentRoutesTest {
     fun getCategories() = testModule {
         it.login()
 
-        val list: List<Content.Category> = it.get("/content/categories") {
+        val list: List<Content.Category> = it.get("/api/content/categories") {
             https()
         }.body()
 
@@ -272,7 +272,7 @@ class ContentRoutesTest {
     fun deleteCategory() = testModule {
         it.login()
 
-        val response = it.delete("/content/category") {
+        val response = it.delete("/api/content/category") {
             https()
             json(categoryName)
         }
@@ -303,7 +303,7 @@ class ContentRoutesTest {
             )
         )
 
-        val response = it.post("/content/selection") {
+        val response = it.post("/api/content/selection") {
             https()
             json(category)
         }
@@ -316,7 +316,7 @@ class ContentRoutesTest {
     fun getSelections() = testModule {
         it.login()
 
-        val list: List<Content.SelectionGroup> = it.get("/content/selections") {
+        val list: List<Content.SelectionGroup> = it.get("/api/content/selections") {
             https()
         }.body()
 
@@ -328,7 +328,7 @@ class ContentRoutesTest {
     fun deleteSelection() = testModule {
         it.login()
 
-        val response = it.delete("/content/selection") {
+        val response = it.delete("/api/content/selection") {
             https()
             json(selectionName)
         }

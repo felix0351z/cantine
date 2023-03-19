@@ -146,18 +146,15 @@ fun Route.purchase() = with { service ->
 
 }
 
-fun Application.paymentRoutes() {
-    routing {
-
-        // All payment routes needs an active user session
-        authenticate("session") {
-            route("/payment") {
-                credit()
-                orders()
-                order()
-                purchases()
-                purchase()
-            }
+fun Route.paymentRoutes() {
+    // All payment routes needs an active user session
+    authenticate("session") {
+        route("/payment") {
+            credit()
+            orders()
+            order()
+            purchases()
+            purchase()
         }
     }
 }

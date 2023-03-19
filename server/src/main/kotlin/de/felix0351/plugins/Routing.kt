@@ -15,6 +15,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.request.ContentTransformationException
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -23,6 +24,8 @@ import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
 import org.slf4j.event.*
 import kotlin.reflect.typeOf
+
+const val BASE_ROUTE = "/api"
 
 fun Application.configureRouting() {
     install(XForwardedHeaders)
@@ -141,9 +144,20 @@ fun Application.configureRouting() {
 
     }
 
-    authenticationRoutes()
-    contentRoutes()
-    paymentRoutes()
+    routing {
+        get("/") {
+            call.respond(HttpStatusCode.OK, "Cantine Server is running")
+        }
+
+        route(BASE_ROUTE) {
+
+            authenticationRoutes()
+            contentRoutes()
+            paymentRoutes()
+
+        }
+
+    }
 
 }
 

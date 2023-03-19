@@ -327,25 +327,21 @@ fun Route.image() {
 
 
 
-fun Application.contentRoutes() {
-    routing {
-
-        // All content routes need a active user session
-        authenticate("session") {
-            route("/content") {
-                meals()
-                meal()
-                reports()
-                report()
-                categories()
-                category()
-                selections()
-                selection()
-                image()
-            }
+fun Route.contentRoutes() {
+    // All content routes need a active user session
+    authenticate("session") {
+        route("/content") {
+            meals()
+            meal()
+            reports()
+            report()
+            categories()
+            category()
+            selections()
+            selection()
+            image()
         }
-
-
-
     }
+
+
 }

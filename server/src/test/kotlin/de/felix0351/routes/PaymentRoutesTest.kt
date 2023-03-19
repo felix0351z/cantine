@@ -34,7 +34,7 @@ class PaymentRoutesTest {
             credit = 20F
         )
 
-        val response = it.post("/payment/credit") {
+        val response = it.post("/api/payment/credit") {
             https()
             json(request)
         }
@@ -47,7 +47,7 @@ class PaymentRoutesTest {
     fun testGetCredit() = testModule {
         it.login()
 
-        val response = it.get("/payment/credit") {
+        val response = it.get("/api/payment/credit") {
             https()
         }
 
@@ -61,7 +61,7 @@ class PaymentRoutesTest {
     fun testGetOrders() = testModule {
         it.login()
 
-        val response = it.get("/payment/orders") {
+        val response = it.get("/api/payment/orders") {
             https()
         }
 
@@ -74,7 +74,7 @@ class PaymentRoutesTest {
     fun testAddOrder() = testModule {
         it.login()
 
-        val meals: List<Meal> = it.get("/content/meals") {
+        val meals: List<Meal> = it.get("/api/content/meals") {
             https()
         }.body()
 
@@ -86,7 +86,7 @@ class PaymentRoutesTest {
             ))
         )
 
-        val response = it.post("/payment/order") {
+        val response = it.post("/api/payment/order") {
             https()
             json(request)
         }
@@ -105,7 +105,7 @@ class PaymentRoutesTest {
             orderId = orderID
         )
 
-        val response = it.post("/payment/purchase") {
+        val response = it.post("/api/payment/purchase") {
             https()
             json(request)
         }
@@ -118,7 +118,7 @@ class PaymentRoutesTest {
     fun testDeleteOrder() = testModule {
         it.login()
 
-        val response = it.delete("/payment/order") {
+        val response = it.delete("/api/payment/order") {
             https()
             json(orderID)
         }
@@ -134,7 +134,7 @@ class PaymentRoutesTest {
     fun testGetPurchases() = testModule {
         it.login()
 
-        val response = it.get("/payment/purchases") {
+        val response = it.get("/api/payment/purchases") {
             https()
         }
 
@@ -147,7 +147,7 @@ class PaymentRoutesTest {
     fun testCleanPurchases() = testModule {
         it.login()
 
-        val response = it.delete("/payment/purchases") {
+        val response = it.delete("/api/payment/purchases") {
             https()
         }
 
