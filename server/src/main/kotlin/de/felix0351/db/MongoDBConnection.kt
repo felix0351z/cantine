@@ -14,6 +14,7 @@ import org.litote.kmongo.reactivestreams.KMongo
 
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
+import org.koin.mp.KoinPlatformTimeTools
 import org.litote.kmongo.coroutine.*
 import kotlin.jvm.Throws
 
@@ -26,7 +27,7 @@ import kotlin.jvm.Throws
 class MongoDBConnection {
 
     private val client: CoroutineClient
-    private val log = getLogger()
+    val log = getLogger()
 
     val database: CoroutineDatabase
 
@@ -35,13 +36,12 @@ class MongoDBConnection {
             val config = FileHandler.configuration.database
 
             client = KMongo.createClient(buildSettingsObject(config)).coroutine
-
             database = client.getDatabase(config.database)
             //Check for a successful connection
             runBlocking {
                 database.runCommand<Unit>("{ping: 1}", ReadPreference.nearest())
             }
-
+            log.info("Successfully connected to the database")
         } catch (ex: MongoException) {
             // If something goes wrong while connecting to the database the server can't start
 
@@ -121,8 +121,11 @@ class MongoDBConnection {
     suspend fun<T> callWithTransaction(fn: suspend (db: CoroutineDatabase) -> T): T {
         return client.startSession().use {
             it.startTransaction()
-
+            val start = KoinPlatformTimeTools.getTimeInNanoSeconds()
             val value = callToDatabase { database -> fn(database) }
+            val end = KoinPlatformTimeTools.getTimeInNanoSeconds()
+
+            log.debug("Transaction call processed in ${(end-start)/1_000_000}ms")
 
             it.commitTransactionAndAwait()
 
@@ -160,7 +163,12 @@ class MongoDBConnection {
     inline fun<T, reified U: Any> callToCollection(collection: Collections, fn: (col: CoroutineCollection<U>) -> T): T {
         return callToDatabase {
             val col = it.getCollection<U>(collection.name)
-            fn(col)
+
+            val start = KoinPlatformTimeTools.getTimeInNanoSeconds()
+            val value = fn(col)
+            val end = KoinPlatformTimeTools.getTimeInNanoSeconds()
+            log.debug("Collection call processed in ${(end-start)/1_000_000}ms")
+            value
         }
     }
 

@@ -14,6 +14,7 @@ plugins {
 tasks.test {
     // Use Junit5 for tests
     useJUnitPlatform()
+    workingDir("/test")
 }
 
 application {
@@ -62,6 +63,8 @@ dependencies {
     //Serialization with KotlinX
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+
+    implementation("io.ktor:ktor-server-partial-content-jvm:$ktor_version")
 
     // KAML for yaml config serialization
     val kaml_version = "0.49.0"

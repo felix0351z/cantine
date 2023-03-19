@@ -37,6 +37,7 @@ enum class ErrorCode(val code: Int) {
     WrongPassword(7),
     NoPassword(8),
     Unauthorized(9),
-    NotEnoughMoney(10)
+    NotEnoughMoney(10),
+    FileIOException(11)
 
 }

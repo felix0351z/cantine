@@ -8,6 +8,7 @@ sealed class DatabaseException: RuntimeException() {
 
 }
 
+class FileIOException: RuntimeException()
 class IllegalIdException: RuntimeException()
 class NoPasswordException: RuntimeException()
 class WrongPasswordException: RuntimeException()

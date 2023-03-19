@@ -17,8 +17,8 @@ import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 
 
-const val EXAMPLE_USERNAME = "felix0351"
-const val EXAMPLE_PASSWORD = "Pommes"
+const val EXAMPLE_USERNAME = "admin"
+const val EXAMPLE_PASSWORD = "admin"
 
 /*
 Simulate a normal server start
@@ -73,7 +73,7 @@ inline fun<reified T> HttpRequestBuilder.json(body: T) {
 Simulate login
  */
 suspend fun HttpClient.login(username: String = EXAMPLE_USERNAME, password: String = EXAMPLE_PASSWORD) = submitForm(
-    url = "/login",
+    url = "/api/login",
     formParameters = Parameters.build {
         append("username", username)
         append("password", password)
@@ -85,7 +85,7 @@ suspend fun HttpClient.login(username: String = EXAMPLE_USERNAME, password: Stri
 /*
 Simulate logout
  */
-suspend fun HttpClient.logout() = get("/logout") {
+suspend fun HttpClient.logout() = get("/api/logout") {
     https()
 }
 

@@ -1,13 +1,17 @@
 package de.felix0351.routes
 
 import de.felix0351.models.objects.Auth
+import de.felix0351.models.objects.Collections
 import de.felix0351.models.objects.Content
 import de.felix0351.plugins.asBsonObjectId
+import de.felix0351.plugins.receiveRequestWithImage
 import de.felix0351.plugins.withRole
 import de.felix0351.repository.ContentRepository
+import de.felix0351.utils.FileHandler
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -35,8 +39,7 @@ fun Route.meals() = with { contentRepo ->
 
 /**
  * Create/Get/Delete/Edit one specific meal
- * POST/PUT /content/meal
- * GET/DELETE/ /content/meal/<id>
+ * GET/POST/PUT/DELETE /content/meal
  *
  */
 fun Route.meal() = with { contentRepo ->
@@ -57,12 +60,22 @@ fun Route.meal() = with { contentRepo ->
         post {
             //Worker Permission is needed
             withRole(Auth.PermissionLevel.WORKER) {
-                val meal = call.receive<Content.Meal>()
-                contentRepo.addMeal(meal)
+                receiveRequestWithImage<Content.Meal> { body, image ->
+                    val id = body.id.toString()
 
-                call.respond(HttpStatusCode.OK, meal.id.toString())
+                    if (image != null) { // Image was provided
+                        val path = FileHandler.createPathForContentFile(id, Collections.MEALS)
+
+                        contentRepo.addMeal(body.copy(picture = path))
+                        FileHandler.savePicture(image, path)
+                    } else { // Only add the body content
+
+                        contentRepo.addMeal(body)
+                    }
+
+                    call.respond(HttpStatusCode.OK, id)
+                }
             }
-
 
         }
 
@@ -70,8 +83,18 @@ fun Route.meal() = with { contentRepo ->
         put {
             //Worker Permission is needed
             withRole(Auth.PermissionLevel.WORKER) {
-                val meal = call.receive<Content.Meal>()
-                contentRepo.updateMeal(meal)
+                receiveRequestWithImage<Content.Meal> { body, image ->
+
+                    if (image != null) {
+                        val path = FileHandler.createPathForContentFile(body.id.toString(), Collections.MEALS)
+
+                        contentRepo.updateMeal(body)
+                        FileHandler.updatePicture(image, path)
+                    } else { // Only add the body content
+                        contentRepo.updateMeal(body)
+                    }
+
+                }
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -83,6 +106,9 @@ fun Route.meal() = with { contentRepo ->
             withRole(Auth.PermissionLevel.WORKER) {
                 val id = call.receive<String>()
                 contentRepo.deleteMeal(id.asBsonObjectId())
+
+                // Delete the image if one exists.
+                FileHandler.deleteContentFile(FileHandler.createPathForContentFile(id, Collections.MEALS))
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -112,8 +138,8 @@ fun Route.reports() = with { contentRepo ->
 
 /**
  * Create/Get/Delete/Edit one specific meal
- * POST /content/report
- * GET/DELETE/PUT /content/report/<id>
+ * GET/POST/PUT/DELETE /content/report
+
  *
  */
 fun Route.report() = with { contentRepo ->
@@ -133,11 +159,20 @@ fun Route.report() = with { contentRepo ->
             //Worker permission is needed
             withRole(Auth.PermissionLevel.WORKER) {
 
-                val report = call.receive<Content.Report>()
-                contentRepo.addReport(report)
+                receiveRequestWithImage<Content.Report> { body, image ->
+                    val id = body.id.toString()
 
-                call.respond(HttpStatusCode.OK, report.id.toString())
+                    if(image != null) {
+                        val path = FileHandler.createPathForContentFile(id, Collections.REPORTS)
 
+                        contentRepo.addReport(body.copy(picture = path))
+                        FileHandler.savePicture(image, path)
+                    } else {
+                        contentRepo.addReport(body)
+                    }
+
+                    call.respond(HttpStatusCode.OK, id)
+                }
             }
         }
 
@@ -145,9 +180,18 @@ fun Route.report() = with { contentRepo ->
         put {
             //Worker permission is needed
             withRole(Auth.PermissionLevel.WORKER) {
+                receiveRequestWithImage<Content.Report> { body, image ->
 
-                val report = call.receive<Content.Report>()
-                contentRepo.updateReport(report)
+                    if (image != null) {
+                        val path = FileHandler.createPathForContentFile(body.id.toString(), Collections.REPORTS)
+
+                        contentRepo.updateReport(body)
+                        FileHandler.updatePicture(image, path)
+                    } else {
+                        contentRepo.updateReport(body)
+                    }
+
+                }
 
                 call.respond(HttpStatusCode.OK)
             }
@@ -156,11 +200,13 @@ fun Route.report() = with { contentRepo ->
         // Delete the report
         delete {
 
-            val id = call.receive<String>()
             // Worker permission needed
             withRole(Auth.PermissionLevel.WORKER) {
+                val id = call.receive<String>()
 
                 contentRepo.deleteReport(id.asBsonObjectId())
+                // Delete the image if one exists.
+                FileHandler.deleteContentFile(FileHandler.createPathForContentFile(id, Collections.REPORTS))
                 call.respond(HttpStatusCode.OK)
             }
 
@@ -258,26 +304,44 @@ fun Route.selection() = with { repo ->
     }
 }
 
+fun Route.image() {
+     get("/image/{dir}/{id}") {
+        val ex = BadRequestException("Wrong content path")
 
+        val dir = call.parameters["dir"] ?: throw ex
+        val id = call.parameters["id"] ?: throw ex
+        val file = FileHandler.getContentFile(dir, id)
 
-fun Application.contentRoutes() {
-    routing {
+        if (!file.exists()) throw BadRequestException("Wrong content path")
 
-        // All content routes need a active user session
-        authenticate("session") {
-            route("/content") {
-                meals()
-                meal()
-                reports()
-                report()
-                categories()
-                category()
-                selections()
-                selection()
-            }
-        }
-
-
-
+        call.response.header(
+            name = HttpHeaders.ContentDisposition,
+            value = ContentDisposition.Attachment
+                .withParameter(ContentDisposition.Parameters.FileName, file.name)
+                .toString()
+        )
+        call.respondFile(file)
     }
+
+}
+
+
+
+fun Route.contentRoutes() {
+    // All content routes need a active user session
+    authenticate("session") {
+        route("/content") {
+            meals()
+            meal()
+            reports()
+            report()
+            categories()
+            category()
+            selections()
+            selection()
+            image()
+        }
+    }
+
+
 }

@@ -1,29 +1,31 @@
 package de.felix0351.routes
 
+
 import de.felix0351.https
 import de.felix0351.json
 import de.felix0351.login
 import de.felix0351.models.objects.Content
-import de.felix0351.objects.Meal
-import de.felix0351.objects.Report
-import de.felix0351.objects.exampleMeal
-import de.felix0351.objects.exampleReport
+import de.felix0351.objects.*
 import de.felix0351.testModule
+import de.felix0351.utils.getLogger
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
+import io.ktor.client.utils.*
 import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.TestMethodOrder
-import kotlin.test.Test
-
-
+import java.io.File
 import kotlin.system.measureTimeMillis
+import kotlin.test.Test
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class ContentRoutesTest {
@@ -41,13 +43,27 @@ class ContentRoutesTest {
     fun testAddMeal() = testModule {
         it.login()
         val meal = Json.encodeToString(exampleMeal)
-        println(meal)
 
         val millis = measureTimeMillis {
-            val id = it.post("/content/meal") {
+            val id = it.post("/api/content/meal") {
+                setBody(MultiPartFormDataContent(
+                    parts = formData {
+                        append("image", File(testImage).readBytes(), Headers.build {
+                            append(HttpHeaders.ContentType, "image/jpeg")
+                            append(HttpHeaders.ContentDisposition, "filename=\"test-file.jpg\"")
+                        })
+                        append(FormPart("json", meal, Headers.build {
+                            append(HttpHeaders.ContentType, "application/json")
+                        }))
+                    }
+                ))
                 https()
-                json(exampleMeal)
+                onUpload { bytesSentTotal, contentLength ->
+                    getLogger().info("Sent $bytesSentTotal baytes from $contentLength")
+                }
+
             }.bodyAsText()
+
             println(id)
             mealID = id
         }
@@ -57,11 +73,28 @@ class ContentRoutesTest {
 
     @Test
     @Order(2)
+    fun testGetImage() = testModule {
+        it.login()
+
+        val response = it.get("/api/content/image/MEALS/$mealID") {
+            https()
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        withContext(Dispatchers.IO) {
+            val file =File("testImage.jpg")
+            file.createNewFile()
+            file.writeBytes(response.readBytes())
+        }
+    }
+
+    @Test
+    @Order(3)
     fun testGetMeals() = testModule {
         it.login()
 
         val millis = measureTimeMillis {
-            val meals: List<Meal> = it.get("/content/meals") {
+            val meals: List<Meal> = it.get("/api/content/meals") {
                 https()
             }.body()
 
@@ -71,24 +104,31 @@ class ContentRoutesTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     fun testUpdateMeal() = testModule {
         it.login()
+        val body = Json.encodeToString(exampleMeal.copy(id = mealID, price = 100F))
 
-        val response = it.put("/content/meal") {
+        val response = it.put("/api/content/meal") {
+            setBody(MultiPartFormDataContent(
+                parts = formData {
+                    append(FormPart("json", body, Headers.build {
+                        append(HttpHeaders.ContentType, "application/json")
+                    }))
+                }
+            ))
             https()
-            json(exampleMeal.copy(id = mealID, price = 100F))
         }
 
         assertEquals( HttpStatusCode.OK, response.status)
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     fun testGetMeal() = testModule {
         it.login()
 
-        val meal: Meal = it.get("/content/meal") {
+        val meal: Meal = it.get("/api/content/meal") {
             https()
             json(mealID)
         }.body()
@@ -98,11 +138,11 @@ class ContentRoutesTest {
 
 
     @Test
-    @Order(5)
+    @Order(6)
     fun testDeleteMeal() = testModule {
         it.login()
 
-        val response = it.delete("/content/meal") {
+        val response = it.delete("/api/content/meal") {
             https()
             json(mealID)
         }
@@ -113,13 +153,25 @@ class ContentRoutesTest {
     //Reports
 
     @Test
-    @Order(6)
+    @Order(7)
     fun testAddReport() = testModule {
         it.login()
 
-        val id = it.post("/content/report") {
+        val report = Json.encodeToString(exampleReport)
+
+        val id = it.post("/api/content/report") {
+            setBody(MultiPartFormDataContent(
+                parts = formData {
+                    append("image", File(testImage).readBytes(), Headers.build {
+                        append(HttpHeaders.ContentType, "image/jpeg")
+                        append(HttpHeaders.ContentDisposition, "filename=\"test-file.jpg\"")
+                    })
+                    append(FormPart("json", report, Headers.build {
+                        append(HttpHeaders.ContentType, "application/json")
+                    }))
+                }
+            ))
             https()
-            json(exampleReport)
         }.bodyAsText()
 
         println(id)
@@ -128,11 +180,11 @@ class ContentRoutesTest {
 
 
     @Test
-    @Order(7)
+    @Order(8)
     fun testGetReports() = testModule {
         it.login()
 
-        val reports: List<Report> = it.get("/content/reports") {
+        val reports: List<Report> = it.get("/api/content/reports") {
             https()
         }.body()
 
@@ -140,24 +192,34 @@ class ContentRoutesTest {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     fun testUpdateReport() = testModule {
         it.login()
 
-        val response = it.put("/content/report") {
+        val report = Json.encodeToString(exampleReport.copy(id = reportID, description = "Nichts wichtiges"))
+
+        val response = it.put("/api/content/report") {
+
+            setBody(MultiPartFormDataContent(
+                parts = formData {
+                    append(FormPart("json", report, Headers.build {
+                        append(HttpHeaders.ContentType, "application/json")
+                    }))
+                }
+
+            ))
             https()
-            json(exampleReport.copy(id = reportID, description = "Nichts wichtiges"))
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     fun testGetReport() = testModule {
         it.login()
 
-        val report: Report = it.get("/content/report") {
+        val report: Report = it.get("/api/content/report") {
             https()
             json(reportID)
         }.body()
@@ -166,11 +228,11 @@ class ContentRoutesTest {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
     fun testDeleteReport() = testModule {
         it.login()
 
-        val response = it.delete("/content/report") {
+        val response = it.delete("/api/content/report") {
             https()
             json(reportID)
         }
@@ -180,12 +242,12 @@ class ContentRoutesTest {
 
 
     @Test
-    @Order(11)
+    @Order(12)
     fun addCategory() = testModule {
         it.login()
 
         val category = Content.Category(name = categoryName)
-        val response = it.post("/content/category") {
+        val response = it.post("/api/content/category") {
             https()
             json(category)
         }
@@ -194,11 +256,11 @@ class ContentRoutesTest {
     }
 
     @Test
-    @Order(12)
+    @Order(13)
     fun getCategories() = testModule {
         it.login()
 
-        val list: List<Content.Category> = it.get("/content/categories") {
+        val list: List<Content.Category> = it.get("/api/content/categories") {
             https()
         }.body()
 
@@ -206,11 +268,11 @@ class ContentRoutesTest {
     }
 
     @Test
-    @Order(13)
+    @Order(14)
     fun deleteCategory() = testModule {
         it.login()
 
-        val response = it.delete("/content/category") {
+        val response = it.delete("/api/content/category") {
             https()
             json(categoryName)
         }
@@ -219,7 +281,7 @@ class ContentRoutesTest {
     }
 
     @Test
-    @Order(14)
+    @Order(15)
     fun addSelection() = testModule {
         it.login()
 
@@ -241,7 +303,7 @@ class ContentRoutesTest {
             )
         )
 
-        val response = it.post("/content/selection") {
+        val response = it.post("/api/content/selection") {
             https()
             json(category)
         }
@@ -250,11 +312,11 @@ class ContentRoutesTest {
     }
 
     @Test
-    @Order(15)
+    @Order(16)
     fun getSelections() = testModule {
         it.login()
 
-        val list: List<Content.SelectionGroup> = it.get("/content/selections") {
+        val list: List<Content.SelectionGroup> = it.get("/api/content/selections") {
             https()
         }.body()
 
@@ -262,11 +324,11 @@ class ContentRoutesTest {
     }
 
     @Test
-    @Order(16)
+    @Order(17)
     fun deleteSelection() = testModule {
         it.login()
 
-        val response = it.delete("/content/selection") {
+        val response = it.delete("/api/content/selection") {
             https()
             json(selectionName)
         }

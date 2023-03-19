@@ -125,7 +125,7 @@ sealed class Content {
      * @property id Unique id of the report
      * @property title Title of the report
      * @property description Description of the report
-     * @property picture Path to the source of the file
+     * @property picture Path to the source of the file, will be null if none image is provided
      * @property creationTime Time, when the report was created
      *
      */
@@ -134,7 +134,7 @@ sealed class Content {
         @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Report>,
         val title: String,
         val description: String,
-        val picture: String,
+        val picture: String?,
         @Serializable(with = InstantSerializer::class) val creationTime: Instant
     )
 

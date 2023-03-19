@@ -80,7 +80,7 @@ class PaymentRepositoryMongoDB(
         val time = range ?: Instant.ofEpochSecond(0)
 
         // Only give the payments which are newer then the time date
-        it.find(Auth.Payment::creationTime gte time).toList()
+        it.find(Auth.Payment::creationTime gte time, Auth.User::username eq username).toList()
     }
 
     override suspend fun clearPayments(username: String): Unit = con.callToPaymentsCollection {

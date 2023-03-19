@@ -177,19 +177,14 @@ fun Route.user() = with { service ->
 
 
 
-fun Application.authenticationRoutes() {
-    routing {
-        get("/") {
-            call.respond(HttpStatusCode.OK, "Cantine Server is running")
-        }
+fun Route.authenticationRoutes() {
+    login()
+    logout()
 
-        login()
-        logout()
-
-        authenticate("session") {
-            account()
-            users()
-            user()
-        }
+    authenticate("session") {
+        account()
+        users()
+        user()
     }
+
 }
