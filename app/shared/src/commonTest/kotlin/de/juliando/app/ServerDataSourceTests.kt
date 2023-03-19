@@ -6,7 +6,7 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 
-const val SERVER_TEST_URL = "https://185.215.180.245"
+const val SERVER_TEST_URL = "https://185.215.180.245/api"
 
 /**
  * Creates a test module with the normal pre configured httpclient
