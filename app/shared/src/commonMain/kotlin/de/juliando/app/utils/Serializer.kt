@@ -42,20 +42,25 @@ object InstantSerializer : KSerializer<Instant> {
  * Pictures can now be directly loaded via the picture attribute.
  *
  */
-object PictureSerializer : KSerializer<String> {
+object PictureSerializer : KSerializer<String?> {
 
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
         serialName = "Picture",
         kind = PrimitiveKind.STRING
     )
 
-    override fun deserialize(decoder: Decoder): String {
-        val id = decoder.decodeString()
-        return "${LocalDataStore.url}/$id"
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun deserialize(decoder: Decoder): String? {
+        val id = decoder.decodeNullableSerializableValue(String.serializer().nullable) ?: return null
+        return "${LocalDataStore.url}/content/image/$id"
     }
 
-    override fun serialize(encoder: Encoder, value: String) {
-        encoder.encodeString(value.removePrefix(LocalDataStore.url))
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun serialize(encoder: Encoder, value: String?) {
+        val id = value?.removePrefix("${LocalDataStore.url}/content/image/")
+
+        if (id == null) encoder.encodeNull()
+        else encoder.encodeString(id)
     }
 
 }

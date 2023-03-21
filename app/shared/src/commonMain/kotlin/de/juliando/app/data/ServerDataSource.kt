@@ -136,6 +136,18 @@ class ServerDataSource(
         checkStatusCode(response)
     }
 
+
+
+
+    suspend fun loadImage(route: String) : ByteArray {
+        val response = httpClient.get(route) {
+            setAuthenticationCookie()
+        }
+        checkStatusCode(response)
+
+        return response.readBytes()
+    }
+
     /**
      * Checks which Status code
      *

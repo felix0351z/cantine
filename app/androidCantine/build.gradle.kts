@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("kapt")
 }
 
 android {
@@ -62,6 +63,8 @@ dependencies {
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
+    kapt("com.github.bumptech.glide:compiler:4.15.0")
+    kapt("android.arch.lifecycle:compiler:1.1.1")
 
     // Koin for dependency injection
     val koin = "3.2.0"

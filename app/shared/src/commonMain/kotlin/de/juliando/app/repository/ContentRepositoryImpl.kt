@@ -26,6 +26,11 @@ class ContentRepositoryImpl(
         }
     }
 
+
+    override suspend fun loadPicture(model: String): ByteArray {
+        return server.loadImage(model)
+    }
+
     override suspend fun getMeal(id: String): Content.Meal {
         return server.get("/content/meal", id)
     }

@@ -1,6 +1,7 @@
 package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
+import io.ktor.utils.io.*
 
 /**
  * This repository handles the content data.
@@ -49,4 +50,5 @@ interface ContentRepository {
     @Throws(Exception::class)
     suspend fun deleteSelection(selectionGroupName: String)
 
+    suspend fun loadPicture(model: String): ByteArray
 }
