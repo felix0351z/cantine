@@ -1,4 +1,4 @@
-package de.juliando.app.android
+package de.juliando.app.android.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -65,7 +65,7 @@ fun CantineApplicationTheme(
         ),
         headlineSmall = TextStyle(
             fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Bold,
             fontSize = 18.sp
         ),
 

@@ -2,11 +2,9 @@ package de.juliando.app.android.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-
 import de.juliando.app.android.ui.utils.DataState
 import de.juliando.app.repository.AuthenticationRepository
 import de.juliando.app.repository.ContentRepository
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,8 +31,8 @@ class HomeViewModel(
                     val reports = contentRepository.getReports()
                     _reports.value = DataState.Success(reports)
                 } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    //TODO
+                    _reports.value = DataState.Error(ex)
+                    //TODO: Handle errors which are able to
                 }
             }
             // Load meals
@@ -43,16 +41,12 @@ class HomeViewModel(
                     val meals = contentRepository.getMeals()
                     _meals.value = DataState.Success(meals)
                 } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    //TODO
+                    _meals.value = DataState.Error(ex)
+                    //TODO: Handle errors which are able to
                 }
             }
 
         }
     }
-
-
-
-
 
 }

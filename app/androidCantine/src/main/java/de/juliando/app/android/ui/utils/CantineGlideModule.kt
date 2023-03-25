@@ -1,6 +1,7 @@
 package de.juliando.app.android.ui.utils
 
 import android.content.Context
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.Priority
@@ -9,10 +10,12 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.data.DataFetcher
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoaderFactory
 import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import com.bumptech.glide.module.AppGlideModule
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import de.juliando.app.data.LocalDataStore
 import de.juliando.app.repository.ContentRepository
@@ -25,6 +28,9 @@ import java.nio.ByteBuffer
 class CantineGlideModule : AppGlideModule() {
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
+        val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL) // Save all images in the cache
+        builder.setDefaultRequestOptions(requestOptions)
+
         super.applyOptions(context, builder)
     }
 
@@ -43,7 +49,10 @@ class CantineGlideModule : AppGlideModule() {
 
     class KtorModelLoader : ModelLoader<String, ByteBuffer>, KoinComponent {
 
+        private val TAG = "GlideModule-KtorModelLoader"
+
         override fun buildLoadData(model: String, width: Int, height: Int, options: Options): ModelLoader.LoadData<ByteBuffer> {
+            Log.d(TAG, "Load model with the id $model")
             // Set unique identifier to hold the data in cache
             val diskCacheKey = ObjectKey(model)
             val repo by inject<ContentRepository>()
@@ -66,25 +75,29 @@ class CantineGlideModule : AppGlideModule() {
 
     class KtorDataFetcher(private val model: String, private val contentRepository: ContentRepository) : DataFetcher<ByteBuffer> {
 
+        private val TAG = "GlideModule-KtorDataFetcher"
 
         override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in ByteBuffer>) {
 
             // Load the image via ktor. If the coroutine will be cancelled the return value will be a failed data callback
-            try {
-                 return runBlocking {
+            return try {
+                Log.d(TAG, "Try to fetch model with the id $model")
+                runBlocking {
                     val bytes = contentRepository.loadPicture(model)
                     val buffer = ByteBuffer.wrap(bytes)
-                     callback.onDataReady(buffer)
+                    callback.onDataReady(buffer)
                 }
             } catch (ex: Exception) {
-                return callback.onLoadFailed(ex)
+                Log.e(TAG, "Error occurred while fetching the model $model", ex)
+                callback.onLoadFailed(ex)
             }
 
         }
 
-        override fun cleanup() {}
+        override fun cleanup() {} // Empty because there is nothing to clean up.
 
-        override fun cancel() {}
+        //TODO: Try to handle a possible timeout. Also needed in the ServerDataSource class.
+        override fun cancel() {} // Not implemented now, because of the conflicts with coroutines and the java async pattern
 
         // Specify the response value
         override fun getDataClass(): Class<ByteBuffer> {
