@@ -1,8 +1,7 @@
 package de.juliando.app
 
 import de.juliando.app.models.objects.Content
-import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
@@ -11,35 +10,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Test
 import java.io.File
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.X509TrustManager
 import kotlin.test.assertEquals
 
-actual fun httpClient(config: HttpClientConfig<*>.() -> Unit) = HttpClient(OkHttp) {
-    engine {
-        config {
-            sslSocketFactory(getSslContext().socketFactory, TrustAllX509TrustManager())
-            hostnameVerifier { p0, p1 -> true }
-        }
-    }
-}
-
-fun getSslContext(): SSLContext {
-    val sslContext = SSLContext.getInstance("TLS")
-    sslContext.init(null, arrayOf(TrustAllX509TrustManager()), null)
-    return sslContext
-}
-
-class TrustAllX509TrustManager : X509TrustManager {
-    override fun getAcceptedIssuers(): Array<X509Certificate?> = emptyArray()
-    override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
-    override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
-}
-
-
 class ServerDataSourceTests {
-
 
     @Test
     fun testConnection() = testModule {
@@ -60,9 +33,11 @@ class ServerDataSourceTests {
     @Test
     fun testCookieAccess() = testModule {
         val cookie = it.login("admin", "admin").setCookie()[0]
+        val cookieInStr = renderCookieHeader(cookie)
+        val cookie2 = parseServerSetCookieHeader(cookieInStr)
 
         val response = it.get("$SERVER_TEST_URL/content/meals") {
-            headers.append(HttpHeaders.Cookie, renderCookieHeader(cookie))
+            headers.append(HttpHeaders.Cookie, renderCookieHeader(cookie2))
         }
 
         assertEquals(response.status, HttpStatusCode.OK)

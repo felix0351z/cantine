@@ -1,7 +1,7 @@
 package de.juliando.app.repository
 
-import de.juliando.app.data.LocalDataStoreImpl
-import de.juliando.app.data.ServerDataSourceImpl
+import de.juliando.app.data.LocalDataStore
+import de.juliando.app.data.ServerDataSource
 import de.juliando.app.data.StorageKeys
 import de.juliando.app.models.objects.Content
 
@@ -11,20 +11,24 @@ import de.juliando.app.models.objects.Content
  */
 
 class ContentRepositoryImpl(
-    private val server: ServerDataSourceImpl = ServerDataSourceImpl(),
-    private val cache: LocalDataStoreImpl = LocalDataStoreImpl()
+    private val server: ServerDataSource = ServerDataSource(),
 ) : ContentRepository {
 
     override suspend fun getMeals(): List<Content.Meal> {
         return try {
             // Try to get the Data from the Server
             val meals = server.getList<Content.Meal>("/content/meals")
-            cache.storeList(meals, StorageKeys.MEAL.key)
+            LocalDataStore.storeList(meals, StorageKeys.MEAL.key)
             meals
         } catch (e: Exception) {
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
-            cache.getList(StorageKeys.MEAL.key) ?: emptyList()
+            LocalDataStore.getList(StorageKeys.MEAL.key) ?: emptyList()
         }
+    }
+
+
+    override suspend fun loadPicture(model: String): ByteArray {
+        return server.loadImage(model)
     }
 
     override suspend fun getMeal(id: String): Content.Meal {
@@ -46,12 +50,13 @@ class ContentRepositoryImpl(
     override suspend fun getReports(): List<Content.Report> {
         return try {
             // Try to get the Data from the Server
-            val reports = server.getList<Content.Report>("/content/reports")
-            cache.storeList(reports, StorageKeys.REPORT.key)
+            val reports: List<Content.Report> = server.get("/content/reports")
+            LocalDataStore.storeList(reports, StorageKeys.REPORT.key)
             reports
         } catch (e: Exception) {
+            e.printStackTrace()
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
-            cache.getList(StorageKeys.REPORT.key) ?: emptyList()
+            LocalDataStore.getList(StorageKeys.REPORT.key) ?: emptyList()
         }
     }
 

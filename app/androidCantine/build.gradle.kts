@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("kapt")
 }
 
 android {
@@ -54,18 +55,25 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
     implementation("androidx.compose.foundation:foundation:$composeVersion")
+    // Compose Navigation
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+    // Lifecycle utilities for compose
+    val lifecycleVersion = "2.6.0"
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
+    kapt("com.github.bumptech.glide:compiler:4.15.0")
+    kapt("android.arch.lifecycle:compiler:1.1.1")
 
-
-    // Compose Navigation
-    implementation("androidx.navigation:navigation-compose:$navVersion")
+    // Koin for dependency injection
+    val koin = "3.2.0"
+    implementation("io.insert-koin:koin-android:$koin")
+    implementation("io.insert-koin:koin-androidx-compose:$koin")
 
     // Use Material UI 3
     implementation("androidx.compose.material3:material3:1.0.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
-
     // More material icons
     implementation("androidx.compose.material:material-icons-extended")
 

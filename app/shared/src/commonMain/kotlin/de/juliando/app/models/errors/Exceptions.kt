@@ -1,5 +1,8 @@
 package de.juliando.app.models.errors
 
+/**
+ * Exceptions which comes from the remote server
+ */
 sealed class HttpStatusException: RuntimeException() {
     class InternalDatabaseErrorException : HttpStatusException()
     class ContentTransformationErrorException : HttpStatusException()
@@ -13,4 +16,10 @@ sealed class HttpStatusException: RuntimeException() {
     class UnauthorizedException : HttpStatusException()
     class NotEnoughMoneyException : HttpStatusException()
 }
+
+/**
+ * Will be thrown if an request was executed, even if
+ * there is no active session for a user
+ */
+class NoSessionException(msg: String) : RuntimeException(msg)
 

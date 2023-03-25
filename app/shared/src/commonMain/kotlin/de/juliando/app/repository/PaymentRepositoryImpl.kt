@@ -1,7 +1,7 @@
 package de.juliando.app.repository
 
-import de.juliando.app.data.LocalDataStoreImpl
-import de.juliando.app.data.ServerDataSourceImpl
+import de.juliando.app.data.LocalDataStore
+import de.juliando.app.data.ServerDataSource
 import de.juliando.app.data.StorageKeys
 import de.juliando.app.models.objects.*
 
@@ -11,8 +11,7 @@ import de.juliando.app.models.objects.*
  */
 
 class PaymentRepositoryImpl(
-    private val server: ServerDataSourceImpl = ServerDataSourceImpl(),
-    private val cache: LocalDataStoreImpl = LocalDataStoreImpl()
+    private val server: ServerDataSource = ServerDataSource(),
 ) : PaymentRepository {
 
     override suspend fun getCredit(): Float {
@@ -23,11 +22,11 @@ class PaymentRepositoryImpl(
         return try {
             // Try to get the Data from the Server
             val orders = server.getList<Content.Order>("/payment/orders")
-            cache.storeList(orders, StorageKeys.ORDER.key)
+            LocalDataStore.storeList(orders, StorageKeys.ORDER.key)
             orders
         } catch (e: Exception) {
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
-            cache.getList(StorageKeys.ORDER.key) ?: emptyList()
+            LocalDataStore.getList(StorageKeys.ORDER.key) ?: emptyList()
         }
     }
 
@@ -47,11 +46,11 @@ class PaymentRepositoryImpl(
         return try {
             // Try to get the Data from the Server
             val purchases = server.getList<Auth.Payment>("/payment/purchases")
-            cache.storeList(purchases, StorageKeys.PAYMENT.key)
+            LocalDataStore.storeList(purchases, StorageKeys.PAYMENT.key)
             purchases
         } catch (e: Exception) {
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
-            cache.getList(StorageKeys.PAYMENT.key) ?: emptyList()
+            LocalDataStore.getList(StorageKeys.PAYMENT.key) ?: emptyList()
         }
     }
 

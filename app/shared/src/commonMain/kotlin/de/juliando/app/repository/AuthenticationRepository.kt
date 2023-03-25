@@ -1,12 +1,17 @@
 package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
-
 /**
  * This repository handles the authentication data.
  */
 
 interface AuthenticationRepository {
+
+    //Login/Logout
+    @Throws(Exception::class)
+    suspend fun login()
+    @Throws(Exception::class)
+    suspend fun logout()
 
     //Account
     @Throws(Exception::class)

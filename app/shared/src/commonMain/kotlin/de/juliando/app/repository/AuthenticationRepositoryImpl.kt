@@ -1,15 +1,18 @@
 package de.juliando.app.repository
 
-import de.juliando.app.data.ServerDataSourceImpl
+import de.juliando.app.data.ServerDataSource
 import de.juliando.app.models.objects.*
 
 /**
  * This repository handles the authentication data.
  */
-
+//TODO: Save username and password in local datastore
 class AuthenticationRepositoryImpl(
-    private val server: ServerDataSourceImpl = ServerDataSourceImpl(),
+    private val server: ServerDataSource = ServerDataSource(),
 ) : AuthenticationRepository {
+
+    override suspend fun login() = server.login("admin", "admin")
+    override suspend fun logout() = server.logout()
 
     override suspend fun getAccount(): Auth.User {
         return server.get("/account")

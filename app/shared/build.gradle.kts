@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    kotlin("plugin.serialization") version "1.8.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
 }
 
 kotlin {
@@ -31,6 +31,8 @@ kotlin {
 
     val ktorVersion = "2.2.3"
     val multiplatformSettings = "1.0.0"
+    val koin = "3.2.0"
+    val kotlinxTime = "0.4.0"
     sourceSets {
         // Neue Source-Set Namensgebung in Kotlin 1.8.0
         // https://kotlinlang.org/docs/whatsnew18.html#kotlinsourceset-naming-schema
@@ -48,8 +50,12 @@ kotlin {
 
                 implementation("com.russhwolf:multiplatform-settings-no-arg:$multiplatformSettings")
                 implementation("com.russhwolf:multiplatform-settings-serialization:$multiplatformSettings")
-                //Time
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
+                //Time utilities
+                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxTime")
+
+                // Dependency Injection with koin
+                api("io.insert-koin:koin-core:$koin")
             }
         }
 

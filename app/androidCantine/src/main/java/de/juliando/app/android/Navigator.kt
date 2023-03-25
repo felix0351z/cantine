@@ -22,6 +22,8 @@ import androidx.navigation.compose.rememberNavController
 import de.juliando.app.android.ui.home.HomeScreen
 import de.juliando.app.android.ui.orders.OrderScreen
 import de.juliando.app.android.ui.payment.PaymentScreen
+import de.juliando.app.android.ui.theme.CantineApplicationTheme
+import de.juliando.app.android.ui.theme.CantineTheme
 
 
 sealed class NavigationItem(
