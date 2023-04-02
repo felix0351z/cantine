@@ -1,7 +1,6 @@
 package de.juliando.app
 
-import de.juliando.app.models.objects.Content
-import io.ktor.client.call.*
+import de.juliando.app.models.objects.backend.Content
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
@@ -75,6 +74,47 @@ class ServerDataSourceTests {
         }
         println(request.bodyAsText())
         assertEquals(request.status, HttpStatusCode.OK)
+    }
+
+    @Test
+    fun addMealTest() = testModule {
+        val testImage = "C:\\Users\\felix\\Downloads\\schnitzel.jpg"
+        val meal = Content.Meal(
+            id = null,
+            category = "Wochenplan",
+            name = "Schnitzel mit Pommes oder Spätzle",
+            description = "Schwein-, Hähnchen- und Gemüseschnitzel zur Auswahl!",
+            price = 12.0F,
+            deposit = 5F,
+            day = "Donnerstag",
+            selections = emptyList(),
+            picture = null
+        )
+        val str = Json.encodeToString(meal)
+
+        val cookie = it.login("admin", "admin").setCookie()[0]
+
+        val request = it.post("$SERVER_TEST_URL/content/meal") {
+            setBody(MultiPartFormDataContent(
+                parts = formData {
+                    append("image", File(testImage).readBytes(), Headers.build {
+                        append(HttpHeaders.ContentType, "image/jpeg")
+                        append(HttpHeaders.ContentDisposition, "filename=\"meal.jpeg\"")
+                    })
+                    append(FormPart("json", str, Headers.build {
+                        append(HttpHeaders.ContentType, "application/json")
+                    }))
+                }
+
+            ))
+            headers.append(HttpHeaders.Cookie, renderCookieHeader(cookie))
+
+        }
+        println(request.bodyAsText())
+        assertEquals(request.status, HttpStatusCode.OK)
+
+
+
     }
 
 

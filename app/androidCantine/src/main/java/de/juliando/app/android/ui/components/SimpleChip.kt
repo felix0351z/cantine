@@ -19,13 +19,14 @@ import de.juliando.app.android.ui.theme.CantineTypography
 fun SimpleChip(
     modifier: Modifier,
     text: String,
-    chipPadding: Dp
+    chipPadding: Dp,
+    color: Color = Color.White
 
 ) {
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(Color.White)
+            .background(color)
     ) {
 
         Box(

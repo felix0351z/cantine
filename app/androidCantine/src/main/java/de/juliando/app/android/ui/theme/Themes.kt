@@ -13,11 +13,16 @@ object CantineTypography {
 
         // Used for report headline
         val pictureHeadlineLarge = TextStyle(
-            color = CantineColors.white,
+            color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp
         )
 
+        val mealHeadline = TextStyle(
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+        )
     }
 
     object Bodies {
@@ -29,10 +34,22 @@ object CantineTypography {
             fontSize = 16.sp
         )
 
+        val mealBody = TextStyle(
+            color = CantineTheme.grey2,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
+
+            )
+
         // Used for chips (Example: Report)
         val chipBody = TextStyle(
             color = Color.Black,
             fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        val descriptionBody = TextStyle(
+            fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
 
@@ -48,6 +65,7 @@ object CantineTypography {
 object CantineColors {
     val white = Color.White
     val black = Color.Black
+    val primaryColor = Color(0xFFFFBA52)
 
     val white50Transparent = Color(0x80FFFFFF)
     val black50Transparent = Color(0xCC000000)
