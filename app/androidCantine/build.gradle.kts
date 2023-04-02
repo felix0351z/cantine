@@ -27,8 +27,12 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -40,8 +44,7 @@ android {
 }
 
 dependencies {
-    // Shared module als Abhänigkeiten
-    implementation(project(":shared"))
+    implementation(project(":shared")) // add the shared module as dependency
 
     val navVersion = "2.5.3"
     val composeVersion = "1.3.1"

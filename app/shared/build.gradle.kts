@@ -5,12 +5,12 @@ plugins {
 }
 
 kotlin {
-    // Shared-Module Dokumentation
+    // Shared-Module documentation
     // https://kotlinlang.org/docs/multiplatform-share-on-platforms.html
 
-    // In Android wird das SharedModule als Dependency direkt integriert
+    // in android, the shared module will directly applied as gradle dependency
     android {
-        // Kotlin-Kompilierung-support für Java 8
+        // kotlin compilation support for java 8
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -18,48 +18,42 @@ kotlin {
         }
     }
 
-    // In iOS wird das SharedModule als Framework kompiliert
+    // in ios, the shared module will integrated(and pre-compiled) as ios framework
     ios() {
-        // Erstellt  vorkonfigurierte SourceSets für iOsArm64 und iOSX64
+        // creates pre configured source set configurations for iOSArm64 and iOSX64
         binaries {
             framework {
-                baseName = "shared" // Name der Framework-Datei, welche von dem Shared-Module kompiliert wird
+                baseName = "shared" // name of the framework file, which will be created from the shared module
             }
         }
     }
-    iosSimulatorArm64() // SourceSet für den MacBook iOS-Visualizer
+    iosSimulatorArm64() // SourceSet configuration for the m1/m2 ios simulator
 
     val ktorVersion = "2.2.3"
     val multiplatformSettings = "1.0.0"
     val koin = "3.2.0"
     val kotlinxTime = "0.4.0"
     sourceSets {
-        // Neue Source-Set Namensgebung in Kotlin 1.8.0
+        // New source-set naming in Kotlin 1.8.0
         // https://kotlinlang.org/docs/whatsnew18.html#kotlinsourceset-naming-schema
 
-        // SourceSet für geteilten Code
+        // Source sets for shared code
         val commonMain by getting {
             dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4") // Kotlin coroutines for asynchronous features
+                implementation("io.ktor:ktor-client-core:$ktorVersion") // Ktor as network client
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion") // Ktor plugin for serialization, uses the kotlinx serialization api
 
-                // Ktor
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                //Multiplatform Settings(local data store)
+                implementation("com.russhwolf:multiplatform-settings-no-arg:$multiplatformSettings")  //Multiplatform Settings(local data store)
+                implementation("com.russhwolf:multiplatform-settings-serialization:$multiplatformSettings") // Direct serialization features for the settings plugin
 
-                implementation("com.russhwolf:multiplatform-settings-no-arg:$multiplatformSettings")
-                implementation("com.russhwolf:multiplatform-settings-serialization:$multiplatformSettings")
-
-                //Time utilities
-                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxTime")
-
-                // Dependency Injection with koin
-                api("io.insert-koin:koin-core:$koin")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxTime") // Time utilities
+                api("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion") // Serialization for objects, API needed for proguard configuration in android
+                api("io.insert-koin:koin-core:$koin") // Dependency Injection with koin
             }
         }
 
-        // SourceSet für geteilten Test-Code
+        // sourceSet for shared test code
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -67,29 +61,29 @@ kotlin {
             }
         }
 
-        // SourceSet für spezifischen Android-Code
+        // sourceSet für specific android code
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
             }
         }
 
-        // SourceSet für spezifische AndroidUnitTest
-        // (IntegrationsTest nicht! -> Anderes SourceSet)
+        // sourceSet für specific android unit tests
+        // (No integration tests!)
         val androidUnitTest by getting
 
-        // SourceSet für iOS spezificher Code (ios64Main, iosX64Main, iosSimulator64Main)
+        // sourceSet for specific ios code (ios64Main, iosX64Main, iosSimulator64Main)
         val iosMain by sourceSets.getting {
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:$ktorVersion")
             }
         }
 
-        // SourceSet für iOS spezificher Test-Code (ios64Main, iosX64Main, iosSimulator64Main)
+        // sourceSet for specific ios test code (ios64Main, iosX64Main, iosSimulator64Main)
         val iosTest by sourceSets.getting
 
 
-        // Integration des iOS-Simulators auf M1/M2 Macbooks zumm iosMain/iosTest SourceSet
+        // integration for the ios-Simulator on M1/M2 processors for ios source set testing
         val iosSimulatorArm64Main by sourceSets.getting
         val iosSimulatorArm64Test by sourceSets.getting
         iosSimulatorArm64Main.dependsOn(iosMain)
