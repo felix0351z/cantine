@@ -8,6 +8,7 @@ import de.juliando.app.android.ui.utils.androidModule
 import de.juliando.app.dataModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
@@ -15,10 +16,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        startKoin {
-            androidLogger()
-            androidContext(this@MainActivity)
-            modules(listOf(dataModule, androidModule))
+        if (GlobalContext.getKoinApplicationOrNull() == null) {
+            startKoin {
+                androidLogger()
+                androidContext(this@MainActivity)
+                modules(listOf(dataModule, androidModule))
+            }
         }
 
         setContent {

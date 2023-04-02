@@ -6,6 +6,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 /**
@@ -17,11 +18,13 @@ expect fun httpClient(config: HttpClientConfig<*>.() -> Unit): HttpClient
 /**
  * Create a new ktor-client with installed content negotiation
  */
+@OptIn(ExperimentalSerializationApi::class)
 fun createHttpClient() = httpClient {
     install(ContentNegotiation){
         json(Json {
             prettyPrint = true
             isLenient = true
+            encodeDefaults = true
         })
     }
 
