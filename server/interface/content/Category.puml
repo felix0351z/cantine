@@ -1,8 +1,0 @@
-@startuml
-'https://plantuml.com/object-diagram
-
-object Category<<Serializable>> {
-    + name: String
-}
-
-@enduml
