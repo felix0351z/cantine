@@ -1,4 +1,4 @@
-package de.juliando.app.models.objects
+package de.juliando.app.models.objects.backend
 
 import de.juliando.app.utils.InstantSerializer
 import kotlinx.datetime.Instant

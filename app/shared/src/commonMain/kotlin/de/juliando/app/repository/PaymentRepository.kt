@@ -1,6 +1,7 @@
 package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
+import de.juliando.app.models.objects.backend.*
 
 /**
  * This repository handles the payment data.

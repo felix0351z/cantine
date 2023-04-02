@@ -1,4 +1,4 @@
-package de.juliando.app.models.objects
+package de.juliando.app.models.objects.backend
 
 import kotlinx.serialization.Serializable
 

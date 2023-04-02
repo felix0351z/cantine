@@ -1,7 +1,6 @@
-package de.juliando.app.models.objects
+package de.juliando.app.models.objects.backend
 
 import de.juliando.app.utils.InstantSerializer
-import de.juliando.app.utils.PictureSerializer
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -34,7 +33,7 @@ sealed class Content {
         val deposit: Float,
         val day: String?,
         val selections: List<SelectionGroup>,
-        @Serializable(with = PictureSerializer::class) val picture: String?,
+        val picture: String?,
     )
 
     @Serializable
@@ -45,7 +44,7 @@ sealed class Content {
         val deposit: Float,
         val day: String?,
         val selections: List<String>,
-        @Serializable(with = PictureSerializer::class) val picture: String?,
+        val picture: String?,
     )
 
     @Serializable
@@ -63,7 +62,7 @@ sealed class Content {
         val id: String?,
         val title: String,
         val description: String,
-        @Serializable(with = PictureSerializer::class) val picture: String?,
+        val picture: String?,
         @Serializable(with = InstantSerializer::class) val creationTime: Instant?
     )
 }

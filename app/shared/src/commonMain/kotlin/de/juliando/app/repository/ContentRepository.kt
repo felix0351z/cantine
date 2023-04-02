@@ -1,6 +1,9 @@
 package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
+import de.juliando.app.models.objects.backend.Content
+import de.juliando.app.models.objects.ui.Meal
+import de.juliando.app.models.objects.ui.Report
 import io.ktor.utils.io.*
 
 /**
@@ -12,7 +15,7 @@ interface ContentRepository {
 
     //Meal
     @Throws(Exception::class)
-    suspend fun getMeals(): List<Content.Meal>
+    suspend fun getMeals(): List<Meal>
     @Throws(Exception::class)
     suspend fun getMeal(id: String): Content.Meal
     @Throws(Exception::class)
@@ -24,7 +27,7 @@ interface ContentRepository {
 
     //Report
     @Throws(Exception::class)
-    suspend fun getReports(): List<Content.Report>
+    suspend fun getReports(): List<Report>
     @Throws(Exception::class)
     suspend fun getReport(id: String): Content.Report
     @Throws(Exception::class)

@@ -1,7 +1,7 @@
 package de.juliando.app.repository
 
 import de.juliando.app.data.ServerDataSource
-import de.juliando.app.models.objects.*
+import de.juliando.app.models.objects.backend.*
 
 /**
  * This repository handles the authentication data.

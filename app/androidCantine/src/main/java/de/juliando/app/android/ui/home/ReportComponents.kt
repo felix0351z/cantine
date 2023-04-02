@@ -26,8 +26,8 @@ import de.juliando.app.android.ui.components.SimpleChip
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTypography
 
-import de.juliando.app.models.objects.Content
-import de.juliando.app.utils.asFormattedDescription
+import de.juliando.app.models.objects.backend.Content
+import de.juliando.app.models.objects.ui.Report
 
 
 private const val THUMBNAIL_DIMENSION = 150
@@ -80,11 +80,11 @@ private val requestBuilder = { requestBuilder: RequestBuilder<Drawable> ->
  **/
 @Composable
 fun ReportList(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     state: LazyListState,
     cardSize: DpSize,
     spaceBetween: Dp,
-    items: List<Content.Report>
+    items: List<Report>
 ) {
 
     LazyRow(
@@ -125,7 +125,7 @@ fun ReportList(
 @Composable
 fun ReportCard(
     modifier: Modifier,
-    item: Content.Report,
+    item: Report,
     onClick: () -> Unit
 ) {
     val horizontalStart = 10.dp
@@ -182,7 +182,7 @@ fun ReportCard(
                             .align(Alignment.BottomStart) // Start at the bottom
                             .padding(horizontal = horizontalStart, vertical = 15.dp),
 
-                        text = item.creationTime!!.asFormattedDescription(),
+                        text = item.creationTime!!,
                         style = CantineTypography.Bodies.pictureBodyLarge
                     )
                 }
