@@ -10,7 +10,6 @@ import io.ktor.http.*
 
 //TODO: Correct Exception handling for the front-end in the server source and all repositories
 class ServerDataSource(
-
     val httpClient: HttpClient = createHttpClient(),
     val BASE_URL: String = LocalDataStore.url
 ) {
@@ -52,8 +51,8 @@ class ServerDataSource(
         val response = httpClient.get("$BASE_URL$route") {
             setAuthenticationCookie()
         }
-        return if(checkStatusCode(response)) response.body()
-        else                                 throw Exception()
+        checkStatusCode(response)
+        return response.body()
     }
 
     /**
@@ -69,8 +68,8 @@ class ServerDataSource(
             if (id != null) setJsonBody(id)
             setAuthenticationCookie()
         }
-        return if(checkStatusCode(response)) response.body()
-        else                                 throw Exception()
+        checkStatusCode(response)
+        return response.body()
     }
 
     /**
@@ -86,9 +85,9 @@ class ServerDataSource(
             setJsonBody(request)
             setAuthenticationCookie()
         }
+        checkStatusCode(response)
         return try {
-            return if(checkStatusCode(response)) response.body()
-            else                                 throw Exception()
+            return response.body()
         }catch (e: Exception){
             return null
         }
@@ -108,14 +107,15 @@ class ServerDataSource(
                 setJsonBody(id)
                 setAuthenticationCookie()
             }
+            checkStatusCode(response)
             return try {
-                return if(checkStatusCode(response)) response.body()
-                else                                 throw Exception()
+                return response.body()
             } catch (e: Exception) {
                 return null
             }
         }else{
-            httpClient.delete("$BASE_URL$route")
+            val response = httpClient.delete("$BASE_URL$route")
+            checkStatusCode(response)
             return null
         }
     }
@@ -149,16 +149,14 @@ class ServerDataSource(
     }
 
     /**
-     * Checks which Status code
+     * Checks which status code
      *
-     * @param response HttpResponse to check
-     * @return true if status code is ok else throws an Error
+     * @param response HttpResponse to check the status code
+     * Throws an Exception if the status code is not ok(200-299)
      */
-    fun checkStatusCode(response: HttpResponse): Boolean{
+    fun checkStatusCode(response: HttpResponse, requestType: Int = 0){
         val httpStatus = response.status.value
-        return if (httpStatus in 200..299){
-            true
-        }else{
+        if (httpStatus !in 200..299){
             throw when(httpStatus){
                 500 -> InternalDatabaseErrorException()
                 400 -> ContentTransformationErrorException()
