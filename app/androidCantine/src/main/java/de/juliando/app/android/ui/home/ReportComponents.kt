@@ -14,18 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Dp
-
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.RequestBuilder
-
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-
 import de.juliando.app.android.ui.components.SimpleChip
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTypography
-
 import de.juliando.app.models.objects.backend.Content
 import de.juliando.app.models.objects.ui.Report
 
@@ -84,23 +80,38 @@ fun ReportList(
     state: LazyListState,
     cardSize: DpSize,
     spaceBetween: Dp,
-    items: List<Report>
+    items: DataState
 ) {
+    when(items) {
+        is DataState.Success<*> -> {
 
-    LazyRow(
-        modifier = modifier.height(cardSize.height),
-        state = state, // Remember the current state of the list
-        horizontalArrangement = Arrangement.spacedBy(spaceBetween)
-    ) {
-        items(items) {
-            ReportCard(
-                item = it,
-                onClick = {},
-                modifier = Modifier.width(cardSize.width)
-            )
+            LazyRow(
+                modifier = modifier.height(cardSize.height),
+                state = state, // Remember the current state of the list
+                horizontalArrangement = Arrangement.spacedBy(spaceBetween)
+            ) {
+                items(items.value as List<Report>) {
+                    ReportCard(
+                        item = it,
+                        onClick = {},
+                        modifier = Modifier.width(cardSize.width)
+                    )
+                }
+
+            }
         }
 
+        is DataState.Loading -> {
+
+        }
+
+        is DataState.Error -> {
+
+        }
+
+
     }
+
 
     // Unused, because for the reports no thumbnails with a specific size are used, may be to change in future
     /*GlideLazyListPreloader(

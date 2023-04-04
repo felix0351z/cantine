@@ -1,7 +1,6 @@
 package de.juliando.app.android.ui.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.icons.Icons
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.juliando.app.android.ui.components.Meal
 import de.juliando.app.android.ui.theme.CantineTheme
+import de.juliando.app.models.objects.ui.Meal
 import org.koin.androidx.compose.koinViewModel
 
 const val TAG = "HomeScreen"
@@ -25,10 +25,6 @@ const val TAG = "HomeScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
-
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -63,82 +59,61 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
         }
         
     ) {
-        when(state) {
-            is HomeDataState.Success -> {
-                Log.d(TAG, "Home screen loaded successfully!")
+        val selectedMeals by viewModel.selectedMeals.collectAsStateWithLifecycle()
 
-                HomeFinished(
-                    modifier = Modifier.padding(top = it.calculateTopPadding(), start = 10.dp),
-                    state = state as HomeDataState.Success
-                )
-            }
-            is HomeDataState.Loading -> {
-                Log.d(TAG, "State: Loading....")
-                //TODO: Loading animation. Reports and meals could also be packed together as state
-            }
-            is HomeDataState.Error -> {
-                Log.e(TAG, "Error occurred while loading", (state as HomeDataState.Error).exception)
-                //TODO: Error screen or snackbar maybe?
-            }
-        }
-
-
-
-
-    }
-
-}
-
-
-@Composable
-fun HomeFinished(
-    modifier: Modifier = Modifier,
-    state: HomeDataState.Success
-) {
-
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        state = rememberLazyListState(),
-    ) {
-
-        item { // News feed item
-            val reportCardSize = DpSize(width = 350.dp, height = 200.dp)
-            HomeSection(title = "Neuigkeiten") {
-                ReportList(
-                    state = rememberLazyListState(),
-                    cardSize = reportCardSize,
-                    spaceBetween = 20.dp,
-                    items = state.reports
-                )
-            }
-        }
-
-        item {// Menu selection bar
-            HomeSection(title = "Menü") {
-                MealTabs(listOf("Essen", "Getränke", "Wochenplan", "Müll"))
-            }
-        }
-
-        items(
-            count = state.meals.size,
-            key = { state.meals[it].id }
+        LazyColumn(
+            modifier = Modifier.padding(top = it.calculateTopPadding(), start = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            state = rememberLazyListState(),
         ) {
-            Meal(item = state.meals[it])
+
+            item { // News feed item
+                val reportCardSize = DpSize(width = 350.dp, height = 200.dp)
+                HomeSection(title = "Neuigkeiten") {
+                    val posts by viewModel.posts.collectAsStateWithLifecycle()
+
+                    ReportList(
+                        state = rememberLazyListState(),
+                        cardSize = reportCardSize,
+                        spaceBetween = 20.dp,
+                        items = posts
+                    )
+                }
+            }
+
+            item {// Menu selection bar
+                HomeSection(title = "Menü") {
+                    val categories by viewModel.categories.collectAsStateWithLifecycle()
+                    MealTabs(
+                        onClick = {},
+                        categories = categories
+                    )
+                }
+            }
+
+            when(selectedMeals) {
+                is DataState.Success<*> -> {
+                    val ite = (selectedMeals as DataState.Success<*>).value as List<Meal>
+
+                    items(
+                        count = ite.size,
+                        key = { ite[it].id }
+                    ) {
+                        Meal(item = ite[it])
+                    }
+
+                }
+                is DataState.Loading -> {
+
+
+                }
+                is DataState.Error -> {
+
+
+                }
+            }
         }
-
     }
-}
-
-@Composable
-fun HomeLoading() {
-
-}
-
-@Composable
-fun HomeError() {
-
-
 }
 
 @Composable
@@ -155,7 +130,6 @@ fun HomeSection(
     Spacer(modifier = Modifier.height(padding))
     Item()
 }
-
 
 
 

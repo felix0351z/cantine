@@ -3,30 +3,39 @@ package de.juliando.app.android.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.juliando.app.models.objects.ui.Meal
-import de.juliando.app.models.objects.ui.Report
 import de.juliando.app.repository.AuthenticationRepository
 import de.juliando.app.repository.ContentRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-sealed class HomeDataState {
-    object Loading: HomeDataState()
-    class Success(val reports: List<Report>, val meals: List<Meal> ): HomeDataState()
-    class Error(val exception: Exception): HomeDataState()
-
+sealed class DataState {
+    object Loading: DataState()
+    class Success<T>(val value: T): DataState()
+    class Error : DataState()
 }
+
+fun List<Meal>.selectCategories() = this.filter { it.category != null }.map { it.category!! }.distinct()
+fun List<Meal>.selectWithCategory(category: String) = this.filter { it.category == category }
+
 
 class HomeViewModel(
     contentRepository: ContentRepository,
     authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
-    // Collect the reports and meals together
-    private var _state: MutableStateFlow<HomeDataState> = MutableStateFlow(HomeDataState.Loading)
-    val state = _state.asStateFlow()
+
+    private var _meals: List<Meal> = emptyList()
+
+    private var _posts: MutableStateFlow<DataState> = MutableStateFlow(DataState.Loading)
+    val posts = _posts.asStateFlow()
+
+    private var _selectedMeals: MutableStateFlow<DataState> = MutableStateFlow(DataState.Loading)
+    val selectedMeals = _selectedMeals.asStateFlow()
+
+    private var _categories: MutableStateFlow<DataState> = MutableStateFlow(DataState.Loading)
+    val categories = _categories
 
 
     init {
@@ -35,21 +44,30 @@ class HomeViewModel(
 
             // Get the reports and meals asynchronously
             try {
-                val reports = async { contentRepository.getReports() }
-                val meals = async { contentRepository.getMeals() }
 
-                _state.value = HomeDataState.Success(
-                    reports = reports.await(),
-                    meals = meals.await()
-                )
+                launch {
+                    _posts.value = DataState.Success(contentRepository.getReports())
+                }
+
+                launch {
+                    // For the first time, select all meals
+
+                    _meals = contentRepository.getMeals()
+                    _categories.value = DataState.Success(_meals.selectCategories())
+                    _selectedMeals.value = DataState.Success(_meals)
+                }
+
             } catch (ex: Exception) {
                 //TODO: Handle errors which are able to
 
-                HomeDataState.Error(ex)
             }
 
 
         }
+    }
+
+    fun updateMealSelection(category: String?) {
+
     }
 
 }
