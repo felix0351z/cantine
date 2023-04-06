@@ -3,23 +3,38 @@ package de.juliando.app.android.ui.home
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.Meal
+import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.theme.CantineTheme
+import de.juliando.app.android.ui.utils.DataState
 import de.juliando.app.models.objects.ui.Meal
 import org.koin.androidx.compose.koinViewModel
 
-const val TAG = "HomeScreen"
+const val START_PADDING = 10
+const val SPACED_BY = 10
+
+const val MEAL_CARD_HEIGHT_MINIMUM = 130
+const val MEAL_CARD_HEIGHT_MAXIMUM = 200
+
+const val REPORT_CARD_WIDTH = 350
+const val REPORT_CARD_HEIGHT = 200
+
+const val CORNER_SHAPE = 16
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +53,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.ShoppingCart,
-                            contentDescription = "Einkaufswagen"
+                            contentDescription = ""
                         )
                     }
                 },
@@ -58,57 +73,60 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             
         }
         
-    ) {
+    ) { topPadding ->
+
+        val posts by viewModel.posts.collectAsStateWithLifecycle()
+        val categories by viewModel.categories.collectAsStateWithLifecycle()
         val selectedMeals by viewModel.selectedMeals.collectAsStateWithLifecycle()
 
+
         LazyColumn(
-            modifier = Modifier.padding(top = it.calculateTopPadding(), start = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.padding(top = topPadding.calculateTopPadding(), start = START_PADDING.dp),
+            verticalArrangement = Arrangement.spacedBy(SPACED_BY.dp),
             state = rememberLazyListState(),
         ) {
+            item { HomeSection(title = stringResource(R.string.menu_report_title)) } /*News feed section*/
 
-            item { // News feed item
-                val reportCardSize = DpSize(width = 350.dp, height = 200.dp)
-                HomeSection(title = "Neuigkeiten") {
-                    val posts by viewModel.posts.collectAsStateWithLifecycle()
-
-                    ReportList(
-                        state = rememberLazyListState(),
-                        cardSize = reportCardSize,
-                        spaceBetween = 20.dp,
-                        items = posts
-                    )
-                }
+            item { /*News feed item*/
+                ReportList(
+                    state = rememberLazyListState(),
+                    cardSize = DpSize(width = REPORT_CARD_WIDTH.dp, height = REPORT_CARD_HEIGHT.dp),
+                    spaceBetween = SPACED_BY.dp*2,
+                    items = posts
+                )
             }
+            
+            item { HomeSection(title = stringResource(R.string.menu_meal_title)) } /*Menu section*/
 
-            item {// Menu selection bar
-                HomeSection(title = "Menü") {
-                    val categories by viewModel.categories.collectAsStateWithLifecycle()
-                    MealTabs(
-                        onClick = {},
-                        categories = categories
-                    )
-                }
+            item {
+                MealTabs(onClick = {}, categories = categories)
             }
 
             when(selectedMeals) {
                 is DataState.Success<*> -> {
-                    val ite = (selectedMeals as DataState.Success<*>).value as List<Meal>
+                    val meals = (selectedMeals as DataState.Success<*>).value as List<Meal>
 
                     items(
-                        count = ite.size,
-                        key = { ite[it].id }
+                        count = meals.size,
+                        key = { meals[it].id }
                     ) {
-                        Meal(item = ite[it])
+                        Meal(
+                            modifier = Modifier.clip(RoundedCornerShape(CORNER_SHAPE.dp)),
+                            heightIn = Pair(MEAL_CARD_HEIGHT_MINIMUM.dp, MEAL_CARD_HEIGHT_MAXIMUM.dp),
+                            item = meals[it]
+                        )
                     }
-
                 }
                 is DataState.Loading -> {
-
-
+                    items(count = 5) {
+                        ShimmerItem(modifier = Modifier
+                            .clip(RoundedCornerShape(CORNER_SHAPE.dp))
+                            .fillMaxWidth()
+                            .height(MEAL_CARD_HEIGHT_MINIMUM.dp)
+                        )
+                    }
                 }
                 is DataState.Error -> {
-
 
                 }
             }
@@ -120,15 +138,13 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
 fun HomeSection(
     title: String,
     padding: Dp = 20.dp,
-    Item: @Composable () -> Unit
 ) {
     Spacer(modifier = Modifier.height(padding))
     Text(
         text = title,
         style = MaterialTheme.typography.headlineLarge
     )
-    Spacer(modifier = Modifier.height(padding))
-    Item()
+    Spacer(modifier = Modifier.height(padding/4))
 }
 
 

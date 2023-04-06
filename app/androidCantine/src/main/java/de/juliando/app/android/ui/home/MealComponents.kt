@@ -1,14 +1,10 @@
 package de.juliando.app.android.ui.home
 
-
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,48 +17,46 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import de.juliando.app.android.ui.theme.CantineTheme
 import de.juliando.app.android.ui.theme.CantineTypography
+import de.juliando.app.android.ui.utils.DataState
+
+const val MINIMUM_TAB_HEIGHT = 45
 
 @Composable
 fun MealTabs(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    categories: DataState
+    categories: DataState,
+    textPadding: Dp = 14.dp
 ) {
     var state by remember { mutableStateOf(0) }
 
     when(categories) {
-
-
         is DataState.Success<*> -> {
             LazyRow(
                 modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(13.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 state = rememberLazyListState()
             ) {
-                val categories = categories.value as List<String>
+                val values = categories.value as List<String>
 
                 items(
-                    count = categories.size,
-                    key = { categories[it] }
+                    count = values.size,
+                    key = { values[it] }
                 ) {
                     CustomTab(
+                        modifier = Modifier.requiredHeight(MINIMUM_TAB_HEIGHT.dp),
                         onClick = { state = it; onClick() },
                         selected = state == it,
-                        title = categories[it],
-                        textPadding = 14.dp
+                        title = values[it],
+                        textPadding = textPadding
                     )
                 }
             }
 
         }
-        is DataState.Loading -> {
-
+        else -> {
+            Spacer(modifier = Modifier.height(MINIMUM_TAB_HEIGHT.dp))
         }
-        is DataState.Error -> {
-
-        }
-
-
     }
 }
 

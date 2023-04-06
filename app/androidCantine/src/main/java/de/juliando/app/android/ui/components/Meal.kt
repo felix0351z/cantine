@@ -51,23 +51,19 @@ private val requestBuilder = { requestBuilder: RequestBuilder<Drawable> ->
 fun Meal(
     modifier: Modifier = Modifier,
     item: Meal,
-    cornerShape: Dp = 16.dp,
+    innerPadding: Dp = 10.dp,
+    heightIn: Pair<Dp, Dp>,
     containerColor: Color = CantineTheme.surfaceColor,
-    innerPadding: Dp = 10.dp
     ) {
-    val minimumHeight = 130.dp
-    val maximumHeight = 200.dp
-
 
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(cornerShape),
         colors = CardDefaults.cardColors(containerColor = containerColor),
         onClick = {}
     ) {
 
         Row(
-            modifier = Modifier.padding(innerPadding).heightIn(min = minimumHeight, max = maximumHeight),
+            modifier = Modifier.padding(innerPadding).heightIn(min = heightIn.first, max = heightIn.second),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -76,7 +72,7 @@ fun Meal(
                 modifier = Modifier
                     .weight(3f) // Description takes 3/5 of the width in the row
                     .padding(horizontal = 5.dp) // Starts 5dp from the left in the row
-                    .defaultMinSize(minHeight = minimumHeight),
+                    .defaultMinSize(minHeight = heightIn.first),
                 verticalArrangement = Arrangement.SpaceBetween // All elements will be arranged with space, looks better
             ) {
                 //Headline

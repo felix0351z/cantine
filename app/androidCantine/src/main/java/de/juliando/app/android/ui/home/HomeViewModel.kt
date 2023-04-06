@@ -2,6 +2,7 @@ package de.juliando.app.android.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.juliando.app.android.ui.utils.DataState
 import de.juliando.app.models.objects.ui.Meal
 import de.juliando.app.repository.AuthenticationRepository
 import de.juliando.app.repository.ContentRepository
@@ -9,12 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-sealed class DataState {
-    object Loading: DataState()
-    class Success<T>(val value: T): DataState()
-    class Error : DataState()
-}
 
 fun List<Meal>.selectCategories() = this.filter { it.category != null }.map { it.category!! }.distinct()
 fun List<Meal>.selectWithCategory(category: String) = this.filter { it.category == category }
@@ -44,7 +39,6 @@ class HomeViewModel(
 
             // Get the reports and meals asynchronously
             try {
-
                 launch {
                     _posts.value = DataState.Success(contentRepository.getReports())
                 }

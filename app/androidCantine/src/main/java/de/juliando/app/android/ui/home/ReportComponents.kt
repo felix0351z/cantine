@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -19,12 +20,13 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.components.SimpleChip
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTypography
+import de.juliando.app.android.ui.utils.DataState
 import de.juliando.app.models.objects.backend.Content
 import de.juliando.app.models.objects.ui.Report
-
 
 private const val THUMBNAIL_DIMENSION = 150
 private const val ITEMS_TO_PRELOAD = 5
@@ -82,9 +84,12 @@ fun ReportList(
     spaceBetween: Dp,
     items: DataState
 ) {
+    val cardModifier = Modifier
+        .size(cardSize)
+        .clip(RoundedCornerShape(16.dp))
+
     when(items) {
         is DataState.Success<*> -> {
-
             LazyRow(
                 modifier = modifier.height(cardSize.height),
                 state = state, // Remember the current state of the list
@@ -94,19 +99,23 @@ fun ReportList(
                     ReportCard(
                         item = it,
                         onClick = {},
-                        modifier = Modifier.width(cardSize.width)
+                        modifier = cardModifier
                     )
                 }
 
             }
+
         }
 
         is DataState.Loading -> {
-
+            LazyRow(state = state, horizontalArrangement = Arrangement.spacedBy(spaceBetween)
+            ) {
+                items(2) { ShimmerItem(cardModifier) }
+            }
         }
 
         is DataState.Error -> {
-
+            //TODO:
         }
 
 
@@ -140,12 +149,10 @@ fun ReportCard(
     onClick: () -> Unit
 ) {
     val horizontalStart = 10.dp
-    val cornerShape = 16.dp
 
     Card(
         modifier = modifier,
         onClick = onClick,
-        shape = RoundedCornerShape(cornerShape)
     ) {
         Box {
 

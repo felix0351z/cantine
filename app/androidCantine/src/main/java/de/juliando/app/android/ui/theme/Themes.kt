@@ -65,6 +65,10 @@ object CantineTypography {
 object CantineColors {
     val white = Color.White
     val black = Color.Black
+
+    val surfaceColor = Color(0xFF1C1C1C)
+    val onSurfaceColor = Color(0xFF272727)
+
     val primaryColor = Color(0xFFFFBA52)
 
     val white50Transparent = Color(0x80FFFFFF)
