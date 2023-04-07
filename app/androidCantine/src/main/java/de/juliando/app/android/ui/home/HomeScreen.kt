@@ -99,7 +99,10 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             item { HomeSection(title = stringResource(R.string.menu_meal_title)) } /*Menu section*/
 
             item {
-                MealTabs(onClick = {}, categories = categories)
+                MealTabs(
+                    onClick = { viewModel.updateMealSelection(it) },
+                    categories = categories
+                )
             }
 
             when(selectedMeals) {

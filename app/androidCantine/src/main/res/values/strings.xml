@@ -5,6 +5,8 @@
     <string name="menu_report_title">News</string>
     <string name="menu_meal_title">Menu</string>
 
+    <string name="list_selection_all">All</string>
+
 
 
 </resources>

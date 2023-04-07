@@ -12,9 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import de.juliando.app.android.R
 import de.juliando.app.android.ui.theme.CantineTheme
 import de.juliando.app.android.ui.theme.CantineTypography
 import de.juliando.app.android.ui.utils.DataState
@@ -24,7 +26,7 @@ const val MINIMUM_TAB_HEIGHT = 45
 @Composable
 fun MealTabs(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: (category: String?) -> Unit,
     categories: DataState,
     textPadding: Dp = 14.dp
 ) {
@@ -39,15 +41,26 @@ fun MealTabs(
             ) {
                 val values = categories.value as List<String>
 
-                items(
+                item {
+                    CustomTab( // All items tab
+                        modifier = Modifier.requiredHeight(MINIMUM_TAB_HEIGHT.dp),
+                        onClick = {state = 0; onClick(null) },
+                        selected = state == 0,
+                        title = stringResource(R.string.list_selection_all),
+                        textPadding = textPadding
+                    )
+                }
+
+                items( // Category values
                     count = values.size,
                     key = { values[it] }
                 ) {
+                    val title = values[it]
                     CustomTab(
                         modifier = Modifier.requiredHeight(MINIMUM_TAB_HEIGHT.dp),
-                        onClick = { state = it; onClick() },
-                        selected = state == it,
-                        title = values[it],
+                        onClick = { state = it+1; onClick(title) },
+                        selected = state == it+1,
+                        title = title,
                         textPadding = textPadding
                     )
                 }

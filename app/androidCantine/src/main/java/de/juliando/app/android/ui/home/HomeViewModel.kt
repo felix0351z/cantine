@@ -1,5 +1,6 @@
 package de.juliando.app.android.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.juliando.app.android.ui.utils.DataState
@@ -10,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+const val TAG = "HomeViewModel"
 
 fun List<Meal>.selectCategories() = this.filter { it.category != null }.map { it.category!! }.distinct()
 fun List<Meal>.selectWithCategory(category: String) = this.filter { it.category == category }
@@ -41,6 +44,8 @@ class HomeViewModel(
             try {
                 launch {
                     _posts.value = DataState.Success(contentRepository.getReports())
+
+                    Log.d(TAG, "Loaded posts!")
                 }
 
                 launch {
@@ -49,6 +54,8 @@ class HomeViewModel(
                     _meals = contentRepository.getMeals()
                     _categories.value = DataState.Success(_meals.selectCategories())
                     _selectedMeals.value = DataState.Success(_meals)
+
+                    Log.d(TAG, "Loaded meals!")
                 }
 
             } catch (ex: Exception) {
@@ -61,7 +68,10 @@ class HomeViewModel(
     }
 
     fun updateMealSelection(category: String?) {
+        Log.d(TAG, "Selected category tab $category")
 
+        if (category == null) _selectedMeals.value = DataState.Success(_meals)
+        else _selectedMeals.value = DataState.Success(_meals.selectWithCategory(category))
     }
 
 }
