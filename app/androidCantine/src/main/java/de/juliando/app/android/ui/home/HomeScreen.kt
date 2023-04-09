@@ -1,19 +1,21 @@
 package de.juliando.app.android.ui.home
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,8 +23,6 @@ import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.Meal
 import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.theme.CantineTheme
-import de.juliando.app.android.ui.utils.DataState
-import de.juliando.app.models.objects.ui.Meal
 import org.koin.androidx.compose.koinViewModel
 
 const val START_PADDING = 10
@@ -40,6 +40,8 @@ const val CORNER_SHAPE = 16
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+    val focusManager = LocalFocusManager.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -75,52 +77,88 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
         
     ) { topPadding ->
 
+        val viewState by viewModel.state.collectAsStateWithLifecycle()
+
         val posts by viewModel.posts.collectAsStateWithLifecycle()
         val categories by viewModel.categories.collectAsStateWithLifecycle()
         val selectedMeals by viewModel.selectedMeals.collectAsStateWithLifecycle()
+        val searchInput by viewModel.searchInput.collectAsStateWithLifecycle()
+        //val tags by viewModel.tags.collectAsStateWithLifecycle()
 
+        //var searchViewActivated by remember { mutableStateOf(false) }
 
         LazyColumn(
             modifier = Modifier.padding(top = topPadding.calculateTopPadding(), start = START_PADDING.dp),
             verticalArrangement = Arrangement.spacedBy(SPACED_BY.dp),
             state = rememberLazyListState(),
         ) {
-            item { HomeSection(title = stringResource(R.string.menu_report_title)) } /*News feed section*/
-
-            item { /*News feed item*/
-                ReportList(
-                    state = rememberLazyListState(),
-                    cardSize = DpSize(width = REPORT_CARD_WIDTH.dp, height = REPORT_CARD_HEIGHT.dp),
-                    spaceBetween = SPACED_BY.dp*2,
-                    items = posts
-                )
-            }
-            
-            item { HomeSection(title = stringResource(R.string.menu_meal_title)) } /*Menu section*/
 
             item {
-                MealTabs(
-                    onClick = { viewModel.updateMealSelection(it) },
+                SearchBar( // Search Bar
+                    modifier = Modifier
+                        .padding(top = SPACED_BY.dp * 2, end = START_PADDING.dp)
+                        .fillMaxWidth(),
+                    value = searchInput,
+                    onValueChange = viewModel::updateSearchText,
+                    onSearchPressed = { focusManager.clearFocus() }
+                )
+            }
+
+            item {
+                AnimatedVisibility(visible = searchInput.isEmpty()) {
+                    HomeSection(title = stringResource(R.string.menu_report_title))
+                }
+            }
+
+            item { /*News feed items*/
+                AnimatedVisibility(visible = searchInput.isEmpty()) {
+                    ReportList(
+                        state = rememberLazyListState(),
+                        cardSize = DpSize(width = REPORT_CARD_WIDTH.dp, height = REPORT_CARD_HEIGHT.dp),
+                        spaceBetween = SPACED_BY.dp*2,
+                        reports = posts,
+                        status = viewState
+                    )
+                }
+            }
+
+            item {
+                AnimatedVisibility(visible = searchInput.isEmpty()) {
+                    HomeSection(title = stringResource(R.string.menu_meal_title))
+                }
+
+                AnimatedVisibility(
+                    visible = searchInput.isNotEmpty(),
+                    enter = slideInVertically()
+                ) {
+                    MultiSelectionTab(
+                        onClick = {},
+                        tags = listOf("Vegan", "Ohne Nüsse", "Regional", "Spezial")
+                    )
+                }
+            }
+
+            item {
+                SelectionTab(
+                    onClick = viewModel::updateCategorySelection,
                     categories = categories
                 )
             }
 
-            when(selectedMeals) {
-                is DataState.Success<*> -> {
-                    val meals = (selectedMeals as DataState.Success<*>).value as List<Meal>
-
+            when(viewState) {
+                is ViewState.Success -> {
                     items(
-                        count = meals.size,
-                        key = { meals[it].id }
+                        count = selectedMeals.size,
+                        key = { selectedMeals[it].id }
                     ) {
                         Meal(
                             modifier = Modifier.clip(RoundedCornerShape(CORNER_SHAPE.dp)),
                             heightIn = Pair(MEAL_CARD_HEIGHT_MINIMUM.dp, MEAL_CARD_HEIGHT_MAXIMUM.dp),
-                            item = meals[it]
+                            item = selectedMeals[it]
                         )
                     }
                 }
-                is DataState.Loading -> {
+                is ViewState.Loading -> {
                     items(count = 5) {
                         ShimmerItem(modifier = Modifier
                             .clip(RoundedCornerShape(CORNER_SHAPE.dp))
@@ -129,25 +167,32 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                         )
                     }
                 }
-                is DataState.Error -> {
-
+                is ViewState.Error -> {
+                    TODO()
                 }
             }
         }
+
+        BackHandler(enabled = searchInput.isNotEmpty()) {
+            viewModel.updateSearchText("")
+            focusManager.clearFocus()
+        }
+
     }
 }
 
 @Composable
 fun HomeSection(
-    title: String,
-    padding: Dp = 20.dp,
+    title: String
 ) {
-    Spacer(modifier = Modifier.height(padding))
-    Text(
-        text = title,
-        style = MaterialTheme.typography.headlineLarge
-    )
-    Spacer(modifier = Modifier.height(padding/4))
+    Column {
+        Spacer(modifier = Modifier.height(SPACED_BY.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineLarge
+        )
+    }
+
 }
 
 

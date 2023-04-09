@@ -14,4 +14,15 @@ data class Meal(
     val day: String?,
     val selections: List<Content.SelectionGroup>,
     val picture: String?,
-)
+) {
+
+
+
+    fun matchQuery(query: String): Boolean {
+        val fields = listOf(name, category, description, day)
+        return fields.filterNotNull().any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+
+}

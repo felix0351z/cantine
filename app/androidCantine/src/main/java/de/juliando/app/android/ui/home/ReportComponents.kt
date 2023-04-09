@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -24,13 +23,12 @@ import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.components.SimpleChip
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTypography
-import de.juliando.app.android.ui.utils.DataState
 import de.juliando.app.models.objects.backend.Content
 import de.juliando.app.models.objects.ui.Report
 
-private const val THUMBNAIL_DIMENSION = 150
-private const val ITEMS_TO_PRELOAD = 5
-private val THUMBNAIL_SIZE = Size(THUMBNAIL_DIMENSION.toFloat(), THUMBNAIL_DIMENSION.toFloat())
+//private const val THUMBNAIL_DIMENSION = 150
+//private const val ITEMS_TO_PRELOAD = 5
+//private val THUMBNAIL_SIZE = Size(THUMBNAIL_DIMENSION.toFloat(), THUMBNAIL_DIMENSION.toFloat())
 
 
 //private fun Content.Report.signature() = MediaStoreSignature(picture)
@@ -73,7 +71,9 @@ private val requestBuilder = { requestBuilder: RequestBuilder<Drawable> ->
  * @param state The current state of this lazy list
  * @param cardSize The size of a single report card
  * @param spaceBetween The space between the cards
- * @param items The Reports
+ * @param reports The actual items
+ * @param status The current state of the UI. If the current status is loading, a shimmer composable is visible.
+ * Instead if an error happens, nothing will be displayed
  *
  **/
 @Composable
@@ -82,44 +82,37 @@ fun ReportList(
     state: LazyListState,
     cardSize: DpSize,
     spaceBetween: Dp,
-    items: DataState
+    reports: List<Report>,
+    status: ViewState
 ) {
     val cardModifier = Modifier
         .size(cardSize)
         .clip(RoundedCornerShape(16.dp))
 
-    when(items) {
-        is DataState.Success<*> -> {
+    when(status) {
+        is ViewState.Success -> {
             LazyRow(
                 modifier = modifier.height(cardSize.height),
                 state = state, // Remember the current state of the list
                 horizontalArrangement = Arrangement.spacedBy(spaceBetween)
             ) {
-                items(items.value as List<Report>) {
+                items(reports) {
                     ReportCard(
                         item = it,
                         onClick = {},
                         modifier = cardModifier
                     )
                 }
-
             }
-
         }
-
-        is DataState.Loading -> {
+        is ViewState.Loading -> {
             LazyRow(state = state, horizontalArrangement = Arrangement.spacedBy(spaceBetween)
-            ) {
-                items(2) { ShimmerItem(cardModifier) }
-            }
+            ) { items(2)
+            { ShimmerItem(cardModifier) } }
         }
-
-        is DataState.Error -> {
-            //TODO:
-        }
-
-
+        else -> {}
     }
+}
 
 
     // Unused, because for the reports no thumbnails with a specific size are used, may be to change in future
@@ -131,7 +124,7 @@ fun ReportList(
         requestBuilderTransform = preloadRequestBuilderTransform
     )*/
 
-}
+
 
 /**
  * Displays a material 3 card with a report as component
@@ -139,6 +132,7 @@ fun ReportList(
  * @param modifier The modifier to be applied to this card
  * @param item The Report item
  * @param onClick The action for a click event
+ * @param horizontalStart Padding of the inner elements to the right
  *
  **/
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
@@ -146,10 +140,9 @@ fun ReportList(
 fun ReportCard(
     modifier: Modifier,
     item: Report,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    horizontalStart: Dp = 10.dp
 ) {
-    val horizontalStart = 10.dp
-
     Card(
         modifier = modifier,
         onClick = onClick,
