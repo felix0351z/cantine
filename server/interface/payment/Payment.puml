@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+object Payment <<Serializable>> {
+    + user: String
+    + meals: List<String>
+    + price: Float
+    + creationTime: Instant
+}
+
+object AddCreditRequest <<Serializable>> {
+    + password: String
+    + username: String
+    + credit: Float
+}
+
+
+@enduml

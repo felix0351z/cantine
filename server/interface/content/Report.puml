@@ -1,0 +1,14 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+object Report <<Serializable>> {
+    + id: String
+    + title: String
+    + description: String
+    + picture: String
+    + creationTime: Instant
+
+}
+
+
+@enduml
