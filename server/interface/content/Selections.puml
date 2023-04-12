@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+object SelectionGroup <<Serializable>> {
+    + name: String
+    + elements: List<Selection>
+}
+
+object Selection <<Serializable>> {
+    + name: String
+    + price: Float
+}
+
+
+@enduml

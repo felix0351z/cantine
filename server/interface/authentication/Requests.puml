@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+object UserAddRequest <<Serializable>> {
+    + password: String
+    + user: User
+}
+
+object UserDeleteRequest <<Serializable>> {
+    + password: String
+    + username: String
+}
+
+object PasswordChangeRequest <<Serializable>> {
+    + password: String
+    + username: String?
+    + newPassword: String
+}
+
+object NameChangeRequest <<Serializable>> {
+    + password: String
+    + username: String
+    + newName: String
+}
+
+object PermissionChangeRequest <<Serializable>> {
+    + password: String
+    + username: String
+    + newPermissionLevel: PermissionLevel
+}
+
+@enduml

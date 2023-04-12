@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+object Order <<Serializable>> {
+    + id: String
+    + user: String
+    + meals: List<OrderedMeal>
+    + price: Float
+    + deposit: Float
+    + orderTime: Instant
+}
+
+object OrderedMeal <<Serializable>> {
+    + name: String
+    + description: String
+    + price: Float
+    + deposit: Float
+    + day: String?
+    + selections: List<String>
+    + picture: String?
+
+}
+
+
+
+@enduml
