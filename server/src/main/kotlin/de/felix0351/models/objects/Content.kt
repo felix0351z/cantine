@@ -62,6 +62,7 @@ sealed class Content {
     data class Meal(
         @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Meal>,
         val category: String?,
+        val tags: List<String>,
         val name: String,
         val description: String,
         val price: Float,
@@ -133,6 +134,7 @@ sealed class Content {
     data class Report(
         @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Report>,
         val title: String,
+        val tags: List<String>,
         val description: String,
         val picture: String?,
         @Serializable(with = InstantSerializer::class) val creationTime: Instant
