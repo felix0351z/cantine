@@ -23,6 +23,7 @@ import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.Meal
 import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.theme.CantineTheme
+import de.juliando.app.android.ui.utils.ViewState
 import org.koin.androidx.compose.koinViewModel
 
 const val START_PADDING = 10
@@ -78,14 +79,16 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     ) { topPadding ->
 
         val viewState by viewModel.state.collectAsStateWithLifecycle()
-
-        val posts by viewModel.posts.collectAsStateWithLifecycle()
-        val categories by viewModel.categories.collectAsStateWithLifecycle()
         val selectedMeals by viewModel.selectedMeals.collectAsStateWithLifecycle()
-        val searchInput by viewModel.searchInput.collectAsStateWithLifecycle()
-        //val tags by viewModel.tags.collectAsStateWithLifecycle()
+        val posts by viewModel.posts.collectAsStateWithLifecycle()
 
-        //var searchViewActivated by remember { mutableStateOf(false) }
+        val categories by viewModel.categories.collectAsStateWithLifecycle()
+        val tags by viewModel.tags.collectAsStateWithLifecycle()
+
+        val searchInput by viewModel.searchInput.collectAsStateWithLifecycle()
+        val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
+        val selectedTags by viewModel.selectedTags.collectAsStateWithLifecycle()
+
 
         LazyColumn(
             modifier = Modifier.padding(top = topPadding.calculateTopPadding(), start = START_PADDING.dp),
@@ -132,8 +135,9 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                     enter = slideInVertically()
                 ) {
                     MultiSelectionTab(
-                        onClick = {},
-                        tags = listOf("Vegan", "Ohne Nüsse", "Regional", "Spezial")
+                        onClick = viewModel::updateTagEntries,
+                        tags = tags,
+                        selected = selectedTags
                     )
                 }
             }
@@ -141,7 +145,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
             item {
                 SelectionTab(
                     onClick = viewModel::updateCategorySelection,
-                    categories = categories
+                    categories = categories,
+                    selected = selectedCategory
                 )
             }
 

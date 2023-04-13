@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class Meal(
     val id: String,
     val category: String?,
+    val tags: List<String>,
     val name: String,
     val description: String,
     val toPay: String,

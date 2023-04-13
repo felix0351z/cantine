@@ -23,6 +23,7 @@ fun asDisplayable(m: List<Content.Meal>): List<Meal> = m.filter { it.id != null 
     Meal(
         id = it.id!!,
         category = it.category,
+        tags = it.tags,
         name = it.name,
         description = it.description,
         toPay = toCurrencyString(it.price + it.deposit),
@@ -40,6 +41,7 @@ fun asDisplayableReport(r: List<Content.Report>): List<Report> = r.filter { it.i
     Report(
         id = it.id!!,
         title = it.title,
+        tags = it.tags,
         description = it.description,
         picture = toFullImageUrl(it.picture),
         creationTime = it.creationTime?.asFormattedDescription()

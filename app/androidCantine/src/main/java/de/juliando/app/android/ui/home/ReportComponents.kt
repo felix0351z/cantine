@@ -23,6 +23,7 @@ import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.components.SimpleChip
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTypography
+import de.juliando.app.android.ui.utils.ViewState
 import de.juliando.app.models.objects.backend.Content
 import de.juliando.app.models.objects.ui.Report
 
@@ -164,16 +165,18 @@ fun ReportCard(
             ) {
 
                 // Chip to display the tag
-                SimpleChip(
+
+                Row(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(horizontal = horizontalStart, vertical = 10.dp)
                         .height(30.dp),
-
-                    //TODO: Add tag for reports
-                    text = "Vegan",
-                    chipPadding = 3.dp
-                )
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    item.tags.forEach {
+                        SimpleChip(text = it)
+                    }
+                }
 
 
                 // Title

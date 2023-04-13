@@ -12,14 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import de.juliando.app.android.ui.theme.CantineTypography
 
 @Composable
 fun SimpleChip(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     text: String,
-    chipPadding: Dp,
+    chipPadding: Dp = 3.dp,
     color: Color = Color.White
 
 ) {
@@ -38,7 +40,9 @@ fun SimpleChip(
             Text(
                 textAlign = TextAlign.Center,
                 text = text,
-                style = CantineTypography.Bodies.chipBody
+                style = CantineTypography.Bodies.chipBody,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
 

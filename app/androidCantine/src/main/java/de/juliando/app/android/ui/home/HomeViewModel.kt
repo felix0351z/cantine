@@ -3,6 +3,7 @@ package de.juliando.app.android.ui.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.juliando.app.android.ui.utils.ViewState
 import de.juliando.app.models.objects.ui.Meal
 import de.juliando.app.models.objects.ui.Report
 import de.juliando.app.repository.AuthenticationRepository
@@ -17,25 +18,22 @@ const val TAG = "HomeViewModel"
 fun List<Meal>.selectCategories() = this.filter { it.category != null }.map { it.category!! }.distinct()
 fun List<Meal>.selectWithCategory(category: String) = this.filter { it.category == category }
 
-sealed class ViewState {
-    object Loading: ViewState()
-    object Success: ViewState()
-    class Error(exception: Exception): ViewState()
-}
-
-
-
 class HomeViewModel(
     contentRepository: ContentRepository,
     authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
+    // Save the selected tags
+    private val savedTags = mutableListOf<String>()
+
     private var _searchInput: MutableStateFlow<String> = MutableStateFlow("")
     val searchInput = _searchInput.asStateFlow()
 
-
     private var _selectedCategory: MutableStateFlow<String?> = MutableStateFlow(null)
-    private var _selectedTags: MutableStateFlow<Set<String>> = MutableStateFlow(emptySet())
+    val selectedCategory = _selectedCategory.asStateFlow()
+
+    private var _selectedTags: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    val selectedTags = _selectedTags.asStateFlow()
 
     private var _state: MutableStateFlow<ViewState> = MutableStateFlow(ViewState.Loading)
     val state = _state.asStateFlow()
@@ -45,17 +43,33 @@ class HomeViewModel(
 
     private var _meals: MutableStateFlow<List<Meal>> = MutableStateFlow(emptyList())
 
+    val categories = _meals
+        .map { it.selectCategories() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(4000),
+            initialValue = emptyList()
+        )
+    val tags = _meals.map { it.flatMap { it.tags } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(4000),
+            initialValue = emptyList()
+        )
+
     val selectedMeals = _meals
         // Filter after category
         .combine(_selectedCategory) { meals, category ->
             if (category == null) meals
             else meals.selectWithCategory(category)
         }
-        // Map for tags (Not included yet)
-        /*.combine(_selectedTags) { meals, tags ->
+        // Map for tags
+        .combine(_selectedTags) { meals, tags ->
             if (tags.isEmpty()) meals
-            else meals.filter {}
-        }*/
+            else meals.filter {
+                it.tags.any { tags.contains(it) }
+            }
+        }
         // Filter after search request
         .combine(_searchInput) { meals, searchQuery ->
             if (searchQuery.isBlank()) meals
@@ -66,15 +80,6 @@ class HomeViewModel(
             started = SharingStarted.WhileSubscribed(4000),
             initialValue = _meals.value
         )
-
-    val categories = _meals
-        .map { it.selectCategories() }
-        .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(4000),
-        initialValue = emptyList()
-    )
-    //val tags = _meals todo!
 
 
     init {
@@ -103,12 +108,15 @@ class HomeViewModel(
         _selectedCategory.value = category
     }
 
-    fun addTag() {
+    fun updateTagEntries(tag: String) {
+        if (savedTags.contains(tag)) savedTags.remove(tag)
+        else savedTags.add(tag)
 
+        // Kotlin StateFlows are only notifying it's observers if the actual value has changed. (The list won't change of course)
+        // So a workaround is needed with the map function.
+        _selectedTags.value = savedTags.map { it }
     }
-    fun removeTag() {
 
-    }
 
     fun updateSearchText(text: String) {
         _searchInput.value = text

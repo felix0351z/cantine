@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.RequestBuilder
@@ -63,7 +64,9 @@ fun Meal(
     ) {
 
         Row(
-            modifier = Modifier.padding(innerPadding).heightIn(min = heightIn.first, max = heightIn.second),
+            modifier = Modifier
+                .padding(innerPadding)
+                .heightIn(min = heightIn.first, max = heightIn.second),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -75,27 +78,33 @@ fun Meal(
                     .defaultMinSize(minHeight = heightIn.first),
                 verticalArrangement = Arrangement.SpaceBetween // All elements will be arranged with space, looks better
             ) {
-                //Headline
 
-                SimpleChip(
-                   modifier = Modifier.height(30.dp),
-                    text = "Vegan",
-                    chipPadding = 3.dp,
-                    color = Color.White
-                )
-
-                Spacer(modifier = Modifier.height(5.dp))// A minimum space has to be between the chips and the title
+                //Tags & the day
+                if (item.tags.isNotEmpty() || item.day != null) {
+                    Row(
+                        modifier = Modifier.height(30.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        if (item.day != null) {
+                            SimpleChip(text = item.day!!)
+                        }
+                        SimpleChip(text = item.tags[0]) // Only show the first tag for better interaction
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))// A minimum space has to be between the chips and the title
+                }
 
                 Column {
                     Text( // Title
                         text = item.name,
                         style = CantineTypography.Headlines.mealHeadline,
-                        maxLines = 2
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text( // Description
                         text = item.description,
                         style = CantineTypography.Bodies.mealBody,
-                        maxLines = 2
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 

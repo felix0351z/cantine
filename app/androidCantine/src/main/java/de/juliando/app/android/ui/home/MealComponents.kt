@@ -40,9 +40,8 @@ fun SelectionTab(
     modifier: Modifier = Modifier,
     onClick: (category: String?) -> Unit,
     categories: List<String>,
+    selected: String?
 ) {
-    var state by remember { mutableStateOf(0) } // Save the current position as int
-
     if (categories.isNotEmpty()) {
         LazyRow(
             modifier = modifier.fillMaxWidth(),
@@ -51,10 +50,11 @@ fun SelectionTab(
         ) {
 
             item {
-                CustomTab( // All items tab
+                CustomTab(
+                    // All items tab
                     modifier = Modifier.requiredHeight(MINIMUM_TAB_HEIGHT.dp),
-                    onClick = {state = 0; onClick(null) },
-                    selected = state == 0,
+                    onClick = { onClick(null) },
+                    selected = selected == null,
                     showIcon = false,
                     title = stringResource(R.string.list_selection_all),
                 )
@@ -70,10 +70,9 @@ fun SelectionTab(
                 CustomTab(
                     modifier = Modifier.requiredHeight(MINIMUM_TAB_HEIGHT.dp),
                     onClick = {
-                        state = it+1 // The state is +1, because the first all tab
                         onClick(title)
                     },
-                    selected =  state == it+1 ,
+                    selected =  title == selected,
                     showIcon = false,
                     title = title,
                 )
@@ -98,10 +97,11 @@ fun SelectionTab(
 @Composable
 fun MultiSelectionTab(
     modifier: Modifier = Modifier,
-    onClick: (tag: String?) -> Unit,
+    onClick: (tag: String) -> Unit,
     tags: List<String>,
+    selected: List<String>,
 ) {
-    val col = remember { mutableStateListOf<Int>() } // Save all current list states in a list
+    //val col = remember { mutableStateListOf<Int>() } // Save all current list states in a list
 
     if (tags.isNotEmpty()) {
         LazyRow(
@@ -118,10 +118,10 @@ fun MultiSelectionTab(
                 CustomTab(
                     modifier = Modifier.requiredHeight(MINIMUM_TAB_HEIGHT.dp),
                     onClick = {
-                        if (col.contains(it)) col.remove(it) else col.add(it)
+                        //if (col.contains(it)) col.remove(it) else col.add(it)
                         onClick(title)
                     },
-                    selected =  col.contains(it),
+                    selected =  selected.any { it == title },
                     showIcon = true,
                     title = title,
                 )
@@ -169,7 +169,9 @@ fun CustomTab(
         ) {
             AnimatedVisibility(visible = !selected && showIcon) {
                 Icon(
-                    modifier = Modifier.padding(vertical = 11.dp).padding(top = 2.dp),
+                    modifier = Modifier
+                        .padding(vertical = 11.dp)
+                        .padding(top = 2.dp),
                     painter = painterResource(R.drawable.check),
                     contentDescription = "",
                     tint = textColor

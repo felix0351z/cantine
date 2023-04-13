@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class Report(
     val id: String,
     val title: String,
+    val tags: List<String>,
     val description: String,
     val picture: String?,
     val creationTime: String?
