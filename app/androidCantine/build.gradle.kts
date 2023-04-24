@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:$composeVersion")
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:$navVersion")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha")
     // Lifecycle utilities for compose
     val lifecycleVersion = "2.6.0"
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")

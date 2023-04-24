@@ -1,5 +1,6 @@
 package de.juliando.app.android
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -14,12 +15,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 import de.juliando.app.android.ui.home.HomeScreen
+import de.juliando.app.android.ui.home.views.ReportView
 import de.juliando.app.android.ui.orders.OrderScreen
 import de.juliando.app.android.ui.payment.PaymentScreen
 import de.juliando.app.android.ui.theme.CantineApplicationTheme
@@ -59,10 +63,10 @@ val bottomNavigationBar = listOf(
 )
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun AppNavigator() {
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(), // Fill the complete screen
@@ -121,17 +125,23 @@ fun AppNavigator() {
 }
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavigationHost(
     nav_controller: NavHostController,
     padding: PaddingValues
 ) {
-    NavHost(
+    AnimatedNavHost(
         navController = nav_controller,
         startDestination = NavigationItem.Home.route,
         modifier = Modifier.padding(padding)
     ) {
         composable(NavigationItem.Home.route) { HomeScreen() }
+
+        composable(
+            route = "reportView"
+        ) { ReportView() }
+
         composable(NavigationItem.Orders.route) { OrderScreen() }
         composable(NavigationItem.Payment.route) { PaymentScreen() }
 
