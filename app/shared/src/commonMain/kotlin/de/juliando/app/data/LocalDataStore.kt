@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
 
 object LocalDataStore {
     val settings: Settings by lazy { Settings() }
-    val url = "https://185.215.180.245/api"
+    val url = "http://207.180.215.119:8080/api"
 
     /**
      *Generic function to store a List with a key.
@@ -40,6 +40,59 @@ object LocalDataStore {
         var obj: String? = settings[key]
         return if (obj != null){
             Json.decodeFromString<List<T>>(obj)
+        }else {
+            null
+        }
+    }
+
+    /**
+     *Generic function to store a String with a key.
+     *
+     * @param toStore String to store in local storage
+     * @param key Key to access the storage
+     */
+     fun storeString(toStore: String?, key: String) {
+        if (toStore != null){
+            settings[key] = toStore
+        }else {
+            settings.remove(key)
+        }
+     }
+
+    /**
+     *Generic function to get a String with a key.
+     *
+     * @param key Key to access the storage
+     * @return String from the local storage
+     */
+    fun getString(key: String): String? {
+        return settings[key]
+    }
+
+    /**
+     *Generic function to store a Object with a key.
+     *
+     * @param toStore Object to store in local storage
+     * @param key Key to access the storage
+     */
+    inline fun <reified T> storeObject(toStore: T?, key: String) {
+        if (toStore != null){
+            settings[key] = Json.encodeToString(toStore)
+        }else {
+            settings.remove(key)
+        }
+    }
+
+    /**
+     *Generic function to get a Object with a key.
+     *
+     * @param key Key to access the storage
+     * @return Object from the local storage
+     */
+    inline fun <reified T> getObject(key: String): T? {
+        var obj: String? = settings[key]
+        return if (obj != null){
+            Json.decodeFromString<T>(obj)
         }else {
             null
         }

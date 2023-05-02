@@ -8,7 +8,9 @@ enum class StorageKeys {
     REPORT,
     ORDER,
     PAYMENT,
-    COOKIE;
+    COOKIE,
+    URL,
+    USER;
 
     val key get() = this.name
 }

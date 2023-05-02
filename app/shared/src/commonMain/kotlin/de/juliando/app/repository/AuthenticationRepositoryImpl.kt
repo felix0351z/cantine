@@ -11,7 +11,8 @@ class AuthenticationRepositoryImpl(
     private val server: ServerDataSource = ServerDataSource(),
 ) : AuthenticationRepository {
 
-    override suspend fun login() = server.login("admin", "admin")
+    override suspend fun loginAdmin() = server.login("admin", "admin")
+    override suspend fun login(username: String, password: String) = server.login(username, password)
     override suspend fun logout() = server.logout()
 
     override suspend fun getAccount(): Auth.User {

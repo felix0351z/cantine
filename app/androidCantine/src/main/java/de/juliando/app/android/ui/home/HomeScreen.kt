@@ -1,6 +1,7 @@
 package de.juliando.app.android.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -13,17 +14,22 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import de.juliando.app.android.LoginActivity
+import de.juliando.app.android.MainActivity
 import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.Meal
 import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.theme.CantineTheme
 import de.juliando.app.android.ui.utils.ViewState
+import de.juliando.app.repository.AuthenticationRepositoryImpl
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 const val START_PADDING = 10
@@ -42,6 +48,9 @@ const val CORNER_SHAPE = 16
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val focusManager = LocalFocusManager.current
+
+    val mContext = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -62,7 +71,13 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                 },
                 title = {},
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        //TODO: change Activity and delete cookie
+                        mContext.startActivity(Intent(mContext, LoginActivity::class.java))
+                        coroutineScope.launch {
+                            viewModel.logout()
+                        }
+                    }) {
                         Icon(imageVector = Icons.Outlined.Logout , contentDescription = "")
                     }
                     IconButton(onClick = { /*TODO*/ }) {
