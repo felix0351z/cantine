@@ -8,4 +8,14 @@
 
     <string name="search_name">Suchen…</string>
 
+    <string name="landing_1">Willkommen bei Mensa</string>
+    <string name="landing_2">Mesa ist deine neue App für Online-Essensbestellungen in deiner Cafeteria.</string>
+    <string name="landing_3">Ein Schritt noch...</string>
+    <string name="landing_4">Verbinde dich mit deinem Schulserver und melde dich an.</string>
+    <string name="login">Anmelden</string>
+
+    <string name="welcome_to">Willkommen bei</string>
+    <string name="mensa">Mensa</string>
+    <string name="mensa_description">Mensa ist deine neue App für online Essensbestellungen in deiner Cafeteria.</string>
+    <string name="continue_btn">Weiter</string>
 </resources>

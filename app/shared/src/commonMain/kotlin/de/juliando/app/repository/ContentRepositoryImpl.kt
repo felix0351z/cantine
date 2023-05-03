@@ -27,7 +27,8 @@ class ContentRepositoryImpl(
             asDisplayable(meals)
         } catch (e: Exception) {
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
-            LocalDataStore.getList(StorageKeys.MEAL.key) ?: emptyList()
+            val meals:List<Content.Meal> = LocalDataStore.getList(StorageKeys.MEAL.key) ?: emptyList()
+            asDisplayable(meals)
         }
     }
 
@@ -62,7 +63,8 @@ class ContentRepositoryImpl(
         } catch (e: Exception) {
             e.printStackTrace()
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
-            LocalDataStore.getList(StorageKeys.REPORT.key) ?: emptyList()
+            val reports: List<Content.Report> = LocalDataStore.getList(StorageKeys.REPORT.key) ?: emptyList()
+            asDisplayableReport(reports)
         }
     }
 

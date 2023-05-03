@@ -9,6 +9,16 @@
 
     <string name="search_name">Search…</string>
 
+    <string name="landing_1">Welcome to Mensa</string>
+    <string name="landing_2">Mensa is your new app for online Food orders in your cafeteria.</string>
+    <string name="landing_3">One more step...</string>
+    <string name="landing_4">Connect to your school server and sign in.</string>
+    <string name="login">Login</string>
 
+    <string name="title_activity_login" translatable="false">ActivityLogin</string>
 
+    <string name="welcome_to">Willkommen zu</string>
+    <string name="mensa">Mensa</string>
+    <string name="mensa_description">Mensa ist deine neue App für Online-Essensbestellungen in deiner Cafeteria.</string>
+    <string name="continue_btn">Weiter</string>
 </resources>

@@ -20,7 +20,7 @@ fun List<Meal>.selectWithCategory(category: String) = this.filter { it.category 
 
 class HomeViewModel(
     contentRepository: ContentRepository,
-    authenticationRepository: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
     // Save the selected tags
@@ -84,8 +84,6 @@ class HomeViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            authenticationRepository.login()
-
             try {
                 val jobs = listOf(
                     launch { _posts.value =  contentRepository.getReports() },
@@ -117,9 +115,11 @@ class HomeViewModel(
         _selectedTags.value = savedTags.map { it }
     }
 
-
     fun updateSearchText(text: String) {
         _searchInput.value = text
     }
 
+    suspend fun logout(){
+        authenticationRepository.logout()
+    }
 }
