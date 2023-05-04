@@ -132,7 +132,8 @@ class AuthenticationTests {
 
         val user: Auth.PublicUser = it.get("/api/user") {
             https()
-            json(testUser.username)
+            header("id", testUser.username)
+            //json(testUser.username)
         }.body()
 
         println(user)

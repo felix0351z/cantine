@@ -130,7 +130,8 @@ class ContentRoutesTest {
 
         val meal: Meal = it.get("/api/content/meal") {
             https()
-            json(mealID)
+            header("id", mealID)
+            //json(mealID)
         }.body()
 
         println(meal)
@@ -144,7 +145,8 @@ class ContentRoutesTest {
 
         val response = it.delete("/api/content/meal") {
             https()
-            json(mealID)
+            header("id", mealID)
+            //json(mealID)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -221,7 +223,8 @@ class ContentRoutesTest {
 
         val report: Report = it.get("/api/content/report") {
             https()
-            json(reportID)
+            header("id", reportID)
+            //json(reportID)
         }.body()
 
         println(report)
@@ -234,7 +237,8 @@ class ContentRoutesTest {
 
         val response = it.delete("/api/content/report") {
             https()
-            json(reportID)
+            header("id", reportID)
+            //json(reportID)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -274,7 +278,8 @@ class ContentRoutesTest {
 
         val response = it.delete("/api/content/category") {
             https()
-            json(categoryName)
+            header("id", categoryName)
+            //json(categoryName)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -330,7 +335,8 @@ class ContentRoutesTest {
 
         val response = it.delete("/api/content/selection") {
             https()
-            json(selectionName)
+            header("id", selectionName)
+            //json(selectionName)
         }
 
         assertEquals(HttpStatusCode.OK, response.status)

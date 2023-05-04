@@ -1,6 +1,8 @@
 package de.felix0351.routes
 
+import de.felix0351.models.errors.IllegalIdException
 import de.felix0351.models.objects.*
+import de.felix0351.plugins.asBsonObjectId
 import de.felix0351.plugins.withRole
 import de.felix0351.services.PaymentService
 import io.ktor.http.*
@@ -11,7 +13,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import org.koin.ktor.ext.inject
-import org.litote.kmongo.Id
 
 
 private fun Route.with(route: Route.(service: PaymentService) -> Unit) {
@@ -92,9 +93,11 @@ fun Route.order() = with { service ->
         delete {
 
             withRole(Auth.PermissionLevel.USER) {
-                val id = call.receive<Id<Content.Order>>()
+                val id = call.request.header("id") ?: throw IllegalIdException()
+                // Deprecated via body: Ktor Android Engine doesn't support body content with get/delete requests
+                //val id = call.receive<String>()
 
-                val canceledOrder = service.cancelOrder(it, id)
+                val canceledOrder = service.cancelOrder(it, id.asBsonObjectId())
                 call.respond(HttpStatusCode.OK, canceledOrder)
             }
 

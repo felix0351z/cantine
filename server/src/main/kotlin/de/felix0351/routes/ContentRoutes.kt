@@ -1,5 +1,6 @@
 package de.felix0351.routes
 
+import de.felix0351.models.errors.IllegalIdException
 import de.felix0351.models.objects.Auth
 import de.felix0351.models.objects.Collections
 import de.felix0351.models.objects.Content
@@ -12,6 +13,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
+import io.ktor.server.plugins.ContentTransformationException
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -48,9 +50,11 @@ fun Route.meal() = with { contentRepo ->
         // Get the meal <id>
         get {
 
-            val id = call.receive<String>()
-            val meal = contentRepo.getMeal(id.asBsonObjectId())
+            val id = call.request.header("id") ?: throw IllegalIdException()
+            // Deprecated via body: Ktor Android Engine doesn't support body content with get/delete requests
+            //val id = call.receive<String>()
 
+            val meal = contentRepo.getMeal(id.asBsonObjectId())
             call.respond(HttpStatusCode.OK, meal)
 
         }
@@ -104,7 +108,11 @@ fun Route.meal() = with { contentRepo ->
         delete {
             //Worker Permission is needed
             withRole(Auth.PermissionLevel.WORKER) {
-                val id = call.receive<String>()
+
+                val id = call.request.header("id") ?: throw IllegalIdException()
+                // Deprecated via body: Ktor Android Engine doesn't support body content with get/delete requests
+                //val id = call.receive<String>()
+
                 contentRepo.deleteMeal(id.asBsonObjectId())
 
                 // Delete the image if one exists.
@@ -148,7 +156,10 @@ fun Route.report() = with { contentRepo ->
         // Get the report
         get {
 
-            val id = call.receive<String>()
+            val id = call.request.header("id") ?: throw IllegalIdException()
+            // Deprecated via body: Ktor Android Engine doesn't support body content with get/delete requests
+            //val id = call.receive<String>()
+
             val report = contentRepo.getReport(id.asBsonObjectId())
 
             call.respond(HttpStatusCode.OK, report)
@@ -202,7 +213,9 @@ fun Route.report() = with { contentRepo ->
 
             // Worker permission needed
             withRole(Auth.PermissionLevel.WORKER) {
-                val id = call.receive<String>()
+                val id = call.request.header("id") ?: throw IllegalIdException()
+                // Deprecated via body: Ktor Android Engine doesn't support body content with get/delete requests
+                //val id = call.receive<String>()
 
                 contentRepo.deleteReport(id.asBsonObjectId())
                 // Delete the image if one exists.
@@ -251,7 +264,10 @@ fun Route.category() = with { repo ->
         }
         delete {
             withRole(Auth.PermissionLevel.WORKER) {
-                val categoryName = call.receive<String>()
+
+                val categoryName = call.request.header("id") ?: throw IllegalIdException()
+                // Deprecated via body: Ktor Android Engine doesn't support body content with get/delete requests
+                //val categoryName = call.receive<String>()
                 repo.deleteCategory(categoryName)
 
                 call.respond(HttpStatusCode.OK)
@@ -295,7 +311,10 @@ fun Route.selection() = with { repo ->
 
         delete {
             withRole(Auth.PermissionLevel.WORKER) {
-                val selectionName = call.receive<String>()
+
+                val selectionName = call.request.header("id") ?: throw IllegalIdException()
+                // Deprecated via body: Ktor Android Engine doesn't support body content with get/delete requests
+                //val selectionName = call.receive<String>()
                 repo.deleteSelection(selectionName)
 
                 call.respond(HttpStatusCode.OK)

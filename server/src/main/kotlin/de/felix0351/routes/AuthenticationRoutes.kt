@@ -1,5 +1,6 @@
 package de.felix0351.routes
 
+import de.felix0351.models.errors.IllegalIdException
 import de.felix0351.models.objects.*
 import de.felix0351.plugins.withRole
 import de.felix0351.services.AuthenticationService
@@ -111,7 +112,10 @@ fun Route.user() = with { service ->
         get {
 
             withRole(Auth.PermissionLevel.ADMIN) {
-                val name = call.receive<String>()
+
+                val name = call.request.header("id") ?: throw IllegalIdException()
+                // Deprecated via body: Ktor Android Engine doesn't support body content with get/delete requests
+                //val name = call.receive<String>()
                 call.respond(HttpStatusCode.OK, service.getUser(name))
             }
 

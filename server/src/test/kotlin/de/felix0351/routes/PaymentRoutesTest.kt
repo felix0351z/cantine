@@ -120,7 +120,8 @@ class PaymentRoutesTest {
 
         val response = it.delete("/api/payment/order") {
             https()
-            json(orderID)
+            header("id", orderID)
+            //json(orderID)
         }
 
         println(response.bodyAsText())
