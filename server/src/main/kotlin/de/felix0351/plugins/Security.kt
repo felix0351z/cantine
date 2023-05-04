@@ -45,8 +45,8 @@ private fun SessionsConfig.configureAuthCookie() {
 
     cookie<Auth.UserSession>("user_session", directorySessionStorage(File(FileHandler.SESSION_FILE_NAME))) {
 
-        // Only transfer cookies via ssl encrypted connection
-        cookie.secure = true
+        // Only transfer cookies via ssl encrypted connection, and only use false in the development process
+        cookie.secure = false
 
         // Permanent session has a max age
         cookie.maxAge = sessionAge.days
