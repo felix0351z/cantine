@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Meal(
     val id: String?,
     val category: String?,
+    val tags: List<String>,
     val name: String,
     val description: String,
     val price: Float,
@@ -45,6 +46,7 @@ const val testImage = "test-image.jpg"
 val exampleMeal = Meal(
     id = null,
     category = "dfgfd",
+    tags = listOf(),
     name = "Pommes",
     description = "Frittierte Kartoffeln in Stangenform lol",
     price = 2.2F,
