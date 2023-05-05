@@ -36,7 +36,9 @@ class AuthenticationRepositoryImpl(
     }
 
     override suspend fun deleteUser(request: UserDeleteRequest) {
-        server.delete<UserDeleteRequest, String>("/content/meal", request)
+        TODO()
+        // Requests can't be delivered over delete method in the body, must be changed in future
+        //server.delete<UserDeleteRequest, String>("/content/meal", request)
     }
 
     override suspend fun changeUserName(request: NameChangeRequest) {

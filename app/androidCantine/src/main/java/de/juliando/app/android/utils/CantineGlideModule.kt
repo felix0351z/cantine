@@ -1,4 +1,4 @@
-package de.juliando.app.android.ui.utils
+package de.juliando.app.android.utils
 
 import android.content.Context
 import android.util.Log

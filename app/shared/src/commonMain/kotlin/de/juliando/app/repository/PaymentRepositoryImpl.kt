@@ -55,7 +55,7 @@ class PaymentRepositoryImpl(
     }
 
     override suspend fun deletePurchases() {
-        server.delete<String, String>("/payment/purchases")
+        server.delete<String>("/payment/purchases")
     }
 
     override suspend fun addUserCredit(request: AddCreditRequest) {

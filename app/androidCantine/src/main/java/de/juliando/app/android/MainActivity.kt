@@ -4,11 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.view.WindowCompat
-import de.juliando.app.android.ui.landing.LoginScreen
 import de.juliando.app.android.ui.theme.CantineApplicationTheme
-import de.juliando.app.android.ui.utils.androidModule
+import de.juliando.app.android.utils.androidModule
 import de.juliando.app.data.LocalDataStore
 import de.juliando.app.dataModule
 import org.koin.android.ext.koin.androidContext

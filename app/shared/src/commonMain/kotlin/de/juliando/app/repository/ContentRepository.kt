@@ -29,7 +29,7 @@ interface ContentRepository {
     @Throws(Exception::class)
     suspend fun getReports(): List<Report>
     @Throws(Exception::class)
-    suspend fun getReport(id: String): Content.Report
+    suspend fun getReport(id: String): Report
     @Throws(Exception::class)
     suspend fun newReport(report: Content.Report): String?
     @Throws(Exception::class)

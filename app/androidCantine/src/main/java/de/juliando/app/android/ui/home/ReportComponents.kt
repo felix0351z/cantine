@@ -23,7 +23,7 @@ import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.components.SimpleChip
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTypography
-import de.juliando.app.android.ui.utils.ViewState
+import de.juliando.app.android.utils.ViewState
 import de.juliando.app.models.objects.backend.Content
 import de.juliando.app.models.objects.ui.Report
 
@@ -84,7 +84,8 @@ fun ReportList(
     cardSize: DpSize,
     spaceBetween: Dp,
     reports: List<Report>,
-    status: ViewState
+    status: ViewState,
+    onClick: (String) -> Unit
 ) {
     val cardModifier = Modifier
         .size(cardSize)
@@ -100,7 +101,7 @@ fun ReportList(
                 items(reports) {
                     ReportCard(
                         item = it,
-                        onClick = {},
+                        onClick = { onClick(it.id) },
                         modifier = cardModifier
                     )
                 }

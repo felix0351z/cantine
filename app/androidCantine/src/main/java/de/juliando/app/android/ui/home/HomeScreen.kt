@@ -22,15 +22,12 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.juliando.app.android.LoginActivity
-import de.juliando.app.android.MainActivity
 import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.Meal
 import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.theme.CantineTheme
-import de.juliando.app.android.ui.utils.ViewState
-import de.juliando.app.repository.AuthenticationRepositoryImpl
+import de.juliando.app.android.utils.ViewState
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 const val START_PADDING = 10
 const val SPACED_BY = 10
@@ -46,7 +43,10 @@ const val CORNER_SHAPE = 16
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeScreen(
+    viewModel: HomeViewModel,
+    onReportClick: (String) -> Unit
+) {
     val focusManager = LocalFocusManager.current
 
     val mContext = LocalContext.current
@@ -135,7 +135,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                         cardSize = DpSize(width = REPORT_CARD_WIDTH.dp, height = REPORT_CARD_HEIGHT.dp),
                         spaceBetween = SPACED_BY.dp*2,
                         reports = posts,
-                        status = viewState
+                        status = viewState,
+                        onClick = onReportClick
                     )
                 }
             }
@@ -220,5 +221,4 @@ fun HomeSection(
 @Preview(showBackground = true)
 @Composable
 fun NavigationPreview() {
-    HomeScreen()
 }

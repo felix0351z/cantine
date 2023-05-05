@@ -68,7 +68,8 @@ class ServerDataSource(
      */
     suspend inline fun <reified T> get(route: String, id: String? = null): T {
         val response = httpClient.get("$BASE_URL$route"){
-            if (id != null) setJsonBody(id)
+            if (id != null) setHeaderId(id)
+
             setAuthenticationCookie()
         }
         checkStatusCode(response)
@@ -104,13 +105,14 @@ class ServerDataSource(
      * @return returns the response from the server(can be null)
      *
      */
-    suspend inline fun <reified T, reified R> delete(route: String, id: T? = null): R? {
+    suspend inline fun <reified T> delete(route: String, id: String? = null): T? {
         if(id!=null) {
             val response = httpClient.delete("$BASE_URL$route") {
-                setJsonBody(id)
+                setHeaderId(id)
                 setAuthenticationCookie()
             }
             checkStatusCode(response)
+
             return try {
                 return response.body()
             } catch (e: Exception) {

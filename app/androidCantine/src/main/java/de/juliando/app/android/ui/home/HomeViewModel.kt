@@ -3,7 +3,7 @@ package de.juliando.app.android.ui.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.juliando.app.android.ui.utils.ViewState
+import de.juliando.app.android.utils.ViewState
 import de.juliando.app.models.objects.ui.Meal
 import de.juliando.app.models.objects.ui.Report
 import de.juliando.app.repository.AuthenticationRepository

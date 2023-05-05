@@ -7,7 +7,6 @@ import de.juliando.app.models.objects.backend.Content
 import de.juliando.app.models.objects.ui.Meal
 import de.juliando.app.models.objects.ui.Report
 import de.juliando.app.utils.asDisplayable
-import de.juliando.app.utils.asDisplayableReport
 
 /**
  * This repository handles the content data.
@@ -24,11 +23,11 @@ class ContentRepositoryImpl(
             val meals = server.getList<Content.Meal>("/content/meals")
             LocalDataStore.storeList(meals, StorageKeys.MEAL.key)
 
-            asDisplayable(meals)
+            meals.asDisplayable()
         } catch (e: Exception) {
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
             val meals:List<Content.Meal> = LocalDataStore.getList(StorageKeys.MEAL.key) ?: emptyList()
-            asDisplayable(meals)
+            meals.asDisplayable()
         }
     }
 
@@ -59,17 +58,18 @@ class ContentRepositoryImpl(
             val reports: List<Content.Report> = server.get("/content/reports")
             LocalDataStore.storeList(reports, StorageKeys.REPORT.key)
 
-            asDisplayableReport(reports)
+            reports.asDisplayable()
         } catch (e: Exception) {
             e.printStackTrace()
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
             val reports: List<Content.Report> = LocalDataStore.getList(StorageKeys.REPORT.key) ?: emptyList()
-            asDisplayableReport(reports)
+            reports.asDisplayable()
         }
     }
 
-    override suspend fun getReport(id: String): Content.Report {
-        return server.get("/content/report", id)
+    override suspend fun getReport(id: String): Report {
+        val report: Content.Report =  server.get("/content/report", id)
+        return report.asDisplayable()
     }
 
     override suspend fun newReport(report: Content.Report): String? {
@@ -77,7 +77,7 @@ class ContentRepositoryImpl(
     }
 
     override suspend fun deleteReport(id: String) {
-       server.delete<String, String>("/content/report", id)
+       server.delete<String>("/content/report", id)
     }
 
     override suspend fun editReport(report: Content.Report) {
@@ -93,7 +93,7 @@ class ContentRepositoryImpl(
     }
 
     override suspend fun deleteCategory(categoryName: String) {
-        server.delete<String, String>("/content/category", categoryName)
+        server.delete<String>("/content/category", categoryName)
     }
 
     override suspend fun getSelections(): List<Content.SelectionGroup> {
@@ -105,6 +105,6 @@ class ContentRepositoryImpl(
     }
 
     override suspend fun deleteSelection(selectionGroupName: String) {
-        server.delete<String, String>("/content/selection", selectionGroupName)
+        server.delete<String>("/content/selection", selectionGroupName)
     }
 }

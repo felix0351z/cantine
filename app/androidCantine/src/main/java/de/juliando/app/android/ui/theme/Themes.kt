@@ -3,8 +3,13 @@ package de.juliando.app.android.ui.theme
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import de.juliando.app.android.R
 
 object CantineTypography {
 
@@ -27,6 +32,13 @@ object CantineTypography {
 
     object Bodies {
 
+        val charterFont = FontFamily(
+            Font(R.font.charter_regular, FontWeight.Normal),
+            Font(R.font.charter_bold, FontWeight.Bold),
+            Font(R.font.charter_italic, FontWeight.Normal, FontStyle.Italic),
+            Font(R.font.charter_bold_italic, FontWeight.Bold, FontStyle.Italic)
+        )
+
         // Used for report date description in picture
         val pictureBodyLarge = TextStyle(
             color = CantineColors.white50Transparent,
@@ -34,12 +46,25 @@ object CantineTypography {
             fontSize = 16.sp
         )
 
+        val title_description_style = TextStyle(
+            color = Color(0x99FFFFFF),
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp
+        )
+
+
+        val reading_style = TextStyle(
+            color = Color(0x80FFFFFF),
+            fontWeight = FontWeight.SemiBold,
+            lineHeight = 1.5.em,
+            fontSize = 22.sp,
+        )
+
         val mealBody = TextStyle(
             color = CantineTheme.grey2,
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-
-            )
+        )
 
         // Used for chips (Example: Report)
         val chipBody = TextStyle(
@@ -56,6 +81,7 @@ object CantineTypography {
 
 
 
+
     }
 
 
@@ -68,6 +94,7 @@ object CantineColors {
 
     val surfaceColor = Color(0xFF1C1C1C)
     val onSurfaceColor = Color(0xFF272727)
+    val backgroundColor = Color(0xFF0E0E0E)
 
     val primaryColor = Color(0xFFFFBA52)
 

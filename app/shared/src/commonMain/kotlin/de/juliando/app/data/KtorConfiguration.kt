@@ -38,6 +38,10 @@ inline fun<reified T: Any> HttpRequestBuilder.setJsonBody(body: T) {
     setBody(body)
 }
 
+fun HttpRequestBuilder.setHeaderId(id: String) {
+    header("id", id)
+}
+
 /**
  * Sets the cached authentication cookie for the request
  * @throws NoSessionException If no authentication cookie will be found

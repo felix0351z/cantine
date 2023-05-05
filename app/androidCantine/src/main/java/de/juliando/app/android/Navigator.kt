@@ -1,5 +1,7 @@
 package de.juliando.app.android
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -15,19 +17,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
-
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-
 import de.juliando.app.android.ui.home.HomeScreen
-import de.juliando.app.android.ui.home.views.ReportView
+import de.juliando.app.android.ui.home.views.ReportScreen
 import de.juliando.app.android.ui.orders.OrderScreen
 import de.juliando.app.android.ui.payment.PaymentScreen
 import de.juliando.app.android.ui.theme.CantineApplicationTheme
 import de.juliando.app.android.ui.theme.CantineTheme
+import org.koin.androidx.compose.koinViewModel
 
 
 sealed class NavigationItem(
@@ -134,13 +136,33 @@ fun AppNavigationHost(
     AnimatedNavHost(
         navController = nav_controller,
         startDestination = NavigationItem.Home.route,
-        modifier = Modifier.padding(padding)
+        modifier = Modifier.padding(padding),
+        enterTransition = { EnterTransition.None },
+        exitTransition = {ExitTransition.None},
+        popExitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None }
     ) {
-        composable(NavigationItem.Home.route) { HomeScreen() }
+        composable(NavigationItem.Home.route) {
+            HomeScreen(
+                viewModel = koinViewModel(),
+                onReportClick = {
+                    nav_controller.navigate("report/$it")
+                }
+            )
+        }
 
         composable(
-            route = "reportView"
-        ) { ReportView() }
+            route = "report/{reportId}",
+            arguments = listOf(
+                navArgument("reportId") {
+                    this.type = NavType.StringType
+                }
+            )
+        ) {
+            ReportScreen(
+                viewModel = koinViewModel()
+            )
+        }
 
         composable(NavigationItem.Orders.route) { OrderScreen() }
         composable(NavigationItem.Payment.route) { PaymentScreen() }

@@ -60,7 +60,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:$composeVersion")
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:$navVersion")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.1-alpha")
     // Lifecycle utilities for compose
     val lifecycleVersion = "2.6.0"
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
@@ -71,7 +71,7 @@ dependencies {
     kapt("android.arch.lifecycle:compiler:1.1.1")
 
     // Koin for dependency injection
-    val koin = "3.2.0"
+    val koin = "3.4.0"
     implementation("io.insert-koin:koin-android:$koin")
     implementation("io.insert-koin:koin-androidx-compose:$koin")
 
