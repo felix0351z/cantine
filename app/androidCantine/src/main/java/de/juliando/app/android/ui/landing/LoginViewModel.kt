@@ -29,6 +29,7 @@ class LoginViewModel(
             true
         }catch (e: HttpStatusException.UnauthorizedException){
             _errorMessage.value = "Benutzername und Passwort stimmen nicht überein"
+            _passwordInput.value = ""
             false
         }
     }

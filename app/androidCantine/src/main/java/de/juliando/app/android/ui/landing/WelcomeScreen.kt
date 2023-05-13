@@ -70,7 +70,7 @@ fun WelcomeScreen(
         Text(
             buildAnnotatedString {
                 withStyle(style = ParagraphStyle(
-                    lineHeight = 45.sp
+                    lineHeight = 43.sp
                 )) {
                     withStyle(style = SpanStyle(color = CantineTheme.white, fontSize = 45.sp, fontWeight = FontWeight.Bold)) {
                         append("Wilkommen bei ")
@@ -81,7 +81,7 @@ fun WelcomeScreen(
                 }
             },
             modifier = Modifier
-                .width(300.dp)
+                .width(320.dp)
                 .align(Alignment.Start)
                 .padding(horizontal = 20.dp)
         )
@@ -91,7 +91,7 @@ fun WelcomeScreen(
         Text(
             text = stringResource(id = R.string.mensa_description),
             color = CantineTheme.grey1,
-            fontSize = 17.sp,
+            fontSize = 15.sp,
             modifier = Modifier
                 .width(370.dp)
                 .align(Alignment.Start)

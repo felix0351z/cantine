@@ -2,14 +2,13 @@ package de.juliando.app.android.ui.landing
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.service.autofill.OnClickAction
-import android.view.View
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
@@ -18,10 +17,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -43,7 +40,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 import androidx.compose.foundation.text.KeyboardActions as KeyboardActions1
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -79,7 +75,7 @@ fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
         Text(
             text = stringResource(id = R.string.landing_3),
             fontWeight = FontWeight.Bold,
-            fontSize = 34.sp,
+            fontSize = 33.sp,
             color = CantineTheme.white,
             modifier = Modifier
                 .align(Alignment.Start)
@@ -89,7 +85,7 @@ fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
         Text(
             text = stringResource(id = R.string.landing_4),
             color = CantineTheme.grey1,
-            fontSize = 16.sp,
+            fontSize = 15.sp,
             modifier = Modifier
                 .width(350.dp)
                 .align(Alignment.Start)
@@ -97,24 +93,52 @@ fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
                 .align(Alignment.Start)
         )
 
-        Spacer(modifier = Modifier.padding(vertical = 35.dp))
+        Spacer(modifier = Modifier.padding(vertical = 34.dp))
 
         var errorMessageText = remember {
             mutableStateOf("")
         }
 
         //Error if sth is wrong/does not exist
-        Text(
-            text = errorMessageText.value,
-            color = Color.Red,
-            fontSize = 20.sp,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(horizontal = 20.dp, vertical = 0.dp)
-                .align(Alignment.Start)
-        )
+        Box(
+            Modifier
+                .height(48.dp)
+                .padding(horizontal = 18.dp, vertical = 0.dp)
+                .then(
+                    if (errorMessageText.value != "") Modifier
+                        .background(
+                            color = Color.Red.copy(alpha = 0.4f),
+                            shape = RoundedCornerShape(5.dp)
+                        )
+                        .border(width = 1.dp, color = Color.Red, shape = RoundedCornerShape(5.dp))
+                    else Modifier
+                )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if(errorMessageText.value!="") {
+                    Icon(
+                        imageVector = Icons.Outlined.Warning,
+                        contentDescription = "Warning",
+                        tint = Color.White,
+                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp)
+                    )
+                }
+                Text(
+                    text = errorMessageText.value,
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp, vertical = 0.dp),
+                    maxLines = 2,
+                    lineHeight = 20.sp
+                )
+            }
 
-        Spacer(modifier = Modifier.padding(vertical = 13.dp))
+        }
+
+        Spacer(modifier = Modifier.padding(vertical = 4.dp))
 
         LoginTextField(
             keyboardController = keyboardController,
@@ -166,7 +190,7 @@ fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
             }
         )
 
-        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+        Spacer(modifier = Modifier.padding(vertical = 14.5.dp))
 
         LandingButton(
             modifier = Modifier,
@@ -213,7 +237,7 @@ fun LoginTextField(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
-            .height(70.dp)
+            .height(65.dp)
             .onFocusEvent { focusState ->
                 if (focusState.hasFocus) {
                     coroutineScope.launch {
