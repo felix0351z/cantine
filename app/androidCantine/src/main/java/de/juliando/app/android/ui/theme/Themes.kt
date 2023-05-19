@@ -32,12 +32,19 @@ object CantineTypography {
 
     object Bodies {
 
-        val charterFont = FontFamily(
+        private val charterFont = FontFamily(
             Font(R.font.charter_regular, FontWeight.Normal),
             Font(R.font.charter_bold, FontWeight.Bold),
             Font(R.font.charter_italic, FontWeight.Normal, FontStyle.Italic),
             Font(R.font.charter_bold_italic, FontWeight.Bold, FontStyle.Italic)
         )
+
+        private val libreBaskervilleFont = FontFamily(
+            Font(R.font.librebaskerville_regular, FontWeight.Normal),
+            Font(R.font.librebaskerville_bold, FontWeight.Bold),
+            Font(R.font.librebaskerville_italic, FontWeight.Normal, FontStyle.Italic)
+        )
+
 
         // Used for report date description in picture
         val pictureBodyLarge = TextStyle(
@@ -54,10 +61,11 @@ object CantineTypography {
 
 
         val reading_style = TextStyle(
-            color = Color(0x80FFFFFF),
-            fontWeight = FontWeight.SemiBold,
+            color = Color(0x99FFFFFF),
+            fontWeight = FontWeight.Normal,
             lineHeight = 1.5.em,
-            fontSize = 22.sp,
+            fontSize = 20.sp,
+            fontFamily = libreBaskervilleFont
         )
 
         val mealBody = TextStyle(

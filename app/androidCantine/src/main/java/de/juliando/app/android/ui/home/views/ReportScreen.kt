@@ -45,6 +45,7 @@ private val requestBuilder = { requestBuilder: RequestBuilder<Drawable> ->
 @Composable
 fun ReportScreen(
     viewModel: ReportViewModel,
+    onBackPressed: () -> Unit
 ) {
 
     val report by viewModel.report.collectAsStateWithLifecycle()
@@ -56,7 +57,7 @@ fun ReportScreen(
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Transparent),
                 navigationIcon = {
                     IconButton(
-                        onClick = { /*TODO*/ }) {
+                        onClick = onBackPressed) {
                         Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "", tint = Color.White)
                     }
                 }

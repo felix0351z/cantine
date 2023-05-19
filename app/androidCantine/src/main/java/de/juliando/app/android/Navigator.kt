@@ -1,8 +1,7 @@
 package de.juliando.app.android
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -13,13 +12,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -27,42 +23,65 @@ import de.juliando.app.android.ui.home.HomeScreen
 import de.juliando.app.android.ui.home.views.ReportScreen
 import de.juliando.app.android.ui.orders.OrderScreen
 import de.juliando.app.android.ui.payment.PaymentScreen
-import de.juliando.app.android.ui.theme.CantineApplicationTheme
 import de.juliando.app.android.ui.theme.CantineTheme
 import org.koin.androidx.compose.koinViewModel
 
-
-sealed class NavigationItem(
+/**
+* Memory enum for all needed navigation routes along the app
+ * @param route The route of the screen
+ * @param displayName The name of the screen
+ * @param image The image if it uses the bottom navigation bar. Instead it can be null
+ *
+**/
+enum class NavigationItem(
     val route: String,
     val displayName: String,
-    val selected: ImageVector,
-    val unselected: ImageVector
-    ) {
-    object Home: NavigationItem(
+    val navigationArguments: List<NamedNavArgument> = emptyList(),
+    val image: Pair<ImageVector, ImageVector>? = null
+) {
+
+    HOME(
         route = "home",
         displayName = "Menu",
-        selected = Icons.Filled.Home,
-        unselected = Icons.Outlined.Home
-    )
-    object Orders: NavigationItem(
+        image = Pair(Icons.Filled.Home, Icons.Outlined.Home)
+    ),
+    ORDERS(
         route = "orders",
         displayName = "Bestellungen",
-        selected = Icons.Filled.CalendarToday,
-        unselected = Icons.Outlined.CalendarToday
-    )
-    object Payment: NavigationItem(
+        image = Pair(Icons.Filled.CalendarToday, Icons.Outlined.CalendarToday)
+    ),
+    PAYMENT (
         route = "payment",
         displayName = "Bezahlung",
-        selected = Icons.Filled.Payments,
-        unselected = Icons.Outlined.Payments
-    )
+        image = Pair(Icons.Filled.Payments, Icons.Outlined.Payments)
+    ),
+    REPORT(
+        route = "report/{reportId}",
+        displayName = "Reports",
+        navigationArguments = listOf(
+            navArgument("reportId") {
+                this.type = NavType.StringType
+            }
+        )
+    );
+
+
+    fun hasNoBottomNavigation(): Boolean {
+        return this.image == null
+    }
+
+    companion object {
+
+        val bottomList: List<NavigationItem>
+            get() = values().filter { it.image != null }
+
+        fun fromRoute(route: String): NavigationItem =
+            values().find { it.route == route }!!
+
+    }
+
 }
 
-val bottomNavigationBar = listOf(
-    NavigationItem.Home,
-    NavigationItem.Orders,
-    NavigationItem.Payment
-)
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -73,21 +92,28 @@ fun AppNavigator() {
     Scaffold(
         modifier = Modifier.fillMaxSize(), // Fill the complete screen
         bottomBar = {
-
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentScreen = navBackStackEntry?.destination
+            val route = currentScreen?.route
+
+            // Check if the current screen is part of the bottom navigation bar.
+            // If not no bar is needed
+            if (route != null && NavigationItem.fromRoute(route).hasNoBottomNavigation()) {
+                return@Scaffold
+            }
 
             NavigationBar(
                 containerColor = Color.Transparent
             ) {
-                bottomNavigationBar.forEach { navigationItem ->
+                NavigationItem.bottomList.forEach { navigationItem ->
+                    // Check if the current interated element is selected
                     val selected = currentScreen?.hierarchy?.any { it.route == navigationItem.route } == true
 
                     NavigationBarItem(
                         colors = CantineTheme.navigationBarItemColors(),
                         icon = {
                                Icon(
-                                   imageVector = if(selected) navigationItem.selected else navigationItem.unselected,
+                                   imageVector = if(selected) navigationItem.image!!.first else navigationItem.image!!.second,
                                    contentDescription = navigationItem.displayName,
                                )
                         },
@@ -119,7 +145,7 @@ fun AppNavigator() {
     ) { innerPadding ->
 
         AppNavigationHost(
-            nav_controller = navController,
+            navController = navController,
             padding = innerPadding
         )
     }
@@ -130,53 +156,52 @@ fun AppNavigator() {
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavigationHost(
-    nav_controller: NavHostController,
+    navController: NavHostController,
     padding: PaddingValues
 ) {
     AnimatedNavHost(
-        navController = nav_controller,
-        startDestination = NavigationItem.Home.route,
         modifier = Modifier.padding(padding),
-        enterTransition = { EnterTransition.None },
-        exitTransition = {ExitTransition.None},
-        popExitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None }
+        navController = navController,
+        startDestination = NavigationItem.HOME.route,
     ) {
-        composable(NavigationItem.Home.route) {
+
+
+        composable(NavigationItem.HOME.route) {
             HomeScreen(
                 viewModel = koinViewModel(),
                 onReportClick = {
-                    nav_controller.navigate("report/$it")
+                    navController.navigate("report/$it")
                 }
             )
         }
-
+        composable(NavigationItem.ORDERS.route) {
+            OrderScreen()
+        }
+        composable(NavigationItem.PAYMENT.route) {
+            PaymentScreen()
+        }
         composable(
-            route = "report/{reportId}",
-            arguments = listOf(
-                navArgument("reportId") {
-                    this.type = NavType.StringType
-                }
-            )
+            route = NavigationItem.REPORT.route,
+            arguments = NavigationItem.REPORT.navigationArguments,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300)) +
+                slideInHorizontally(animationSpec = tween(300), initialOffsetX = { 1000 })
+                },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300)) +
+                slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { 1000 })
+            }
         ) {
             ReportScreen(
-                viewModel = koinViewModel()
+                viewModel = koinViewModel(),
+                onBackPressed = {
+                    navController.popBackStack()
+                }
             )
         }
 
-        composable(NavigationItem.Orders.route) { OrderScreen() }
-        composable(NavigationItem.Payment.route) { PaymentScreen() }
 
 
     }
 
 }
-
-@Preview(showBackground = true)
-@Composable
-fun NavigationPreview() {
-    CantineApplicationTheme {
-        AppNavigator()
-    }
-}
-
