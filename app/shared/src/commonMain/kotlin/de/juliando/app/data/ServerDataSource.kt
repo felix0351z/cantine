@@ -11,7 +11,7 @@ import io.ktor.http.*
 //TODO: Correct Exception handling for the front-end in the server source and all repositories
 class ServerDataSource(
     val httpClient: HttpClient = createHttpClient(),
-    val BASE_URL: String = LocalDataStore.url
+    var BASE_URL: String = LocalDataStore.getURL()
 ) {
 
     /**
@@ -20,6 +20,7 @@ class ServerDataSource(
      * @param password
      */
     suspend fun login(username: String, password: String) {
+        BASE_URL = LocalDataStore.getURL()
         val response = httpClient.submitForm(
             url = "$BASE_URL/login",
             formParameters = Parameters.build {
@@ -32,6 +33,7 @@ class ServerDataSource(
         val cookie = response.setCookie()[0]
         LocalDataStore.storeAuthenticationCookie(cookie)
     }
+
     /**
      * Logout from current session.
      */

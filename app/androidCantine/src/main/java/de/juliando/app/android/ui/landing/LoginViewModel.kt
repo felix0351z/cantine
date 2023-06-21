@@ -1,8 +1,10 @@
 package de.juliando.app.android.ui.landing
 
 import androidx.lifecycle.ViewModel
+import de.juliando.app.data.LocalDataStore
 import de.juliando.app.models.errors.HttpStatusException
-import de.juliando.app.repository.AuthenticationRepository
+import de.juliando.app.models.objects.backend.*
+import de.juliando.app.repository.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -11,7 +13,7 @@ class LoginViewModel(
     private val authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
-    private var _serverURLInput: MutableStateFlow<String> = MutableStateFlow("")
+    private var _serverURLInput: MutableStateFlow<String> = MutableStateFlow("http://207.180.215.119:8080/api")
     val serverURLInput = _serverURLInput.asStateFlow()
 
     private var _usernameInput: MutableStateFlow<String> = MutableStateFlow("")
@@ -25,10 +27,21 @@ class LoginViewModel(
 
     suspend fun signIn(): Boolean{
         return try {
-            authenticationRepository.login(usernameInput.value, passwordInput.value)
-            true
+            val url = serverURLInput.value
+            if (url==""){
+                _errorMessage.value = "Bitte gebe eine URL ein!"
+                false
+            }else {
+                LocalDataStore.storeURL(url)
+                authenticationRepository.login(usernameInput.value, passwordInput.value)
+                true
+            }
         }catch (e: HttpStatusException.UnauthorizedException){
-            _errorMessage.value = "Benutzername und Passwort stimmen nicht überein"
+            _errorMessage.value = "Benutzername und Passwort stimmen nicht überein!"
+            _passwordInput.value = ""
+            false
+        }catch (e: Exception){
+            _errorMessage.value = "Die URL ist falsch!"
             _passwordInput.value = ""
             false
         }

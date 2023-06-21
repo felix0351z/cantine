@@ -67,7 +67,7 @@ class CantineGlideModule : AppGlideModule() {
         *
         */
         override fun handles(model: String): Boolean {
-            return model.startsWith(LocalDataStore.url)
+            return model.startsWith(LocalDataStore.getURL())
         }
 
 

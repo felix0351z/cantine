@@ -14,7 +14,26 @@ import kotlinx.serialization.json.Json
 
 object LocalDataStore {
     val settings: Settings by lazy { Settings() }
-    val url = "http://207.180.215.119:8080/api"
+    //val url = "http://207.180.215.119:8080/api"
+
+
+    /**
+     *Function to store the URL.
+     *
+     * @param toStore URL(String) to store in local storage
+     */
+    inline fun storeURL(url: String?) {
+        storeString(url, StorageKeys.URL.key)
+    }
+
+    /**
+     *Function to get the URL.
+     *
+     * @return URL from the local storage
+     */
+    inline fun getURL(): String {
+        return getString(StorageKeys.URL.key) ?: return ""
+    }
 
     /**
      *Generic function to store a List with a key.
