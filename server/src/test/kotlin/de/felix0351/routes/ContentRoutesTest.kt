@@ -305,7 +305,8 @@ class ContentRoutesTest {
                     name = "Ketchup",
                     price = 0.5F
                 )
-            )
+            ),
+            multipleChoice = true
         )
 
         val response = it.post("/api/content/selection") {
