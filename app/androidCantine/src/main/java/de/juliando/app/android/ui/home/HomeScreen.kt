@@ -20,14 +20,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.juliando.app.android.LoginActivity
 import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.Meal
 import de.juliando.app.android.ui.components.ShimmerItem
+import de.juliando.app.android.ui.home.views.SelectBottomSheet
 import de.juliando.app.android.ui.theme.CantineTheme
 import de.juliando.app.android.utils.ViewState
-import kotlinx.coroutines.launch
 
 const val START_PADDING = 10
 const val SPACED_BY = 10
@@ -48,9 +49,17 @@ fun HomeScreen(
     onReportClick: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
-    val mContext = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val currentBottomSheetMeal by viewModel.currentBottomSheetMeal.collectAsStateWithLifecycle()
+
+
+    if (currentBottomSheetMeal != null) {
+        SelectBottomSheet(
+            onDismiss = viewModel::updateBottomSheetState,
+            meal = currentBottomSheetMeal!!
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -73,10 +82,8 @@ fun HomeScreen(
                 actions = {
                     IconButton(onClick = {
                         //TODO: change Activity and delete cookie
-                        mContext.startActivity(Intent(mContext, LoginActivity::class.java))
-                        coroutineScope.launch {
-                            viewModel.logout()
-                        }
+                        context.startActivity(Intent(context, LoginActivity::class.java))
+                        viewModel.logout()
                     }) {
                         Icon(imageVector = Icons.Outlined.Logout , contentDescription = "")
                     }
@@ -175,7 +182,8 @@ fun HomeScreen(
                         Meal(
                             modifier = Modifier.clip(RoundedCornerShape(CORNER_SHAPE.dp)),
                             heightIn = Pair(MEAL_CARD_HEIGHT_MINIMUM.dp, MEAL_CARD_HEIGHT_MAXIMUM.dp),
-                            item = selectedMeals[it]
+                            item = selectedMeals[it],
+                            onClick = { viewModel.updateBottomSheetState(it) }
                         )
                     }
                 }

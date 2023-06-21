@@ -76,7 +76,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:$koin")
 
     // Use Material UI 3
-    implementation("androidx.compose.material3:material3:1.0.1")
+    implementation("androidx.compose.material3:material3:1.1.0")
     implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
     // More material icons
     implementation("androidx.compose.material:material-icons-extended")

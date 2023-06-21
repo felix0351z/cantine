@@ -17,13 +17,13 @@ object CantineTypography {
     object Headlines {
 
         // Used for report headline
-        val pictureHeadlineLarge = TextStyle(
+        val headlineLarge = TextStyle(
             color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp
         )
 
-        val mealHeadline = TextStyle(
+        val headlineMedium = TextStyle(
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -85,6 +85,20 @@ object CantineTypography {
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
+
+        val bodySmall = TextStyle(
+            color = CantineTheme.grey2,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
+        )
+
+        val bodySmallSelected = TextStyle(
+            color = CantineTheme.white,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
+        )
+
+
 
 
 

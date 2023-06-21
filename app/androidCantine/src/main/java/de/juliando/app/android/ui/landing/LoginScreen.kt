@@ -250,7 +250,7 @@ fun LoginTextField(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = CantineTheme.white,
             unfocusedBorderColor = CantineTheme.grey1,
-            textColor = CantineTheme.white
+            focusedTextColor = CantineTheme.white
         ),
         value = value,
         onValueChange = onValueChange,

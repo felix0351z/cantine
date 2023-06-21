@@ -55,12 +55,13 @@ fun Meal(
     innerPadding: Dp = 10.dp,
     heightIn: Pair<Dp, Dp>,
     containerColor: Color = CantineTheme.surfaceColor,
+    onClick: (Meal) -> Unit
     ) {
 
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        onClick = {}
+        onClick = {onClick(item)}
     ) {
 
         Row(
@@ -96,7 +97,7 @@ fun Meal(
                 Column {
                     Text( // Title
                         text = item.name,
-                        style = CantineTypography.Headlines.mealHeadline,
+                        style = CantineTypography.Headlines.headlineMedium,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -114,7 +115,7 @@ fun Meal(
                 Text( //Price
                     modifier = Modifier.weight(1f, false), // Place at the bottom of the column
                     text = item.toPay,
-                    style = CantineTypography.Headlines.mealHeadline,
+                    style = CantineTypography.Headlines.headlineMedium,
                     color = CantineColors.primaryColor,
                     maxLines = 1
                 )

@@ -187,7 +187,7 @@ fun ReportCard(
                         .padding(horizontal = horizontalStart, vertical = 40.dp),
 
                     text = item.title,
-                    style = CantineTypography.Headlines.pictureHeadlineLarge
+                    style = CantineTypography.Headlines.headlineLarge
                 )
 
                 // Description, only if a date is available

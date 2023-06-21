@@ -23,6 +23,9 @@ class HomeViewModel(
     private val authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
+    private var _currentBottomSheetMeal: MutableStateFlow<Meal?> = MutableStateFlow(null)
+    val currentBottomSheetMeal = _currentBottomSheetMeal.asStateFlow()
+
     // Save the selected tags
     private val savedTags = mutableListOf<String>()
 
@@ -115,11 +118,17 @@ class HomeViewModel(
         _selectedTags.value = savedTags.map { it }
     }
 
+    fun updateBottomSheetState(newMeal: Meal? = null) {
+        _currentBottomSheetMeal.value = newMeal
+    }
+
     fun updateSearchText(text: String) {
         _searchInput.value = text
     }
 
-    suspend fun logout(){
-        authenticationRepository.logout()
+     fun logout(){
+         viewModelScope.launch {
+             authenticationRepository.logout()
+         }
     }
 }
