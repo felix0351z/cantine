@@ -3,6 +3,7 @@ package de.juliando.app.data
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
+import de.juliando.app.models.objects.backend.Content
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -20,7 +21,7 @@ object LocalDataStore {
     /**
      *Function to store the URL.
      *
-     * @param toStore URL(String) to store in local storage
+     * @param url URL(String) to store in local storage
      */
     inline fun storeURL(url: String?) {
         storeString(url, StorageKeys.URL.key)
@@ -60,6 +61,38 @@ object LocalDataStore {
         return if (obj != null){
             Json.decodeFromString<List<T>>(obj)
         }else {
+            null
+        }
+    }
+
+    /**
+     *  Function to get the Meal with the [id] from the stored List.
+     *
+     * @param id of the Meal
+     * @return Meal or null
+     */
+    inline fun getMealFromList(id: String): Content.Meal? {
+        var listString: String? = settings[StorageKeys.MEAL.key]
+        return if (listString != null){
+            val list = Json.decodeFromString<List<Content.Meal>>(listString)
+            list.find { it.id.equals(id) }
+        } else {
+            null
+        }
+    }
+
+    /**
+     *  Function to get the Report with the [id] from the stored List.
+     *
+     * @param id of the Report
+     * @return Report or null
+     */
+    inline fun getReportFromList(id: String): Content.Report? {
+        var listString: String? = settings[StorageKeys.REPORT.key]
+        return if (listString != null){
+            val list = Json.decodeFromString<List<Content.Report>>(listString)
+            list.find { it.id.equals(id) }
+        } else {
             null
         }
     }
