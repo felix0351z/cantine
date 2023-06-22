@@ -1,5 +1,6 @@
 package de.juliando.app.android
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
                 if(LocalDataStore.getAuthenticationCookieHeader() == null){
                     startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                     overridePendingTransition(0, 0)
+                    finish()
                 }else{
                     AppNavigator()
                 }

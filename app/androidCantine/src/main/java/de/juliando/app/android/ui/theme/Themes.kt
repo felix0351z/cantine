@@ -28,6 +28,13 @@ object CantineTypography {
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
         )
+
+        // Used for OrderedMeal
+        val headlineSmall = TextStyle(
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+        )
     }
 
     object Bodies {

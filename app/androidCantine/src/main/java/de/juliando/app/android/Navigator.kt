@@ -175,7 +175,9 @@ fun AppNavigationHost(
             )
         }
         composable(NavigationItem.ORDERS.route) {
-            OrderScreen()
+            OrderScreen(
+                viewModel = koinViewModel()
+            )
         }
         composable(NavigationItem.PAYMENT.route) {
             PaymentScreen()

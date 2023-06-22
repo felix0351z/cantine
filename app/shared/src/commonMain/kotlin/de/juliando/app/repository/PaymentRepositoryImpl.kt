@@ -4,6 +4,7 @@ import de.juliando.app.data.LocalDataStore
 import de.juliando.app.data.ServerDataSource
 import de.juliando.app.data.StorageKeys
 import de.juliando.app.models.objects.backend.*
+import de.juliando.app.models.objects.ui.Order
 
 /**
  * This repository handles the payment data.
@@ -18,10 +19,10 @@ class PaymentRepositoryImpl(
         return server.get("/payment/credit")
     }
 
-    override suspend fun getOrders(): List<Content.Order> {
+    override suspend fun getOrders(): List<Order> {
         return try {
             // Try to get the Data from the Server
-            val orders = server.getList<Content.Order>("/payment/orders")
+            val orders = server.getList<Order>("/payment/orders")
             LocalDataStore.storeList(orders, StorageKeys.ORDER.key)
             orders
         } catch (e: Exception) {

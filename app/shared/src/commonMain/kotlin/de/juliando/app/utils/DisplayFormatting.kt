@@ -13,7 +13,7 @@ expect fun toCurrencyString(amount: Float): String
 
 fun toFullImageUrl(pictureId: String?): String? {
     return if (pictureId == null) null
-    else "${LocalDataStore.url}/content/image/$pictureId"
+    else "${LocalDataStore.getURL()}/content/image/$pictureId"
 }
 
 

@@ -1,6 +1,7 @@
 package de.juliando.app.android.ui.landing
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -201,6 +202,7 @@ fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
                 coroutineScope.launch {
                     if(viewModel.signIn()){
                         mContext.startActivity(Intent(mContext, MainActivity::class.java))
+                        (mContext as? Activity)?.finish()
                     }
                     errorMessageText.value = viewModel.errorMessage.value
                 }
