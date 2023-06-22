@@ -95,14 +95,20 @@ object CantineTypography {
 
         val bodySmall = TextStyle(
             color = CantineTheme.grey2,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
         )
 
         val bodySmallSelected = TextStyle(
-            color = CantineTheme.white,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
+            color = CantineColors.white,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        val primaryButton = TextStyle(
+            color = CantineColors.black,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
         )
 
 
@@ -118,7 +124,7 @@ object CantineTypography {
 }
 
 object CantineColors {
-    val white = Color.White
+    val white = Color(0xFFD5D5D5)
     val black = Color.Black
 
     val surfaceColor = Color(0xFF1C1C1C)
