@@ -1,44 +1,23 @@
 package de.juliando.app.android.ui.landing
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Dns
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.juliando.app.android.MainActivity
 import de.juliando.app.android.R
 import de.juliando.app.android.ui.theme.CantineTheme
-import kotlinx.coroutines.launch
-import java.util.Vector
 
 @Composable
 fun WelcomeScreen(
@@ -67,16 +46,19 @@ fun WelcomeScreen(
 
         Spacer(modifier = Modifier.padding(vertical = 10 .dp))
 
+        val introduction_welcome_to = stringResource(R.string.introduction_welcome_to)
+        val introduction_cantine = stringResource(R.string.introduction_mensa)
+
         Text(
             buildAnnotatedString {
                 withStyle(style = ParagraphStyle(
                     lineHeight = 43.sp
                 )) {
                     withStyle(style = SpanStyle(color = CantineTheme.white, fontSize = 45.sp, fontWeight = FontWeight.Bold)) {
-                        append("Wilkommen bei ")
+                        append(introduction_welcome_to)
                     }
                     withStyle(style = SpanStyle(color = CantineTheme.primaryColor, fontSize = 45.sp, fontWeight = FontWeight.Bold)) {
-                        append("Mensa")
+                        append(introduction_cantine)
                     }
                 }
             },

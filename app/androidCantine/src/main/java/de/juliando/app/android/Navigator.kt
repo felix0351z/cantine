@@ -163,6 +163,8 @@ fun AppNavigationHost(
         modifier = Modifier.padding(padding),
         navController = navController,
         startDestination = NavigationItem.HOME.route,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }
     ) {
 
 

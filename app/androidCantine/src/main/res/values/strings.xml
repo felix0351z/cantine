@@ -24,4 +24,6 @@
     <string name="continue_btn">Weiter</string>
 
     <string name="add_to_shopping_cart">Add</string>
+    <string name="introduction_welcome_to">Welcome to</string>
+    <string name="introduction_mensa">Cantine</string>
 </resources>
