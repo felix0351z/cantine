@@ -37,7 +37,13 @@ class ContentRepositoryImpl(
     }
 
     override suspend fun getMeal(id: String): Content.Meal {
-        return server.get("/content/meal", id)
+        return try {
+            // Try to get Data from the stored Meal list
+            val meal = LocalDataStore.getMealFromList(id)
+            if (meal!=null) meal else throw NullPointerException()
+        } catch (e: Exception) {
+            server.get("/content/meal", id)
+        }
     }
 
     override suspend fun addMeal(newMeal: Content.Meal): String? {
@@ -68,8 +74,14 @@ class ContentRepositoryImpl(
     }
 
     override suspend fun getReport(id: String): Report {
-        val report: Content.Report =  server.get("/content/report", id)
-        return report.asDisplayable()
+        return try {
+            // Try to get Data from the stored Report list
+            val report = LocalDataStore.getReportFromList(id)
+            if (report!=null) report.asDisplayable() else throw NullPointerException()
+        } catch (e: Exception) {
+            // Catch: get the Report from the server.
+            server.get<Content.Report>("/content/report", id).asDisplayable()
+        }
     }
 
     override suspend fun newReport(report: Content.Report): String? {

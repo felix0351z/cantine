@@ -16,10 +16,8 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import de.juliando.app.android.ui.theme.CantineColors
-import de.juliando.app.android.ui.theme.CantineTheme
 import de.juliando.app.android.ui.theme.CantineTypography
-import de.juliando.app.models.objects.backend.Content
-import de.juliando.app.models.objects.ui.Meal
+import de.juliando.app.data.LocalDataStore
 import de.juliando.app.models.objects.ui.OrderedMeal
 
 
@@ -52,7 +50,7 @@ fun OrderedMeal(
     innerPadding: Dp = 10.dp,
     heightIn: Pair<Dp, Dp>,
     containerColor: Color = CantineColors.onSurfaceColor,
-    onClick: (Meal) -> Unit
+    onClick: (OrderedMeal) -> Unit
     ) {
 
     Card(
@@ -97,7 +95,7 @@ fun OrderedMeal(
 
                 Text( //Price
                     modifier = Modifier.weight(1f, false), // Place at the bottom of the column
-                    text = item.price+" €",
+                    text = "${try{item.price.toDouble()+item.deposit.toDouble()}catch (e: Exception){item.price}}€",
                     style = CantineTypography.Headlines.headlineSmall,
                     color = CantineColors.primaryColor,
                     maxLines = 1
@@ -110,7 +108,7 @@ fun OrderedMeal(
                     .aspectRatio(1f) // Must be quadratic
                     .padding(2.dp)
                     .clip(RoundedCornerShape(10.dp)), // Clip with a corner shape of 10.dp
-                model = item.picture,
+                model = "${LocalDataStore.getURL()}/content/image/${item.picture}", // URL from the picture
                 contentDescription = item.name,
                 requestBuilderTransform = requestBuilder
             )
