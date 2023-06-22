@@ -18,4 +18,5 @@
     <string name="mensa">Mensa</string>
     <string name="mensa_description">Mensa ist deine neue App für online Essensbestellungen in deiner Cafeteria.</string>
     <string name="continue_btn">Weiter</string>
+    <string name="add_to_shopping_cart">Hinzufügen</string>
 </resources>
