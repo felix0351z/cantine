@@ -25,8 +25,9 @@ const val SPACED_BY = 20
 const val CORNER_SHAPE = 16
 
 @Composable
-fun OrderScreen(
-    viewModel: OrderViewModel
+fun OrdersScreen(
+    viewModel: OrdersViewModel,
+    onOrderClick: (String) -> Unit,
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
     val orders by viewModel.orders.collectAsStateWithLifecycle()
@@ -36,7 +37,7 @@ fun OrderScreen(
             .background(CantineColors.backgroundColor)
             .fillMaxSize()
             .padding(top = 5.dp, start = 5.dp, end = 5.dp),
-        verticalArrangement = Arrangement.spacedBy(de.juliando.app.android.ui.home.SPACED_BY.dp),
+        verticalArrangement = Arrangement.spacedBy(SPACED_BY.dp),
         state = rememberLazyListState(),
     ) {
         item {
@@ -59,7 +60,7 @@ fun OrderScreen(
                     Order(
                         modifier = Modifier.clip(RoundedCornerShape(de.juliando.app.android.ui.home.CORNER_SHAPE.dp)),
                         item = orders[it],
-                        onClick = {},
+                        onClick = { onOrderClick(orders[it].id) },
                         onLongClick = {},
                         cornerShape = CORNER_SHAPE
                     )

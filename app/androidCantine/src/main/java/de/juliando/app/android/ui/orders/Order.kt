@@ -91,7 +91,7 @@ fun Order(
                                 modifier = Modifier.clip(RoundedCornerShape(CORNER_SHAPE.dp)),
                                 heightIn = Pair(100.dp, 110.dp),
                                 item = item.meals[it],
-                                onClick = {onClick}
+                                onClick = onClick
                             )
                         }
                     }

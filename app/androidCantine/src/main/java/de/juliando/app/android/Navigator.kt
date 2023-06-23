@@ -21,7 +21,8 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import de.juliando.app.android.ui.home.HomeScreen
 import de.juliando.app.android.ui.home.views.ReportScreen
-import de.juliando.app.android.ui.orders.OrderScreen
+import de.juliando.app.android.ui.orders.OrdersScreen
+import de.juliando.app.android.ui.orders.views.OrderScreen
 import de.juliando.app.android.ui.payment.PaymentScreen
 import de.juliando.app.android.ui.theme.CantineTheme
 import org.koin.androidx.compose.koinViewModel
@@ -60,6 +61,15 @@ enum class NavigationItem(
         displayName = "Reports",
         navigationArguments = listOf(
             navArgument("reportId") {
+                this.type = NavType.StringType
+            }
+        )
+    ),
+    ORDER(
+        route = "order/{orderId}",
+        displayName = "Order",
+        navigationArguments = listOf(
+            navArgument("orderId") {
                 this.type = NavType.StringType
             }
         )
@@ -177,8 +187,11 @@ fun AppNavigationHost(
             )
         }
         composable(NavigationItem.ORDERS.route) {
-            OrderScreen(
-                viewModel = koinViewModel()
+            OrdersScreen(
+                viewModel = koinViewModel(),
+                onOrderClick = {
+                    navController.navigate("order/$it")
+                }
             )
         }
         composable(NavigationItem.PAYMENT.route) {
@@ -197,6 +210,26 @@ fun AppNavigationHost(
             }
         ) {
             ReportScreen(
+                viewModel = koinViewModel(),
+                onBackPressed = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = NavigationItem.ORDER.route,
+            arguments = NavigationItem.ORDER.navigationArguments,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300)) +
+                        slideInHorizontally(animationSpec = tween(300), initialOffsetX = { 1000 })
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300)) +
+                        slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { 1000 })
+            }
+        ) {
+            OrderScreen(
                 viewModel = koinViewModel(),
                 onBackPressed = {
                     navController.popBackStack()

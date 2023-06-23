@@ -50,14 +50,14 @@ fun OrderedMeal(
     innerPadding: Dp = 10.dp,
     heightIn: Pair<Dp, Dp>,
     containerColor: Color = CantineColors.onSurfaceColor,
-    onClick: (OrderedMeal) -> Unit
+    onClick: () -> Unit
     ) {
 
     Card(
         modifier = modifier
             .padding(vertical = 2.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        onClick = {onClick}
+        onClick = onClick
     ) {
 
         Row(

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
-class OrderViewModel(
+class OrdersViewModel(
     private val paymentRepository: PaymentRepository
 ): ViewModel() {
 

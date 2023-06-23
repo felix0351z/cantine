@@ -81,7 +81,7 @@ dependencies {
     // More material icons
     implementation("androidx.compose.material:material-icons-extended")
 
-
-
+    // QR-Code generator
+    implementation("com.google.zxing:core:3.5.1")
 
 }
