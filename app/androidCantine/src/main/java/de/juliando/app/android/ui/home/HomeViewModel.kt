@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 const val TAG = "HomeViewModel"
 
 fun List<Meal>.selectCategories() = this.filter { it.category != null }.map { it.category!! }.distinct()
+fun List<Meal>.selectTags() = this.flatMap { it.tags }.distinct()
 fun List<Meal>.selectWithCategory(category: String) = this.filter { it.category == category }
 
 class HomeViewModel(
@@ -53,7 +54,7 @@ class HomeViewModel(
             started = SharingStarted.WhileSubscribed(4000),
             initialValue = emptyList()
         )
-    val tags = _meals.map { it.flatMap { it.tags } }
+    val tags = _meals.map { it.selectTags() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(4000),

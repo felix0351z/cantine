@@ -25,6 +25,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.juliando.app.android.LoginActivity
 import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.Meal
+import de.juliando.app.android.ui.components.MultiSelectionTab
+import de.juliando.app.android.ui.components.SelectionTab
 import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.home.views.SelectBottomSheet
 import de.juliando.app.android.ui.theme.CantineTheme

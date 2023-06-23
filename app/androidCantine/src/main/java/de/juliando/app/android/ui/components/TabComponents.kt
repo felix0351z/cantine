@@ -1,4 +1,4 @@
-package de.juliando.app.android.ui.home
+package de.juliando.app.android.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -101,7 +101,6 @@ fun MultiSelectionTab(
     tags: List<String>,
     selected: List<String>,
 ) {
-    //val col = remember { mutableStateListOf<Int>() } // Save all current list states in a list
 
     if (tags.isNotEmpty()) {
         LazyRow(
