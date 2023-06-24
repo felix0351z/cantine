@@ -111,6 +111,12 @@ object CantineTypography {
             fontWeight = FontWeight.SemiBold
         )
 
+        val emptyViewStyle = TextStyle(
+            color = CantineTheme.grey2,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal
+        )
+
 
 
 

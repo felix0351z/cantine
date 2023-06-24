@@ -1,4 +1,4 @@
-package de.juliando.app.android.ui.home.views
+package de.juliando.app.android.ui.home.report
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -26,14 +26,11 @@ class ReportViewModel(
             try {
                 _report.value = DataState.Success(contentRepository.getReport(reportId))
             } catch (ex: Exception) {
-                Log.i("ReportViewModel", "Error occured while loading", ex)
+                Log.e(this@ReportViewModel::class.toString(), "Error occurred while loading the clicked report", ex)
                 _report.value = DataState.Error(ex)
-                //TODO: Handle errors
             }
         }
     }
-
-
 
 
 

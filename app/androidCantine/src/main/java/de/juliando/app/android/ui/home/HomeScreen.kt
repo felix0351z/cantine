@@ -28,9 +28,11 @@ import de.juliando.app.android.ui.components.Meal
 import de.juliando.app.android.ui.components.MultiSelectionTab
 import de.juliando.app.android.ui.components.SelectionTab
 import de.juliando.app.android.ui.components.ShimmerItem
-import de.juliando.app.android.ui.home.views.SelectBottomSheet
+import de.juliando.app.android.ui.home.menu.SelectBottomSheet
+import de.juliando.app.android.ui.home.shopping_cart.ShoppingCartScreen
 import de.juliando.app.android.ui.theme.CantineTheme
 import de.juliando.app.android.utils.ViewState
+import org.koin.androidx.compose.koinViewModel
 
 const val START_PADDING = 10
 const val SPACED_BY = 10
@@ -54,12 +56,19 @@ fun HomeScreen(
     val context = LocalContext.current
 
     val currentBottomSheetMeal by viewModel.currentBottomSheetMeal.collectAsStateWithLifecycle()
+    val isShoppingCartSelected by viewModel.isShoppingCartSelected.collectAsStateWithLifecycle()
 
 
     if (currentBottomSheetMeal != null) {
         SelectBottomSheet(
-            onDismiss = viewModel::updateBottomSheetState,
+            onDismiss = viewModel::onMealClick,
             meal = currentBottomSheetMeal!!
+        )
+    }
+    if (isShoppingCartSelected) {
+        ShoppingCartScreen(
+            onDismiss = viewModel::onShoppingCartClick,
+            viewModel = koinViewModel()
         )
     }
 
@@ -69,14 +78,13 @@ fun HomeScreen(
                 colors = CantineTheme.largeTopAppBarColors(),
                 navigationIcon = {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = viewModel::onShoppingCartClick,
                         colors = IconButtonDefaults.iconButtonColors(
-                        //contentColor = CantineTheme.white
                         )
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.ShoppingCart,
-                            contentDescription = ""
+                            contentDescription = "Shopping cart"
                         )
                     }
                 },
@@ -182,10 +190,9 @@ fun HomeScreen(
                         key = { selectedMeals[it].id }
                     ) {
                         Meal(
-                            modifier = Modifier.clip(RoundedCornerShape(CORNER_SHAPE.dp)),
                             heightIn = Pair(MEAL_CARD_HEIGHT_MINIMUM.dp, MEAL_CARD_HEIGHT_MAXIMUM.dp),
                             item = selectedMeals[it],
-                            onClick = { viewModel.updateBottomSheetState(it) }
+                            onClick = { viewModel.onMealClick(it) }
                         )
                     }
                 }

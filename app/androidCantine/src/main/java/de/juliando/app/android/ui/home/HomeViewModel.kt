@@ -27,6 +27,9 @@ class HomeViewModel(
     private var _currentBottomSheetMeal: MutableStateFlow<Meal?> = MutableStateFlow(null)
     val currentBottomSheetMeal = _currentBottomSheetMeal.asStateFlow()
 
+    private var _isShoppingCartSelected = MutableStateFlow(false)
+    val isShoppingCartSelected = _isShoppingCartSelected.asStateFlow()
+
     // Save the selected tags
     private val savedTags = mutableListOf<String>()
 
@@ -119,8 +122,12 @@ class HomeViewModel(
         _selectedTags.value = savedTags.map { it }
     }
 
-    fun updateBottomSheetState(newMeal: Meal? = null) {
+    fun onMealClick(newMeal: Meal? = null) {
         _currentBottomSheetMeal.value = newMeal
+    }
+
+    fun onShoppingCartClick() {
+        _isShoppingCartSelected.update { !it }
     }
 
     fun updateSearchText(text: String) {

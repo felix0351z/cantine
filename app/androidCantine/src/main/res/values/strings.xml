@@ -26,4 +26,5 @@
     <string name="add_to_shopping_cart">Add</string>
     <string name="introduction_welcome_to">Welcome to</string>
     <string name="introduction_mensa">Cantine</string>
+    <string name="shopping_cart_empty">Your shopping cart is empty. Go the menu page and buy something!</string>
 </resources>

@@ -1,4 +1,4 @@
-package de.juliando.app.android.ui.home.views
+package de.juliando.app.android.ui.home.menu
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

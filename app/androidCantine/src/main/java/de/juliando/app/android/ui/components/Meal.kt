@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import de.juliando.app.android.ui.home.MEAL_CARD_HEIGHT_MAXIMUM
+import de.juliando.app.android.ui.home.MEAL_CARD_HEIGHT_MINIMUM
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTheme
 import de.juliando.app.android.ui.theme.CantineTypography
@@ -53,13 +55,13 @@ fun Meal(
     modifier: Modifier = Modifier,
     item: Meal,
     innerPadding: Dp = 10.dp,
-    heightIn: Pair<Dp, Dp>,
+    heightIn: Pair<Dp, Dp> = Pair(MEAL_CARD_HEIGHT_MINIMUM.dp, MEAL_CARD_HEIGHT_MAXIMUM.dp),
     containerColor: Color = CantineTheme.surfaceColor,
     onClick: (Meal) -> Unit
     ) {
 
     Card(
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(containerColor = containerColor),
         onClick = {onClick(item)}
     ) {

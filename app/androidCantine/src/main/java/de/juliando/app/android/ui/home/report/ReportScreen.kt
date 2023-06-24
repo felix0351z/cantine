@@ -1,4 +1,4 @@
-package de.juliando.app.android.ui.home.views
+package de.juliando.app.android.ui.home.report
 
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.layout.*

@@ -20,7 +20,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import de.juliando.app.android.ui.home.HomeScreen
-import de.juliando.app.android.ui.home.views.ReportScreen
+import de.juliando.app.android.ui.home.report.ReportScreen
 import de.juliando.app.android.ui.orders.OrdersScreen
 import de.juliando.app.android.ui.orders.views.OrderScreen
 import de.juliando.app.android.ui.payment.PaymentScreen

@@ -22,4 +22,5 @@
     <string name="add_to_shopping_cart">Hinzufügen</string>
     <string name="introduction_welcome_to">Wilkommen bei</string>
     <string name="introduction_mensa">Mensa</string>
+    <string name="shopping_cart_empty">Dein Warenkorb ist leer.</string>
 </resources>
