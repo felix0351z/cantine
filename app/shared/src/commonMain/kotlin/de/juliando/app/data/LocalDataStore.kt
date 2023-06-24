@@ -3,7 +3,9 @@ package de.juliando.app.data
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
+import de.juliando.app.models.objects.backend.Auth
 import de.juliando.app.models.objects.backend.Content
+import de.juliando.app.models.objects.ui.Order
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -37,6 +39,33 @@ object LocalDataStore {
     }
 
     /**
+     *Function to store the current user.
+     *
+     * @param user to store in local storage
+     */
+    inline fun storeCurrentUser(user: Auth.User?) {
+        if (user != null){
+            settings[StorageKeys.USER.key] = Json.encodeToString(user)
+        }else {
+            settings.remove(StorageKeys.USER.key)
+        }
+    }
+
+    /**
+     *Function to get the current user.
+     *
+     * @return user from the local storage
+     */
+    inline fun getCurrentUser(): Auth.User? {
+        val obj: String? = settings[StorageKeys.USER.key]
+        return if (obj != null){
+            Json.decodeFromString(obj)
+        }else {
+            null
+        }
+    }
+
+    /**
      *Generic function to store a List with a key.
      *
      * @param toStore List to store in local storage
@@ -57,7 +86,7 @@ object LocalDataStore {
      * @return List from the local storage
      */
     inline fun <reified T> getList(key: String): List<T>? {
-        var obj: String? = settings[key]
+        val obj: String? = settings[key]
         return if (obj != null){
             Json.decodeFromString<List<T>>(obj)
         }else {
@@ -72,7 +101,7 @@ object LocalDataStore {
      * @return Meal or null
      */
     inline fun getMealFromList(id: String): Content.Meal? {
-        var listString: String? = settings[StorageKeys.MEAL.key]
+        val listString: String? = settings[StorageKeys.MEAL.key]
         return if (listString != null){
             val list = Json.decodeFromString<List<Content.Meal>>(listString)
             list.find { it.id.equals(id) }
@@ -88,9 +117,25 @@ object LocalDataStore {
      * @return Report or null
      */
     inline fun getReportFromList(id: String): Content.Report? {
-        var listString: String? = settings[StorageKeys.REPORT.key]
+        val listString: String? = settings[StorageKeys.REPORT.key]
         return if (listString != null){
             val list = Json.decodeFromString<List<Content.Report>>(listString)
+            list.find { it.id.equals(id) }
+        } else {
+            null
+        }
+    }
+
+    /**
+     *  Function to get the Order with the [id] from the stored List.
+     *
+     * @param id of the Report
+     * @return Order or null
+     */
+    inline fun getOrderFromList(id: String): Order? {
+        val listString: String? = settings[StorageKeys.ORDER.key]
+        return if (listString != null){
+            val list = Json.decodeFromString<List<Order>>(listString)
             list.find { it.id.equals(id) }
         } else {
             null
@@ -142,7 +187,7 @@ object LocalDataStore {
      * @return Object from the local storage
      */
     inline fun <reified T> getObject(key: String): T? {
-        var obj: String? = settings[key]
+        val obj: String? = settings[key]
         return if (obj != null){
             Json.decodeFromString<T>(obj)
         }else {

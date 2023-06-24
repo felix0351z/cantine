@@ -3,6 +3,7 @@ package de.juliando.app.repository
 import de.juliando.app.data.LocalDataStore
 import de.juliando.app.data.ServerDataSource
 import de.juliando.app.data.StorageKeys
+import de.juliando.app.models.errors.HttpStatusException
 import de.juliando.app.models.objects.backend.*
 import de.juliando.app.models.objects.ui.Order
 
@@ -28,6 +29,16 @@ class PaymentRepositoryImpl(
         } catch (e: Exception) {
             // Catch: get the Data from the local Storage. If nothing is stored return an empty list.
             LocalDataStore.getList(StorageKeys.ORDER.key) ?: emptyList()
+        }
+    }
+
+    override suspend fun getOrder(id: String): Order {
+        return try {
+            // Try to get Data from the stored Order list
+            val order = LocalDataStore.getOrderFromList(id)
+            if (order!=null) order else throw NullPointerException()
+        } catch (e: Exception) {
+            throw HttpStatusException.NotFoundException()
         }
     }
 

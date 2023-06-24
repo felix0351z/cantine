@@ -19,6 +19,8 @@ interface PaymentRepository {
     @Throws(Exception::class)
     suspend fun getOrders(): List<Order>
     @Throws(Exception::class)
+    suspend fun getOrder(id: String): Order
+    @Throws(Exception::class)
     suspend fun createOrderRequest(request: CreateOrderRequest): Content.Order?
     @Throws(Exception::class)
     suspend fun deleteOrder(id: String): Content.Order?

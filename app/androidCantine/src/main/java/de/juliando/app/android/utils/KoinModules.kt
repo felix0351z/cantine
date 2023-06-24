@@ -14,6 +14,6 @@ val androidModule = module {
     viewModel { LoginViewModel(get()) }
     viewModel { ReportViewModel(get(), get()) }
     viewModel { OrdersViewModel(get()) }
-    viewModel { OrderViewModel(get()) }
+    viewModel { OrderViewModel(get(), get()) }
     viewModel { ShoppingCartViewModel(get()) }
 }
