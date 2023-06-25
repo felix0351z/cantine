@@ -33,7 +33,6 @@ sealed class Content {
     data class SelectionGroup(
         val name: String,
         val elements: List<Selection>,
-        val multipleChoice: Boolean
     )
 
     @Serializable
@@ -89,6 +88,7 @@ sealed class Content {
 
     @Serializable
     data class OrderedMeal(
+        val id: Id<Meal>,
         val name: String,
         val description: String,
         val price: Float,
