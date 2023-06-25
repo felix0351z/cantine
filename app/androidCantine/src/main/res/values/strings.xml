@@ -27,4 +27,11 @@
     <string name="introduction_welcome_to">Welcome to</string>
     <string name="introduction_mensa">Cantine</string>
     <string name="shopping_cart_empty">Your shopping cart is empty. Go the menu page and buy something!</string>
+    <string name="shopping_cart_added">Added meal to the shopping cart</string>
+    <string name="shopping_cart_remove">Undo</string>
+    <string name="shopping_cart_title">Shopping cart</string>
+    <string name="logout_title">Log out</string>
+    <string name="more_title">More</string>
+    <string name="shopping_cart_pay">Pay</string>
+    <string name="error_occurred">Error occurred</string>
 </resources>

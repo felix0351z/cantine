@@ -54,17 +54,31 @@ fun HomeScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val currentBottomSheetMeal by viewModel.currentBottomSheetMeal.collectAsStateWithLifecycle()
     val isShoppingCartSelected by viewModel.isShoppingCartSelected.collectAsStateWithLifecycle()
+    val snackbarItem by viewModel.snackbar.collectAsStateWithLifecycle()
 
-
+    /*
+    * Show the bottom sheet to select a meal.
+    * If the user clicks on a meal, the currentBottomSheetMeal flow will be updated to the current meal
+    * and the bottom sheet will be displayed.
+    * If the user exits the sheet, the current meal will be set to null again
+    */
     if (currentBottomSheetMeal != null) {
         SelectBottomSheet(
             onDismiss = viewModel::onMealClick,
-            meal = currentBottomSheetMeal!!
+            meal = currentBottomSheetMeal!!,
+            onFinish = viewModel::onPayment
         )
     }
+
+    /*
+    * Show the shopping cart sheet if the user has clicked
+    * on the icon.
+    * The action will be handled also with a stateflow
+    */
     if (isShoppingCartSelected) {
         ShoppingCartScreen(
             onDismiss = viewModel::onShoppingCartClick,
@@ -72,33 +86,53 @@ fun HomeScreen(
         )
     }
 
+    /*
+    * Show all snack-bars which will be sent by the view model.
+    */
+    LaunchedEffect(snackbarItem) {
+        if (snackbarItem != null) { // Only if the item is not null
+            val result = snackbarHostState.showSnackbar(
+                message = context.resources.getString(snackbarItem!!.message),
+                actionLabel = context.resources.getString(snackbarItem!!.button!!.name),
+                duration = SnackbarDuration.Short
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                snackbarItem!!.button!!.action()
+            }
+        }
+    }
+
+
+    /*
+    * Main screen
+    */
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 colors = CantineTheme.largeTopAppBarColors(),
                 navigationIcon = {
-                    IconButton(
-                        onClick = viewModel::onShoppingCartClick,
-                        colors = IconButtonDefaults.iconButtonColors(
-                        )
-                    ) {
+                    // Shopping cart icon for the sheet
+                    IconButton(onClick = viewModel::onShoppingCartClick) {
                         Icon(
                             imageVector = Icons.Outlined.ShoppingCart,
-                            contentDescription = "Shopping cart"
+                            contentDescription = stringResource(R.string.shopping_cart_title)
                         )
                     }
                 },
+                // No title needed, because the home screen will be separated into sections with own titles
                 title = {},
                 actions = {
+                    // Log out icon
                     IconButton(onClick = {
-                        //TODO: change Activity and delete cookie
                         context.startActivity(Intent(context, LoginActivity::class.java))
                         viewModel.logout()
                     }) {
-                        Icon(imageVector = Icons.Outlined.Logout , contentDescription = "")
+                        Icon(imageVector = Icons.Outlined.Logout , contentDescription = stringResource(R.string.logout_title))
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Outlined.MoreVert , contentDescription = "")
+                    // More action
+                    IconButton(onClick = {}) {
+                        Icon(imageVector = Icons.Outlined.MoreVert , contentDescription = stringResource(R.string.more_title))
                     }
 
                 }

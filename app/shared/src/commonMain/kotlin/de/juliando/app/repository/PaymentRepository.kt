@@ -11,6 +11,18 @@ import de.juliando.app.models.objects.ui.Order
 
 interface PaymentRepository {
 
+    //ShoppingCart
+
+    /**
+    * Returns the current shopping cart with all meals
+    **/
+    val shoppingCart: List<Content.OrderedMeal>
+
+    fun addItemToShoppingCart(meal: Content.OrderedMeal): Boolean
+    fun removeItemFromShoppingCart(id: String): Boolean
+
+    fun clearShoppingCart()
+
     //Credit
     @Throws(Exception::class)
     suspend fun getCredit(): Float

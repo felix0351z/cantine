@@ -15,6 +15,15 @@ class PaymentRepositoryImpl(
     private val server: ServerDataSource = ServerDataSource(),
 ) : PaymentRepository {
 
+    // Save the current shopping cart as an mutable list here
+    private val _shoppingCart = mutableListOf<Content.OrderedMeal>()
+    override val shoppingCart: List<Content.OrderedMeal> = _shoppingCart
+
+    override fun addItemToShoppingCart(meal: Content.OrderedMeal) = _shoppingCart.add(meal)
+    override fun removeItemFromShoppingCart(id: String) = _shoppingCart.removeAll { it.id == id }
+    override fun clearShoppingCart() = _shoppingCart.clear()
+
+
     override suspend fun getCredit(): Float {
         return server.get("/payment/credit")
     }

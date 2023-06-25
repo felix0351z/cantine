@@ -3,11 +3,15 @@ package de.juliando.app.android.ui.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.juliando.app.android.R
+import de.juliando.app.android.utils.SnackbarItem
 import de.juliando.app.android.utils.ViewState
 import de.juliando.app.models.objects.ui.Meal
 import de.juliando.app.models.objects.ui.Report
 import de.juliando.app.repository.AuthenticationRepository
 import de.juliando.app.repository.ContentRepository
+import de.juliando.app.repository.PaymentRepository
+import de.juliando.app.utils.toOrderedMeal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.joinAll
@@ -20,7 +24,8 @@ fun List<Meal>.selectTags() = this.flatMap { it.tags }.distinct()
 fun List<Meal>.selectWithCategory(category: String) = this.filter { it.category == category }
 
 class HomeViewModel(
-    contentRepository: ContentRepository,
+    private val contentRepository: ContentRepository,
+    private val paymentRepository: PaymentRepository,
     private val authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
@@ -29,6 +34,9 @@ class HomeViewModel(
 
     private var _isShoppingCartSelected = MutableStateFlow(false)
     val isShoppingCartSelected = _isShoppingCartSelected.asStateFlow()
+
+    private var _snackbar: MutableStateFlow<SnackbarItem?> = MutableStateFlow(null)
+    val snackbar = _snackbar.asStateFlow()
 
     // Save the selected tags
     private val savedTags = mutableListOf<String>()
@@ -100,7 +108,6 @@ class HomeViewModel(
                 jobs.joinAll()
                 _state.value = ViewState.Success
             } catch (ex: Exception) {
-                //TODO: Handle errors which are able to
                 _state.value = ViewState.Error(ex)
             }
 
@@ -128,6 +135,24 @@ class HomeViewModel(
 
     fun onShoppingCartClick() {
         _isShoppingCartSelected.update { !it }
+    }
+
+    fun onPayment(id: String, amount: Int, selections: List<String>) = viewModelScope.launch {
+        for (i in 1..amount) {
+            val rawMeal = contentRepository.getMeal(id)
+            paymentRepository.addItemToShoppingCart(rawMeal.toOrderedMeal(selections)) // Add the item to the shopping cart
+        }
+
+        onMealClick() // After the bottom sheet is closed, set the focus to no item
+        _snackbar.value = SnackbarItem(
+            message = R.string.shopping_cart_added,
+            button = SnackbarItem.ButtonItem(
+                name = R.string.shopping_cart_remove,
+                action = {
+                    paymentRepository.removeItemFromShoppingCart(id)
+                }
+            )
+        )
     }
 
     fun updateSearchText(text: String) {

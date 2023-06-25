@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import de.juliando.app.android.ui.home.MEAL_CARD_HEIGHT_MAXIMUM
+import de.juliando.app.android.ui.home.MEAL_CARD_HEIGHT_MINIMUM
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTypography
 import de.juliando.app.data.LocalDataStore
@@ -48,7 +50,7 @@ fun OrderedMeal(
     modifier: Modifier = Modifier,
     item: OrderedMeal,
     innerPadding: Dp = 10.dp,
-    heightIn: Pair<Dp, Dp>,
+    heightIn: Pair<Dp, Dp> = Pair(MEAL_CARD_HEIGHT_MINIMUM.dp, MEAL_CARD_HEIGHT_MAXIMUM.dp),
     containerColor: Color = CantineColors.onSurfaceColor,
     onClick: () -> Unit
     ) {
@@ -95,7 +97,7 @@ fun OrderedMeal(
 
                 Text( //Price
                     modifier = Modifier.weight(1f, false), // Place at the bottom of the column
-                    text = "${try{item.price.toDouble()+item.deposit.toDouble()}catch (e: Exception){item.price}}€",
+                    text = "${try{item.toPay.toDouble()+item.deposit.toDouble()}catch (e: Exception){item.toPay}}€",
                     style = CantineTypography.Headlines.headlineSmall,
                     color = CantineColors.primaryColor,
                     maxLines = 1
