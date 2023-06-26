@@ -9,7 +9,7 @@ data class Order(
     val id: String,
     val user: String,
     val meals: List<OrderedMeal>,
-    val price: String,
+    val toPay: String,
     val deposit: String,
     @Serializable(with = InstantSerializer::class) val orderTime: Instant
 )

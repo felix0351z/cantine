@@ -30,4 +30,12 @@
     <string name="more_title">Mehr</string>
     <string name="shopping_cart_pay">Bezahlen</string>
     <string name="error_occurred">Error occurred</string>
+    <string name="shopping_cart_delete_title">Entfernen</string>
+    <string name="shopping_cart_delete_description">\"Möchtest du das Gericht entfernen?"</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="shopping_cart_total">"Gesamt: "</string>
+    <string name="shopping_cart_order_created">Bestellung wurde erfolgreich ausgeführt!</string>
+    <string name="shopping_cart_order_error">Ein Fehler ist aufgetreten!</string>
+
 </resources>

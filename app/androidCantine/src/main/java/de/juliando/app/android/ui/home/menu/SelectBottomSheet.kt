@@ -43,6 +43,10 @@ fun SelectionList(
         mutableStateMapOf<Int, String>().also {
             // Initialize with the first value of all groups
             meal.selections.forEachIndexed { index, selectionGroup ->  it[index] = selectionGroup.elements[0].name }
+
+        }.also {
+            // Update with the first entry
+            onUpdate(it.toMap().map { it.value })
         }
     }
 

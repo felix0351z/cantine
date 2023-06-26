@@ -101,7 +101,7 @@ fun Order(
 
                     Text( // Price
                         modifier = Modifier.weight(1f, false),
-                        text = "${try{item.price.toDouble()+item.deposit.toDouble()}catch (e: Exception){item.price}}€",
+                        text = item.toPay,
                         style = CantineTypography.Headlines.headlineMedium,
                         color = CantineColors.primaryColor,
                         maxLines = 1,

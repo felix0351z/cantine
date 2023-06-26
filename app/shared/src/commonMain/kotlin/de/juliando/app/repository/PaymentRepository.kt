@@ -2,7 +2,6 @@ package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
 import de.juliando.app.models.objects.backend.*
-import de.juliando.app.models.objects.ui.Order
 
 /**
  * This repository handles the payment data.
@@ -29,7 +28,7 @@ interface PaymentRepository {
 
     //Order
     @Throws(Exception::class)
-    suspend fun getOrders(): List<Order>
+    suspend fun getOrders(): List<Content.Order>
     @Throws(Exception::class)
     suspend fun createOrderRequest(request: CreateOrderRequest): Content.Order?
     @Throws(Exception::class)

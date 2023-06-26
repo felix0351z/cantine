@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import de.juliando.app.android.R
 import de.juliando.app.android.utils.SnackbarItem
 import de.juliando.app.android.utils.ViewState
+import de.juliando.app.models.objects.backend.CreateOrderRequest
 import de.juliando.app.models.objects.ui.Meal
 import de.juliando.app.models.objects.ui.Report
 import de.juliando.app.repository.AuthenticationRepository
@@ -137,7 +138,7 @@ class HomeViewModel(
         _isShoppingCartSelected.update { !it }
     }
 
-    fun onPayment(id: String, amount: Int, selections: List<String>) = viewModelScope.launch {
+    fun onShoppingCartAdd(id: String, amount: Int, selections: List<String>) = viewModelScope.launch {
         for (i in 1..amount) {
             val rawMeal = contentRepository.getMeal(id)
             paymentRepository.addItemToShoppingCart(rawMeal.toOrderedMeal(selections)) // Add the item to the shopping cart
@@ -153,6 +154,29 @@ class HomeViewModel(
                 }
             )
         )
+    }
+
+    fun onPayment(request: CreateOrderRequest) = viewModelScope.launch {
+        // Finish the payment and send the request to the server
+        try {
+            val order = paymentRepository.createOrderRequest(request)
+
+            if (order != null) {
+                _snackbar.value = SnackbarItem(
+                    message = R.string.shopping_cart_order_created,
+                    button = null
+                )
+            }
+
+        } catch (ex: Exception) {
+            // Notification the user if an error occurred
+            Log.e(TAG, "Order request was executed unsuccessfully!", ex)
+
+            _snackbar.value = SnackbarItem(
+                message = R.string.shopping_cart_order_error,
+                button = null
+            )
+        }
     }
 
     fun updateSearchText(text: String) {

@@ -14,8 +14,7 @@ sealed class Content {
     @Serializable
     data class SelectionGroup(
         val name: String,
-        val elements: List<Selection>,
-        val multipleChoice: Boolean
+        val elements: List<Selection>
     )
 
     @Serializable

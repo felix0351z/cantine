@@ -3,6 +3,7 @@ package de.juliando.app.utils
 import de.juliando.app.data.LocalDataStore
 import de.juliando.app.models.objects.backend.Content
 import de.juliando.app.models.objects.ui.Meal
+import de.juliando.app.models.objects.ui.Order
 import de.juliando.app.models.objects.ui.OrderedMeal
 import de.juliando.app.models.objects.ui.Report
 import kotlin.jvm.JvmName
@@ -85,4 +86,16 @@ fun Content.Meal.toOrderedMeal(selections: List<String>) = Content.OrderedMeal(
     selections = selections,
     picture = picture
 )
+@JvmName("asDisplayableOrderList")
+fun List<Content.Order>.asDisplayable() =
+    map { it.asDisplayable() }
 
+@JvmName("asDisplayableOrder")
+fun Content.Order.asDisplayable() = Order(
+    id = id,
+    user = user,
+    meals = meals.asDisplayable(),
+    toPay = toCurrencyString(price+deposit),
+    deposit = toCurrencyString(deposit),
+    orderTime = orderTime
+)

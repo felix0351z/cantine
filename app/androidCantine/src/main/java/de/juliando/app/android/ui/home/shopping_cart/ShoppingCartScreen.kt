@@ -9,21 +9,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AttachMoney
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.ErrorMessage
 import de.juliando.app.android.ui.components.OrderedMeal
 import de.juliando.app.android.ui.theme.CantineColors
+import de.juliando.app.android.ui.theme.CantineTheme
 import de.juliando.app.android.ui.theme.CantineTypography
 import de.juliando.app.android.utils.DataState
+import de.juliando.app.models.objects.backend.CreateOrderRequest
 
 private const val PADDING_SIZE = 20
 private const val SPACED_BY_PADDING = 10
@@ -35,10 +37,14 @@ private const val BUTTON_HEIGHT = 55
 @Composable
 fun ShoppingCartScreen(
     onDismiss: () -> Unit,
-    viewModel: ShoppingCartViewModel
+    viewModel: ShoppingCartViewModel,
+    onOrderCreated: (CreateOrderRequest) -> Unit,
 ) {
     // Remember the current sheet state for the bottom sheet layout
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    // Save the current id to show a dialog for deletion
+    val isDeleteDialogOpened = remember { mutableStateOf<String?>(null) }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -50,6 +56,47 @@ fun ShoppingCartScreen(
         }
     ) {
         // The shopping cart view of the bottom sheet:
+
+
+        // Update the shopping cart every time the sheet will be opened.
+        LaunchedEffect(key1 = modalSheetState) {
+            viewModel.onReload()
+        }
+
+        // Dialog for deletion of a meal
+        if (isDeleteDialogOpened.value != null) {
+            AlertDialog(
+                onDismissRequest = { isDeleteDialogOpened.value = null },
+                containerColor = CantineColors.backgroundColor,
+                titleContentColor = CantineColors.white,
+                textContentColor = CantineTheme.grey1,
+                title = { Text(text = stringResource(R.string.shopping_cart_delete_title)) },
+                text = { Text(stringResource(R.string.shopping_cart_delete_description)) },
+                confirmButton = {
+                    Button(
+                        colors = CantineColors.primaryButtonColors(),
+                        onClick = {
+                            // Delete the meal
+                            viewModel.onDeleteClick(isDeleteDialogOpened.value!!)
+                            isDeleteDialogOpened.value = null
+                        }) {
+                        Text(stringResource(R.string.yes))
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        colors = CantineColors.secondaryButtonColors(),
+                        onClick = {
+                            isDeleteDialogOpened.value = null
+                        }) {
+                        Text(stringResource(R.string.no))
+                    }
+                }
+            )
+        }
+
+
+
 
             Box(
                 Modifier
@@ -69,9 +116,13 @@ fun ShoppingCartScreen(
                             // Print the empty view
                             EmptyView()
                         } else {
-                            View(items = values,
-                                onPaymentClick = viewModel::onPaymentClick,
-                                onItemClick = viewModel::onDeleteClick
+                            View(
+                                items = values,
+                                onPaymentClick = {
+                                    // Create the payment order and sent it back
+                                    onOrderCreated(viewModel.onPaymentClick())
+                                },
+                                onItemClick = { isDeleteDialogOpened.value = it }
                             )
                         }
                     }
@@ -111,7 +162,8 @@ private fun View(
             Box(Modifier.fillMaxWidth()) {
                 Text(
                     modifier = Modifier.align(Alignment.CenterStart),
-                    text = items.amount
+                    text = stringResource(R.string.shopping_cart_total) + items.amount,
+                    fontSize = 24.sp
                 )
                 Button(
                     modifier = Modifier

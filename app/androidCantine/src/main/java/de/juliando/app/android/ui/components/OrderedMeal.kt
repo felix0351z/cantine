@@ -3,7 +3,10 @@ package de.juliando.app.android.ui.components
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +22,6 @@ import de.juliando.app.android.ui.home.MEAL_CARD_HEIGHT_MAXIMUM
 import de.juliando.app.android.ui.home.MEAL_CARD_HEIGHT_MINIMUM
 import de.juliando.app.android.ui.theme.CantineColors
 import de.juliando.app.android.ui.theme.CantineTypography
-import de.juliando.app.data.LocalDataStore
 import de.juliando.app.models.objects.ui.OrderedMeal
 
 
@@ -97,7 +99,7 @@ fun OrderedMeal(
 
                 Text( //Price
                     modifier = Modifier.weight(1f, false), // Place at the bottom of the column
-                    text = "${try{item.toPay.toDouble()+item.deposit.toDouble()}catch (e: Exception){item.toPay}}€",
+                    text = item.toPay,
                     style = CantineTypography.Headlines.headlineSmall,
                     color = CantineColors.primaryColor,
                     maxLines = 1
@@ -110,7 +112,7 @@ fun OrderedMeal(
                     .aspectRatio(1f) // Must be quadratic
                     .padding(2.dp)
                     .clip(RoundedCornerShape(10.dp)), // Clip with a corner shape of 10.dp
-                model = "${LocalDataStore.getURL()}/content/image/${item.picture}", // URL from the picture
+                model = item.picture, // URL from the picture
                 contentDescription = item.name,
                 requestBuilderTransform = requestBuilder
             )

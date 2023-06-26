@@ -70,7 +70,7 @@ fun HomeScreen(
         SelectBottomSheet(
             onDismiss = viewModel::onMealClick,
             meal = currentBottomSheetMeal!!,
-            onFinish = viewModel::onPayment
+            onFinish = viewModel::onShoppingCartAdd
         )
     }
 
@@ -82,7 +82,8 @@ fun HomeScreen(
     if (isShoppingCartSelected) {
         ShoppingCartScreen(
             onDismiss = viewModel::onShoppingCartClick,
-            viewModel = koinViewModel()
+            viewModel = koinViewModel(),
+            onOrderCreated = viewModel::onPayment
         )
     }
 
@@ -93,7 +94,7 @@ fun HomeScreen(
         if (snackbarItem != null) { // Only if the item is not null
             val result = snackbarHostState.showSnackbar(
                 message = context.resources.getString(snackbarItem!!.message),
-                actionLabel = context.resources.getString(snackbarItem!!.button!!.name),
+                actionLabel = if (snackbarItem!!.button != null) context.resources.getString(snackbarItem!!.button!!.name) else null,
                 duration = SnackbarDuration.Short
             )
             if (result == SnackbarResult.ActionPerformed) {

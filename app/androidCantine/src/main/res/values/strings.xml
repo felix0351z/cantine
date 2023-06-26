@@ -34,4 +34,12 @@
     <string name="more_title">More</string>
     <string name="shopping_cart_pay">Pay</string>
     <string name="error_occurred">Error occurred</string>
+    <string name="shopping_cart_delete_title">Delete</string>
+    <string name="shopping_cart_delete_description">\"Do you want do delete the meal?"</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="shopping_cart_total">"Total: "</string>
+    <string name="shopping_cart_order_created">Order was created successfully</string>
+    <string name="shopping_cart_order_error">An error occurred</string>
+
 </resources>
