@@ -88,7 +88,7 @@ sealed class Content {
 
     @Serializable
     data class OrderedMeal(
-        val id: Id<Meal>,
+        @BsonId @Serializable(with = CustomIDSerializer::class) val id: Id<Meal>,
         val name: String,
         val description: String,
         val price: Float,
