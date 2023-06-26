@@ -182,7 +182,7 @@ class PaymentService(
      * @see Content.OrderedMeal
      */
     private fun mealToOrderedMeal(meal: Content.Meal, selections: List<String>) = Content.OrderedMeal(
-        id = meal.id,
+        id = meal.id.toString(),
         name = meal.name,
         description = meal.description,
         price = meal.price,
