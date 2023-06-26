@@ -159,6 +159,7 @@ class HomeViewModel(
     fun onPayment(request: CreateOrderRequest) = viewModelScope.launch {
         // Finish the payment and send the request to the server
         try {
+            _isShoppingCartSelected.value = false
             val order = paymentRepository.createOrderRequest(request)
 
             if (order != null) {
@@ -177,6 +178,10 @@ class HomeViewModel(
                 button = null
             )
         }
+    }
+
+    fun resetSnackbar() {
+        _snackbar.value = null
     }
 
     fun updateSearchText(text: String) {

@@ -97,8 +97,14 @@ fun HomeScreen(
                 actionLabel = if (snackbarItem!!.button != null) context.resources.getString(snackbarItem!!.button!!.name) else null,
                 duration = SnackbarDuration.Short
             )
-            if (result == SnackbarResult.ActionPerformed) {
-                snackbarItem!!.button!!.action()
+            when(result) {
+                SnackbarResult.ActionPerformed -> {
+                    snackbarItem!!.button!!.action()
+                    viewModel.resetSnackbar()
+                }
+                SnackbarResult.Dismissed -> {
+                    viewModel.resetSnackbar()
+                }
             }
         }
     }

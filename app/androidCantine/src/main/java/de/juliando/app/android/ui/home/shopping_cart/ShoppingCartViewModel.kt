@@ -51,6 +51,7 @@ class ShoppingCartViewModel(
         onReload()
     }
 
+
     // Create the payment order and sent it to the home view-model
     fun onPaymentClick(): CreateOrderRequest {
         return CreateOrderRequest(

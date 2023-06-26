@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -83,14 +84,11 @@ fun Order(
                             .heightIn(min=130.dp, max=200.dp),
                         verticalArrangement = Arrangement.SpaceBetween,
                     ){
-                        items(
-                            count = item.meals.size,
-                            key = { item.meals[it].name },
-                        ) {
+                        items(item.meals) {
                             OrderedMeal(
                                 modifier = Modifier.clip(RoundedCornerShape(CORNER_SHAPE.dp)),
                                 heightIn = Pair(100.dp, 110.dp),
-                                item = item.meals[it],
+                                item = it,
                                 onClick = onClick
                             )
                         }
