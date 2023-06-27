@@ -140,9 +140,9 @@ fun Route.purchase() = with { service ->
 
         withRole(Auth.PermissionLevel.WORKER) {
             val request = call.receive<VerifyOrderRequest>()
-            service.verifyOrder(request)
+            val verifiedOrder = service.verifyOrder(request)
 
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, verifiedOrder)
         }
 
     }

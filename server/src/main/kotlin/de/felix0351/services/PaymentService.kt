@@ -91,7 +91,7 @@ class PaymentService(
      * @see VerifyOrderRequest
      */
     @Throws(DatabaseException.NotFoundException::class)
-    suspend fun verifyOrder(request: VerifyOrderRequest) {
+    suspend fun verifyOrder(request: VerifyOrderRequest): Content.Order {
         val order = paymentRepo.getOrder(request.orderId)
         val payment = Auth.Payment(
             user = request.username,
@@ -101,6 +101,7 @@ class PaymentService(
         )
 
         paymentRepo.verifyAndDeleteOrder(request.orderId, payment)
+        return order
     }
 
     /**
