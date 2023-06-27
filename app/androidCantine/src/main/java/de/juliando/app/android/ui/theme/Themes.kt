@@ -1,5 +1,7 @@
 package de.juliando.app.android.ui.theme
 
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -144,6 +146,10 @@ object CantineColors {
 
     val blackTransparentGradient = Brush.verticalGradient(colors = listOf(Color.Transparent, black50Transparent))
 
+    @Composable
+    fun primaryButtonColors() = ButtonDefaults.buttonColors(containerColor = primaryColor, contentColor = surfaceColor)
+    @Composable
+    fun secondaryButtonColors() = ButtonDefaults.buttonColors(containerColor = onSurfaceColor, contentColor = white)
 
 }
 

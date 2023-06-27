@@ -5,7 +5,6 @@ import de.juliando.app.data.ServerDataSource
 import de.juliando.app.data.StorageKeys
 import de.juliando.app.models.errors.HttpStatusException
 import de.juliando.app.models.objects.backend.*
-import de.juliando.app.models.objects.ui.Order
 
 /**
  * This repository handles the payment data.
@@ -16,14 +15,23 @@ class PaymentRepositoryImpl(
     private val server: ServerDataSource = ServerDataSource(),
 ) : PaymentRepository {
 
+    // Save the current shopping cart as an mutable list here
+    private val _shoppingCart = mutableListOf<Content.OrderedMeal>()
+    override val shoppingCart: List<Content.OrderedMeal> = _shoppingCart
+
+    override fun addItemToShoppingCart(meal: Content.OrderedMeal) = _shoppingCart.add(meal)
+    override fun removeItemFromShoppingCart(id: String) = _shoppingCart.removeAll { it.id == id }
+    override fun clearShoppingCart() = _shoppingCart.clear()
+
+
     override suspend fun getCredit(): Float {
         return server.get("/payment/credit")
     }
 
-    override suspend fun getOrders(): List<Order> {
+    override suspend fun getOrders(): List<Content.Order> {
         return try {
             // Try to get the Data from the Server
-            val orders = server.getList<Order>("/payment/orders")
+            val orders = server.getList<Content.Order>("/payment/orders")
             LocalDataStore.storeList(orders, StorageKeys.ORDER.key)
             orders
         } catch (e: Exception) {

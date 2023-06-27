@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import de.juliando.app.android.utils.ViewState
 import de.juliando.app.models.objects.ui.Order
 import de.juliando.app.repository.PaymentRepository
+import de.juliando.app.utils.asDisplayable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +26,7 @@ class OrdersViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val jobs = listOf(
-                    launch { _orders.value =  paymentRepository.getOrders() }
+                    launch { _orders.value =  paymentRepository.getOrders().asDisplayable() }
                 )
 
                 jobs.joinAll()

@@ -10,9 +10,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.*
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +27,7 @@ import de.juliando.app.android.ui.theme.CantineTypography.Bodies.bodySmallSelect
 import de.juliando.app.android.ui.theme.CantineTypography.Bodies.primaryButton
 import de.juliando.app.models.objects.ui.Meal
 import de.juliando.app.utils.toCurrencyString
+import kotlinx.coroutines.launch
 
 private const val SELECTION_LIST_SPACE = 5
 private const val BUTTON_HEIGHT = 55
@@ -38,12 +36,17 @@ private const val PADDING_SIZE = 20 // Horizontal and bottom
 
 @Composable
 fun SelectionList(
-    meal: Meal
+    meal: Meal,
+    onUpdate: (List<String>) -> Unit
 ) {
     val states = remember {
         mutableStateMapOf<Int, String>().also {
             // Initialize with the first value of all groups
             meal.selections.forEachIndexed { index, selectionGroup ->  it[index] = selectionGroup.elements[0].name }
+
+        }.also {
+            // Update with the first entry
+            onUpdate(it.toMap().map { it.value })
         }
     }
 
@@ -72,7 +75,10 @@ fun SelectionList(
                             selectedColor = CantineTheme.primaryColor,
                             unselectedColor = CantineTheme.grey1
                         ),
-                        onClick = { states[groupIndex] = it.name }
+                        onClick = {
+                            states[groupIndex] = it.name
+                            onUpdate(states.toMap().map { it.value })
+                        }
                     )
                     Text(
                         text = it.name,
@@ -103,11 +109,14 @@ fun SelectionList(
 @Composable
 fun SelectBottomSheet(
     onDismiss: () -> Unit,
-    meal: Meal
+    meal: Meal,
+    onFinish: (String, Int, List<String>) -> Unit
 ) {
     // Remember the current sheet state for the bottom sheet layout
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
 
+    var selections = remember { emptyList<String>() }
     var amountState by remember { mutableStateOf(1) }
 
     ModalBottomSheet(
@@ -120,7 +129,9 @@ fun SelectBottomSheet(
             modifier = Modifier.padding(horizontal = PADDING_SIZE.dp),
             verticalArrangement = Arrangement.spacedBy(PADDING_SIZE.dp),
         ) {
-            SelectionList(meal = meal)
+            SelectionList(meal = meal, onUpdate = {
+                selections = it
+            })
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -152,7 +163,13 @@ fun SelectBottomSheet(
                     modifier = Modifier.height(BUTTON_HEIGHT.dp),
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = CantineColors.primaryColor, contentColor = CantineColors.black),
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                            // Close the sheet and return the selected item to the view
+                            coroutineScope.launch {
+                                modalSheetState.hide()
+                                onFinish(meal.id, amountState, selections)
+                            }
+                        },
                 ) {
                     Text(text = stringResource(R.string.add_to_shopping_cart), style = primaryButton)
                     Spacer(modifier = Modifier.size(10.dp))
@@ -190,5 +207,4 @@ fun CounterBox(
         )
     }
 }
-
 

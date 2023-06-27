@@ -2,7 +2,6 @@ package de.juliando.app.repository
 
 import de.juliando.app.models.objects.*
 import de.juliando.app.models.objects.backend.*
-import de.juliando.app.models.objects.ui.Order
 
 /**
  * This repository handles the payment data.
@@ -11,13 +10,25 @@ import de.juliando.app.models.objects.ui.Order
 
 interface PaymentRepository {
 
+    //ShoppingCart
+
+    /**
+    * Returns the current shopping cart with all meals
+    **/
+    val shoppingCart: List<Content.OrderedMeal>
+
+    fun addItemToShoppingCart(meal: Content.OrderedMeal): Boolean
+    fun removeItemFromShoppingCart(id: String): Boolean
+
+    fun clearShoppingCart()
+
     //Credit
     @Throws(Exception::class)
     suspend fun getCredit(): Float
 
     //Order
     @Throws(Exception::class)
-    suspend fun getOrders(): List<Order>
+    suspend fun getOrders(): List<Content.Order>
     @Throws(Exception::class)
     suspend fun getOrder(id: String): Order
     @Throws(Exception::class)
