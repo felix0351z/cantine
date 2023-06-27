@@ -22,6 +22,9 @@ class OrdersViewModel(
     private var _orders: MutableStateFlow<List<Order>> = MutableStateFlow(emptyList())
     val orders = _orders.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -34,8 +37,25 @@ class OrdersViewModel(
             } catch (ex: Exception) {
                 _state.value = ViewState.Error(ex)
             }
-
-
         }
+    }
+
+    fun refresh() = viewModelScope.launch {
+            _state.value = ViewState.Loading
+            _isLoading.value = true
+            try {
+                _orders.value = paymentRepository.getOrders().asDisplayable()
+                _state.value = ViewState.Success
+                _isLoading.value = false
+            }catch (e: Exception){
+                _state.value = ViewState.Error(e)
+                _isLoading.value = false
+            }
+        }
+
+
+    fun onDeleteClick(id: String) = viewModelScope.launch {
+        paymentRepository.deleteOrder(id)
+        refresh()
     }
 }

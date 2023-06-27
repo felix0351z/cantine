@@ -1,6 +1,8 @@
 package de.juliando.app.android.ui.components
 
 import android.graphics.drawable.Drawable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -46,7 +48,9 @@ private val requestBuilder = { requestBuilder: RequestBuilder<Drawable> ->
  * @param item The OrderedMeal data
  *
  **/
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun OrderedMeal(
     modifier: Modifier = Modifier,
@@ -54,14 +58,19 @@ fun OrderedMeal(
     innerPadding: Dp = 10.dp,
     heightIn: Pair<Dp, Dp> = Pair(MEAL_CARD_HEIGHT_MINIMUM.dp, MEAL_CARD_HEIGHT_MAXIMUM.dp),
     containerColor: Color = CantineColors.onSurfaceColor,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
     ) {
 
     Card(
         modifier = modifier
-            .padding(vertical = 2.dp),
+            .padding(vertical = 2.dp)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        onClick = onClick
+
     ) {
 
         Row(
@@ -99,7 +108,7 @@ fun OrderedMeal(
 
                 Text( //Price
                     modifier = Modifier.weight(1f, false), // Place at the bottom of the column
-                    text = item.toPay,
+                    text = item.price,
                     style = CantineTypography.Headlines.headlineSmall,
                     color = CantineColors.primaryColor,
                     maxLines = 1

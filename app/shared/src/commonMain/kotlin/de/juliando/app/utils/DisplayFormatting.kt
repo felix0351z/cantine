@@ -69,7 +69,7 @@ fun Content.OrderedMeal.asDisplayable() = OrderedMeal(
     id = id!!,
     name = name,
     description = description,
-    toPay = toCurrencyString(price + deposit),
+    price = toCurrencyString(price + deposit),
     deposit = toCurrencyString(deposit),
     day = day,
     selections = selections,
@@ -95,7 +95,7 @@ fun Content.Order.asDisplayable() = Order(
     id = id,
     user = user,
     meals = meals.asDisplayable(),
-    toPay = toCurrencyString(price+deposit),
+    price = toCurrencyString(price+deposit),
     deposit = toCurrencyString(deposit),
     orderTime = orderTime
 )

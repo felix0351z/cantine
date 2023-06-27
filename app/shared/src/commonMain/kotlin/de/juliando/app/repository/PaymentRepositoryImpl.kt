@@ -5,6 +5,7 @@ import de.juliando.app.data.ServerDataSource
 import de.juliando.app.data.StorageKeys
 import de.juliando.app.models.errors.HttpStatusException
 import de.juliando.app.models.objects.backend.*
+import de.juliando.app.models.objects.ui.Order
 
 /**
  * This repository handles the payment data.
@@ -46,7 +47,7 @@ class PaymentRepositoryImpl(
             val order = LocalDataStore.getOrderFromList(id)
             if (order!=null) order else throw NullPointerException()
         } catch (e: Exception) {
-            throw HttpStatusException.NotFoundException()
+            throw e
         }
     }
 

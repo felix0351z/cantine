@@ -6,6 +6,7 @@ import com.russhwolf.settings.set
 import de.juliando.app.models.objects.backend.Auth
 import de.juliando.app.models.objects.backend.Content
 import de.juliando.app.models.objects.ui.Order
+import de.juliando.app.utils.asDisplayable
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -134,9 +135,9 @@ object LocalDataStore {
      */
     inline fun getOrderFromList(id: String): Order? {
         val listString: String? = settings[StorageKeys.ORDER.key]
-        return if (listString != null){
-            val list = Json.decodeFromString<List<Order>>(listString)
-            list.find { it.id.equals(id) }
+        return if (listString != null) {
+            val list = Json.decodeFromString<List<Content.Order>>(listString)
+            list.find { it.id == id }?.asDisplayable()
         } else {
             null
         }

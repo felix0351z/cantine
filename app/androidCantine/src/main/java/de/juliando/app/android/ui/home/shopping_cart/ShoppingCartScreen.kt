@@ -152,7 +152,8 @@ private fun View(
             OrderedMeal(
                 modifier = Modifier.clip(RoundedCornerShape(16.dp)),
                 item = it,
-                onClick = { onItemClick(it.id) }
+                onClick = { onItemClick(it.id) },
+                onLongClick = {}
             )
         }
 

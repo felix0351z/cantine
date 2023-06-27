@@ -1,7 +1,6 @@
 package de.juliando.app.android.ui.orders.views
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -16,12 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -31,11 +31,11 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
+import de.juliando.app.android.R
 import de.juliando.app.android.ui.components.ShimmerItem
 import de.juliando.app.android.ui.home.report.*
 import de.juliando.app.android.ui.orders.toFormattedOrderTime
 import de.juliando.app.android.ui.theme.CantineColors
-import de.juliando.app.android.ui.theme.CantineTypography
 import de.juliando.app.android.utils.DataState
 import de.juliando.app.models.objects.ui.Order
 import kotlinx.coroutines.Dispatchers
@@ -134,31 +134,44 @@ fun OrderScreen(
                                 textAlign = TextAlign.Center
                             )
 
-                            Spacer(modifier = Modifier.height(60.dp))
+                            Spacer(modifier = Modifier.height(80.dp))
 
-                            Image(
-                                painter = qrBitmapPainter(viewModel.getOrderId()),
-                                contentDescription = "OrderId",
-                                contentScale = ContentScale.FillBounds,
+                            Box(
                                 modifier = Modifier
-                                    .padding(20.dp)
-                                    .size(260.dp)
-                            )
+                                    .border(8.dp, Color.White, RoundedCornerShape(5))
+                                    .size(248.dp)
+                            ){
+                                // Create image of the qr-Code with the username and the orderID as text
+                                Image(
+                                    painter = qrBitmapPainter(value.user+" "+viewModel.getOrderId()),
+                                    contentDescription = "OrderId",
+                                    contentScale = ContentScale.FillBounds,
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .size(240.dp)
+                                )
+                            }
 
-                            Spacer(modifier = Modifier.height(60.dp))
+                            Spacer(modifier = Modifier.height(160.dp))
 
-                            Text( // Price
-                                text = "${try{value.price.toDouble()+value.deposit.toDouble()}catch (e: Exception){value.price}}€",
-                                style = CantineTypography.Headlines.headlineLarge,
-                                color = CantineColors.primaryColor,
-                                fontSize = 30.sp,
-                                maxLines = 1,
-                            )
+                            Button(
+                                onClick = onBackPressed,
+                                modifier = Modifier
+                                    .size(width = 200.dp, height = 50.dp),
+                                shape = RoundedCornerShape(30)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.done),
+                                    color = Color.Black,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                     }
                 }
                 is DataState.Error -> {
-                    TODO()
+                    //TODO()
                 }
             }
 
@@ -218,7 +231,7 @@ fun qrBitmapPainter(
             for (x in 0 until matrixWidth) {
                 for (y in 0 until matrixHeight) {
                     val shouldColorPixel = bitmapMatrix?.get(x, y) ?: false
-                    val pixelColor = if (shouldColorPixel) Color.White else CantineColors.backgroundColor
+                    val pixelColor = if (shouldColorPixel) CantineColors.backgroundColor else Color.White
 
                     newBitmap.setPixel(x, y, pixelColor.toArgb())
                 }

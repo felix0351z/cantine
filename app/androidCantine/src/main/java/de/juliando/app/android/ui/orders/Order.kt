@@ -89,7 +89,8 @@ fun Order(
                                 modifier = Modifier.clip(RoundedCornerShape(CORNER_SHAPE.dp)),
                                 heightIn = Pair(100.dp, 110.dp),
                                 item = it,
-                                onClick = onClick
+                                onClick = onClick,
+                                onLongClick = onLongClick
                             )
                         }
                     }
@@ -99,7 +100,7 @@ fun Order(
 
                     Text( // Price
                         modifier = Modifier.weight(1f, false),
-                        text = item.toPay,
+                        text = item.price,
                         style = CantineTypography.Headlines.headlineMedium,
                         color = CantineColors.primaryColor,
                         maxLines = 1,

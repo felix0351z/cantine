@@ -76,7 +76,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:$koin")
 
     // Use Material UI 3
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material3:material3:1.1.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
     // More material icons
     implementation("androidx.compose.material:material-icons-extended")
@@ -84,4 +84,14 @@ dependencies {
     // QR-Code generator
     implementation("com.google.zxing:core:3.5.1")
 
+    // QR-Code Scanner
+    implementation ("androidx.camera:camera-camera2:1.0.2")
+    implementation ("androidx.camera:camera-lifecycle:1.0.2")
+    implementation ("androidx.camera:camera-view:1.0.0-alpha31")
+    implementation("androidx.camera:camera-lifecycle:1.0.2")
+
+    implementation ("com.google.zxing:core:3.3.3")
+
+    // Swipe and Refresh
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
 }
