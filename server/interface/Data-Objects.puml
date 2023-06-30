@@ -1,0 +1,137 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam classAttributeIconSize 0
+skinparam classFontSize 20
+
+package Content <<Rectangle>> {
+
+class Meal<<Serializable>> {
+    + id: String?
+    + category: String?
+    + name: String
+    + tags: String[]
+    + description: String
+    + price: Float
+    + deposit: Float
+    + day: String?
+    + selections: SelectionGroup[]
+    + picture: String?
+}
+
+class SelectionGroup<<Serializable>> {
+    + name: String
+    + elements: Selection[]
+}
+
+class Selection<<Serializable>> {
+    + name: String
+    + price: Float
+}
+
+class Report<<Serializable>> {
+    + id: String?
+    + title: String
+    + tags: String[]
+    + description: String
+    + picture: String?
+    + creationTime: Instant?
+}
+
+
+}
+
+package Auth <<Rectangle>> {
+
+class PublicUser<<Serializable>> {
+    + username: String
+    + name: String
+    + permissionLevel: PermissionLevel
+    + credit: Float
+    + password: String?
+}
+
+enum PermissionLevel<<Serializable>> {
+    ADMIN
+    WORKER
+    USER
+}
+
+class UserAddRequest<<Serializable>> {
+    + password: String
+    + user: PublicUser
+}
+
+class UserDeleteRequest<<Serializable>> {
+    + password: String
+    + username: String
+}
+
+class PasswordChangeRequest<<Serializable>> {
+    + password: String
+    + username: String?
+    + newPassword: String
+}
+
+class NameChangeRequest<<Serializable>> {
+    + password: String
+    + username: String
+    + newPermissionLevel: PermissionLevel
+}
+
+
+}
+
+package Payment <<Rectangle>> {
+
+class Order<<Serializable>> {
+    + id: String
+    + user: String
+    + meals: OrderedMeals[]
+    + price: Float
+    + deposit: Float
+    + orderTime: Instant?
+}
+
+class OrderedMeal<<Serializable>> {
+    + id: String
+    + name: String
+    + description: String
+    + price: Float
+    + deposit: Float
+    + day: String?
+    + selections: String[]
+    + picture: String?
+}
+
+class CreateOrderRequest<<Serializable>> {
+    + meals: CreateOrderRequestMeal[]
+}
+
+class CreateOrderRequestMeal<<Serializable>> {
+    + id: String
+    + selections: String[]
+}
+
+class VerifyOrderRequest<<Serializable>> {
+    orderId: String
+}
+
+class Payment<<Serializable>> {
+    + user: String
+    + meals: String[]
+    + price: Float
+    + creationTime: Instant?
+}
+
+class AddCreditRequest<<Serializable>> {
+    + password: String
+    + username: String
+    + credit: Float
+}
+
+
+}
+
+
+
+@enduml

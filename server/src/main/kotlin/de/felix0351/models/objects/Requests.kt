@@ -100,13 +100,11 @@ data class CreateOrderRequestMeal(
 
 /**
  * Request to verify a purchase at the mensa
- * @property username Name of the user
  * @property orderId Order of the user
  *
  */
 @Serializable
 data class VerifyOrderRequest(
-    val username: String,
     @Serializable(with = CustomIDSerializer::class) val orderId: Id<Content.Order>
 )
 

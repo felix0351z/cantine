@@ -125,7 +125,7 @@ class MongoDBConnection {
             val value = callToDatabase { database -> fn(database) }
             val end = KoinPlatformTimeTools.getTimeInNanoSeconds()
 
-            log.debug("Transaction call processed in ${(end-start)/1_000_000}ms")
+            log.info("Transaction call processed in ${(end-start)/1_000_000}ms")
 
             it.commitTransactionAndAwait()
 

@@ -18,7 +18,5 @@ data class Order(
 
 @Serializable
 data class VerifyOrderRequest(
-    val username: String,
     val orderId: String
-
 )

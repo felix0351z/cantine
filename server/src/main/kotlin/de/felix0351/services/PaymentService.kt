@@ -94,7 +94,7 @@ class PaymentService(
     suspend fun verifyOrder(request: VerifyOrderRequest): Content.Order {
         val order = paymentRepo.getOrder(request.orderId)
         val payment = Auth.Payment(
-            user = request.username,
+            user = order.user,
             meals = order.meals.map { it.name }, //Map the names of the ordered meals for the payment info
             price = order.price,
             creationTime = Instant.now()

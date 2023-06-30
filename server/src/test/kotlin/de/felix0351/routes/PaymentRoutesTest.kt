@@ -101,7 +101,6 @@ class PaymentRoutesTest {
         it.login()
 
         val request = VerifyOrderRequest(
-            username = EXAMPLE_USERNAME,
             orderId = orderID
         )
 
