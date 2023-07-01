@@ -167,7 +167,7 @@ class MongoDBConnection {
             val start = KoinPlatformTimeTools.getTimeInNanoSeconds()
             val value = fn(col)
             val end = KoinPlatformTimeTools.getTimeInNanoSeconds()
-            log.debug("Collection call processed in ${(end-start)/1_000_000}ms")
+            log.info("Collection call processed in ${(end-start)/1_000_000}ms")
             value
         }
     }

@@ -24,7 +24,7 @@ interface PaymentRepository {
     suspend fun cancelOrder(username: String, id: Id<Content.Order>, credit: String)
 
     @Throws(DatabaseException.NotFoundException::class)
-    suspend fun verifyAndDeleteOrder(id: Id<Content.Order>, payment: Auth.Payment)
+    suspend fun addPaymentAndDeleteOrder(id: Id<Content.Order>, payment: Auth.Payment)
 
     suspend fun getOrders(): List<Content.Order>
 

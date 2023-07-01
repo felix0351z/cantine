@@ -37,9 +37,8 @@ class AuthenticationService(
     }
 
 
-    suspend fun getPrivateUser(session: Auth.UserSession): Auth.User =
+    suspend fun getUserFromSession(session: Auth.UserSession): Auth.User =
         authRepo.getUserByUsername(session.username) ?: throw DatabaseException.NotFoundException()
-
 
     /**
      *  Checks the given password of the user if it's correct

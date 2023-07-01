@@ -100,7 +100,7 @@ class PaymentService(
             creationTime = Instant.now()
         )
 
-        paymentRepo.verifyAndDeleteOrder(request.orderId, payment)
+        paymentRepo.addPaymentAndDeleteOrder(request.orderId, payment)
         return order
     }
 

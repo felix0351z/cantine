@@ -78,7 +78,7 @@ private fun AuthenticationConfig.configureSessionAuthentication(service: Authent
         // Perform a database call to return the user as principal
         validate { session ->
 
-            service.getPrivateUser(session)
+            service.getUserFromSession(session)
         }
 
         challenge {

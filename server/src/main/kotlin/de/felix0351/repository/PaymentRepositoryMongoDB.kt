@@ -54,7 +54,7 @@ class PaymentRepositoryMongoDB(
         updateCredit(it, username, credit)
     }
 
-    override suspend fun verifyAndDeleteOrder(id: Id<Content.Order>, payment: Auth.Payment): Unit = con.callWithTransaction {
+    override suspend fun addPaymentAndDeleteOrder(id: Id<Content.Order>, payment: Auth.Payment): Unit = con.callWithTransaction {
         // Delete order & insert payment
         val count = it.getCollection<Content.Order>(Collections.ORDERS.name)
             .deleteOne(Content.Order::id eq id).deletedCount
