@@ -72,10 +72,16 @@ class PasswordChangeRequest<<Serializable>> {
     + newPassword: String
 }
 
-class NameChangeRequest<<Serializable>> {
+class PermissionChangeRequest<<Serializable>> {
     + password: String
     + username: String
     + newPermissionLevel: PermissionLevel
+}
+
+class NameChangeRequest<<Serializable>> {
+    + password: String
+    + username: String
+    + newName: String
 }
 
 
@@ -89,7 +95,7 @@ class Order<<Serializable>> {
     + meals: OrderedMeals[]
     + price: Float
     + deposit: Float
-    + orderTime: Instant?
+    + orderTime: Instant
 }
 
 class OrderedMeal<<Serializable>> {
@@ -120,7 +126,7 @@ class Payment<<Serializable>> {
     + user: String
     + meals: String[]
     + price: Float
-    + creationTime: Instant?
+    + creationTime: Instant
 }
 
 class AddCreditRequest<<Serializable>> {
