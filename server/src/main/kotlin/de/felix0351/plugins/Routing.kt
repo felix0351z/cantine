@@ -27,6 +27,9 @@ import kotlin.reflect.typeOf
 
 const val BASE_ROUTE = "/api"
 
+/**
+ * Install the routing plugins, define all routes and load all necessary status pages
+ */
 fun Application.configureRouting() {
     install(XForwardedHeaders)
     install(PartialContent)
@@ -161,6 +164,11 @@ fun Application.configureRouting() {
 
 }
 
+/**
+* Transform a string into a bson object id
+ * @throws IllegalIdException If the string is not a valid id
+ * @see Id
+*/
 @Throws(IllegalIdException::class)
 fun <T> String.asBsonObjectId(): Id<T> {
     try {
@@ -170,6 +178,10 @@ fun <T> String.asBsonObjectId(): Id<T> {
     }
 }
 
+/**
+ * Receive a multipart request and extract the json body and the image file to items
+ * @param func The handling function for the received request
+ */
 suspend inline fun <reified T> PipelineContext<Unit, ApplicationCall>.receiveRequestWithImage(
     func: PipelineContext<Unit, ApplicationCall>.(body: T, image: PartData.FileItem?) -> Unit
 ) {

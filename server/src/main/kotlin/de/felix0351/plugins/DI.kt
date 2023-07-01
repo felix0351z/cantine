@@ -9,7 +9,9 @@ import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
-
+/**
+ * Configure the koin module and loads all necessary dependencies
+ */
 fun Application.configureDependencyInjection() {
 
     install(Koin) {

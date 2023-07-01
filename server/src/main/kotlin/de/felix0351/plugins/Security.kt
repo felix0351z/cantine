@@ -23,6 +23,9 @@ import kotlin.time.Duration.Companion.days
 
 const val COOKIE_PATH = "/" //Path which needs a session
 
+/**
+ * Configure the authentication and authorization properties
+ */
 fun Application.configureSecurity() {
     val service by inject<AuthenticationService>()
 
@@ -123,7 +126,12 @@ private fun AuthenticationConfig.configureFormAuthentication(service: Authentica
     }
 }
 
-
+/**
+ * Check if the current user of the request has the necessary permission to call this route
+ * @param minimum The minimum permission level to call this route
+ * @return If the permission doesn't exist a NoPermission code will be responded
+ * @see ErrorCode.NoPermission
+ */
 suspend inline fun PipelineContext<Unit, ApplicationCall>.withRole(
     minimum: Auth.PermissionLevel,
     route: PipelineContext<Unit, ApplicationCall>.(user: Auth.User) -> Unit

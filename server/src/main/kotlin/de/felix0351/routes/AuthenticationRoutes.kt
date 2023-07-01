@@ -18,7 +18,11 @@ private fun Route.with(route: Route.(service: AuthenticationService) -> Unit) {
     route(service)
 }
 
-
+/**
+ * Login to the server
+ * Post request in the http form format
+ * if the login was successfully, the username will be responded
+ */
 fun Route.login() {
     authenticate("form") {
         post("/login") {

@@ -13,7 +13,6 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
-import io.ktor.server.plugins.ContentTransformationException
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -323,6 +322,9 @@ fun Route.selection() = with { repo ->
     }
 }
 
+/**
+ * Load an image from the system
+ */
 fun Route.image() {
      get("/image/{dir}/{id}") {
         val ex = BadRequestException("Wrong content path")

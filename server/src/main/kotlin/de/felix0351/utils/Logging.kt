@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory
 
 fun Any.getLogger(): Logger = LoggerFactory.getLogger(javaClass)
 
+/**
+ * Configured plugin to log all necessary route events
+ */
 val LoggingPlugin = createApplicationPlugin("CantineLoggingPlugin") {
     onCall { call ->
         if (!call.request.uri.startsWith(BASE_ROUTE)) return@onCall
@@ -17,7 +20,7 @@ val LoggingPlugin = createApplicationPlugin("CantineLoggingPlugin") {
         val xForwardedHeader = call.request.headers[HttpHeaders.XForwardedFor]
         val address = xForwardedHeader ?: call.request.local.remoteAddress
 
-        call.application.log.info("Call to ${call.request.uri} from the client $address")
+        call.application.log.info("Call to ${call.request.httpMethod.value} ${call.request.uri} from the client $address")
     }
 
 

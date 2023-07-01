@@ -44,7 +44,8 @@ data class DatabaseProperties(
  * @property session_age How long a user can be signed in (in days)
  * @property sign_key  Key to sign every user session (Automatically generated)
  * @property auth_key Key to encrypt the cookies data
- * @property pepper
+ * @property pepper Pepper key for password encryption
+ * @property startUser the first user which will be created
  *
  */
 @Serializable
