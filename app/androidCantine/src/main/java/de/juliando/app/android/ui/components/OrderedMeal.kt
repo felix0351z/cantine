@@ -55,6 +55,7 @@ private val requestBuilder = { requestBuilder: RequestBuilder<Drawable> ->
 fun OrderedMeal(
     modifier: Modifier = Modifier,
     item: OrderedMeal,
+    padding: Dp = 2.dp,
     innerPadding: Dp = 10.dp,
     heightIn: Pair<Dp, Dp> = Pair(MEAL_CARD_HEIGHT_MINIMUM.dp, MEAL_CARD_HEIGHT_MAXIMUM.dp),
     containerColor: Color = CantineColors.onSurfaceColor,
@@ -64,7 +65,7 @@ fun OrderedMeal(
 
     Card(
         modifier = modifier
-            .padding(vertical = 2.dp)
+            .padding(vertical = padding)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick

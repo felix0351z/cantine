@@ -45,5 +45,6 @@
     <string name="shopping_cart_order_error">An error occurred</string>
     <string name="order_sceen_empty">You have no orders.</string>
     <string name="done">Close</string>
+    <string name="no_internet_connection">offline</string>
 
 </resources>

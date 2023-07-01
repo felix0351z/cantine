@@ -143,6 +143,8 @@ object CantineColors {
 
     val white50Transparent = Color(0x80FFFFFF)
     val black50Transparent = Color(0xCC000000)
+    
+    val red = Color(0xFFFF2828)
 
     val blackTransparentGradient = Brush.verticalGradient(colors = listOf(Color.Transparent, black50Transparent))
 

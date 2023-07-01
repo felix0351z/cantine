@@ -47,7 +47,7 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.padding(vertical = 10 .dp))
 
         val introduction_welcome_to = stringResource(R.string.introduction_welcome_to)
-        val introduction_cantine = stringResource(R.string.introduction_mensa)
+        val introduction_cantine = " ${stringResource(R.string.introduction_mensa)}"
 
         Text(
             buildAnnotatedString {

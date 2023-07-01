@@ -37,7 +37,7 @@ interface PaymentRepository {
     @Throws(Exception::class)
     suspend fun deleteOrder(id: String): Content.Order?
     @Throws(Exception::class)
-    suspend fun verifyOrder(request: VerifyOrderRequest)
+    suspend fun verifyOrder(request: VerifyOrderRequest): Order
 
     //Purchase
     @Throws(Exception::class)

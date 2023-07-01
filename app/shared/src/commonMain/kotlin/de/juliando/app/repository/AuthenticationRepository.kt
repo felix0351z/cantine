@@ -11,8 +11,6 @@ interface AuthenticationRepository {
 
     //Login/Logout
     @Throws(Exception::class)
-    suspend fun loginAdmin()
-    @Throws(Exception::class)
     suspend fun login(username: String, password: String)
     @Throws(Exception::class)
     suspend fun logout()

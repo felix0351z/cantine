@@ -123,10 +123,11 @@ fun OrderScreen(
                     item {
                         Column(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(vertical = 80.dp),
+                                .fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
+                            Spacer(modifier = Modifier.height(80.dp))
+
                             Text( // Title
                                 modifier = Modifier,
                                 text = toFormattedOrderTime(value.orderTime),
@@ -134,7 +135,7 @@ fun OrderScreen(
                                 textAlign = TextAlign.Center
                             )
 
-                            Spacer(modifier = Modifier.height(80.dp))
+                            Spacer(modifier = Modifier.height(100.dp))
 
                             Box(
                                 modifier = Modifier
@@ -143,7 +144,7 @@ fun OrderScreen(
                             ){
                                 // Create image of the qr-Code with the username and the orderID as text
                                 Image(
-                                    painter = qrBitmapPainter(value.user+" "+viewModel.getOrderId()),
+                                    painter = qrBitmapPainter(value.user+"-"+viewModel.getOrderId()),
                                     contentDescription = "OrderId",
                                     contentScale = ContentScale.FillBounds,
                                     modifier = Modifier
@@ -152,7 +153,7 @@ fun OrderScreen(
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(160.dp))
+                            Spacer(modifier = Modifier.height(140.dp))
 
                             Button(
                                 onClick = onBackPressed,

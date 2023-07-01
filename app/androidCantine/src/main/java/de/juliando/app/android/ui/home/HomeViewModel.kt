@@ -188,9 +188,16 @@ class HomeViewModel(
         _searchInput.value = text
     }
 
-     fun logout(){
-         viewModelScope.launch {
+     fun logout(onLogoutSuccessful: ()-> Unit) = viewModelScope.launch {
+         try {
              authenticationRepository.logout()
+             onLogoutSuccessful()
+         }catch (e: Exception){
+             _snackbar.value = SnackbarItem(
+                 message = R.string.shopping_cart_order_error,
+                 button = null
+             )
          }
-    }
+     }
+
 }

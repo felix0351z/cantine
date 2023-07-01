@@ -12,7 +12,6 @@ sealed class Auth {
         val name: String,
         val permissionLevel: PermissionLevel,
         val credit: Float,
-        val password: String?
     )
 
     @Serializable

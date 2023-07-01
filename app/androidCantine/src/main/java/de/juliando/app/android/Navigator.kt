@@ -24,7 +24,12 @@ import de.juliando.app.android.ui.home.report.ReportScreen
 import de.juliando.app.android.ui.orders.OrdersScreen
 import de.juliando.app.android.ui.orders.views.OrderScreen
 import de.juliando.app.android.ui.payment.PaymentScreen
+import de.juliando.app.android.ui.scanner.ScannerScreen
+import de.juliando.app.android.ui.scanner.verify_order.VerifyOrderScreen
 import de.juliando.app.android.ui.theme.CantineTheme
+import de.juliando.app.android.utils.ConnectivityStatus
+import de.juliando.app.data.LocalDataStore
+import de.juliando.app.models.objects.backend.Auth
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -56,6 +61,11 @@ enum class NavigationItem(
         displayName = "Bezahlung",
         image = Pair(Icons.Filled.Payments, Icons.Outlined.Payments)
     ),
+    SCANNER (
+        route = "scanner",
+        displayName = "Scannen",
+        image = Pair(Icons.Filled.QrCodeScanner, Icons.Outlined.QrCodeScanner)
+    ),
     REPORT(
         route = "report/{reportId}",
         displayName = "Reports",
@@ -70,6 +80,15 @@ enum class NavigationItem(
         displayName = "Order",
         navigationArguments = listOf(
             navArgument("orderId") {
+                this.type = NavType.StringType
+            }
+        )
+    ),
+    VERIFYORDER(
+        route = "verifyOrder/{order}",
+        displayName = "VerifyOrder",
+        navigationArguments = listOf(
+            navArgument("order") {
                 this.type = NavType.StringType
             }
         )
@@ -94,13 +113,16 @@ enum class NavigationItem(
 
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavigator() {
     val navController = rememberAnimatedNavController()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(), // Fill the complete screen
+        topBar = {
+                 ConnectivityStatus()
+        },
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentScreen = navBackStackEntry?.destination
@@ -116,6 +138,15 @@ fun AppNavigator() {
                 containerColor = Color.Transparent
             ) {
                 NavigationItem.bottomList.forEach { navigationItem ->
+
+                    val currentUser = LocalDataStore.getCurrentUser()
+                    // Only show the scanner to users with the permission level admin or worker
+                    if (currentUser != null) {
+                        if(navigationItem.route=="scanner" && currentUser.permissionLevel==Auth.PermissionLevel.USER){
+                            return@NavigationBar
+                        }
+                    }
+
                     // Check if the current interated element is selected
                     val selected = currentScreen?.hierarchy?.any { it.route == navigationItem.route } == true
 
@@ -197,6 +228,14 @@ fun AppNavigationHost(
         composable(NavigationItem.PAYMENT.route) {
             PaymentScreen()
         }
+        composable(NavigationItem.SCANNER.route) {
+            ScannerScreen(
+                viewModel = koinViewModel(),
+                onQrCodeScanned = {
+                    navController.navigate("verifyOrder/$it")
+                }
+            )
+        }
         composable(
             route = NavigationItem.REPORT.route,
             arguments = NavigationItem.REPORT.navigationArguments,
@@ -230,6 +269,26 @@ fun AppNavigationHost(
             }
         ) {
             OrderScreen(
+                viewModel = koinViewModel(),
+                onBackPressed = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = NavigationItem.VERIFYORDER.route,
+            arguments = NavigationItem.VERIFYORDER.navigationArguments,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300)) +
+                        slideInHorizontally(animationSpec = tween(300), initialOffsetX = { 1000 })
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300)) +
+                        slideOutHorizontally(animationSpec = tween(300), targetOffsetX = { 1000 })
+            }
+        ) {
+            VerifyOrderScreen(
                 viewModel = koinViewModel(),
                 onBackPressed = {
                     navController.popBackStack()

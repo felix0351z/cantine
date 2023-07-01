@@ -6,6 +6,7 @@ import de.juliando.app.data.StorageKeys
 import de.juliando.app.models.errors.HttpStatusException
 import de.juliando.app.models.objects.backend.*
 import de.juliando.app.models.objects.ui.Order
+import de.juliando.app.utils.asDisplayable
 
 /**
  * This repository handles the payment data.
@@ -59,8 +60,13 @@ class PaymentRepositoryImpl(
         return server.delete("/payment/order", id)
     }
 
-    override suspend fun verifyOrder(request: VerifyOrderRequest) {
-        server.post<VerifyOrderRequest, String>("/payment/purchase", request)
+    override suspend fun verifyOrder(request: VerifyOrderRequest): Order {
+        return try {
+            val order = server.post<VerifyOrderRequest, Content.Order>("/payment/purchase", request)
+            if (order!=null) order.asDisplayable() else throw NullPointerException()
+        }catch (e: Exception) {
+            throw e
+        }
     }
 
     override suspend fun getPurchases(): List<Auth.Payment> {

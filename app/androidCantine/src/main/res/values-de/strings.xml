@@ -41,5 +41,6 @@
     <string name="shopping_cart_order_error">Ein Fehler ist aufgetreten!</string>
     <string name="order_sceen_empty">Du hast keine Bestellungen.</string>
     <string name="done">Fertig</string>
+    <string name="no_internet_connection">offline</string>
 
 </resources>

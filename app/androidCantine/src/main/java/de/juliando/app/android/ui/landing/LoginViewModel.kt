@@ -3,7 +3,6 @@ package de.juliando.app.android.ui.landing
 import androidx.lifecycle.ViewModel
 import de.juliando.app.data.LocalDataStore
 import de.juliando.app.models.errors.HttpStatusException
-import de.juliando.app.models.objects.backend.*
 import de.juliando.app.repository.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +31,14 @@ class LoginViewModel(
                 _errorMessage.value = "Bitte gebe eine URL ein!"
                 false
             }else {
+                // Stores the url
                 LocalDataStore.storeURL(url)
+                // Try to login with the usernameInput and passwordInput
                 authenticationRepository.login(usernameInput.value, passwordInput.value)
+                // Deletes the old user in storage
+                LocalDataStore.storeCurrentUser(null)
+                // Stores the current user
+                LocalDataStore.storeCurrentUser(authenticationRepository.getAccount())
                 true
             }
         }catch (e: HttpStatusException.UnauthorizedException){

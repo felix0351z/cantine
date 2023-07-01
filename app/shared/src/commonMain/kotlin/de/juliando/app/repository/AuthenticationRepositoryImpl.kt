@@ -1,6 +1,8 @@
 package de.juliando.app.repository
 
+import de.juliando.app.data.LocalDataStore
 import de.juliando.app.data.ServerDataSource
+import de.juliando.app.data.StorageKeys
 import de.juliando.app.models.objects.backend.*
 
 /**
@@ -11,7 +13,6 @@ class AuthenticationRepositoryImpl(
     private val server: ServerDataSource = ServerDataSource(),
 ) : AuthenticationRepository {
 
-    override suspend fun loginAdmin() = server.login("admin", "admin")
     override suspend fun login(username: String, password: String) = server.login(username, password)
     override suspend fun logout() = server.logout()
 
@@ -32,7 +33,7 @@ class AuthenticationRepositoryImpl(
     }
 
     override suspend fun addUser(request: UserAddRequest) {
-        server.post<UserAddRequest, String>("/content/meal", request)
+        server.post<UserAddRequest, String>("/user", request)
     }
 
     override suspend fun deleteUser(request: UserDeleteRequest) {

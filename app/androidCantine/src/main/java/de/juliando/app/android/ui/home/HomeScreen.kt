@@ -132,8 +132,7 @@ fun HomeScreen(
                 actions = {
                     // Log out icon
                     IconButton(onClick = {
-                        context.startActivity(Intent(context, LoginActivity::class.java))
-                        viewModel.logout()
+                        viewModel.logout(onLogoutSuccessful = {context.startActivity(Intent(context, LoginActivity::class.java))})
                     }) {
                         Icon(imageVector = Icons.Outlined.Logout , contentDescription = stringResource(R.string.logout_title))
                     }
@@ -141,7 +140,6 @@ fun HomeScreen(
                     IconButton(onClick = {}) {
                         Icon(imageVector = Icons.Outlined.MoreVert , contentDescription = stringResource(R.string.more_title))
                     }
-
                 }
 
             )

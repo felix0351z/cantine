@@ -113,7 +113,7 @@ fun OrdersScreen(
                 is ViewState.Success -> {
                     if (orders.isEmpty()) {
                         item {
-                            emptyView()
+                            EmptyView()
                         }
                     } else {
                         items(
@@ -149,7 +149,7 @@ fun OrdersScreen(
 }
 
 @Composable
-fun emptyView(){
+fun EmptyView(){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(30.dp),

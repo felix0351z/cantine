@@ -40,9 +40,9 @@ class ServerDataSource(
     suspend fun logout() {
         val response = httpClient.get("$BASE_URL/logout") {
             setAuthenticationCookie()
-            LocalDataStore.storeAuthenticationCookie(null)
         }
         checkStatusCode(response)
+        LocalDataStore.storeAuthenticationCookie(null)
     }
 
     /**
