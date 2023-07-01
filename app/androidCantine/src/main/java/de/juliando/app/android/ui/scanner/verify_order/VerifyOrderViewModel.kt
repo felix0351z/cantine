@@ -14,7 +14,7 @@ class VerifyOrderViewModel(
     savedStateHandle: SavedStateHandle,
     private val paymentRepository: PaymentRepository
 ): ViewModel() {
-    private val str: String = checkNotNull(savedStateHandle["order"])
+    private val orderID: String = checkNotNull(savedStateHandle["order"])
 
     private var _order = MutableStateFlow<DataState>(DataState.Loading)
     val order = _order.asStateFlow()
@@ -22,10 +22,8 @@ class VerifyOrderViewModel(
     init {
         viewModelScope.launch {
             try {
-                val data = str.split("-")
                 val verifyOrderRequest = VerifyOrderRequest(
-                    username = data[0],
-                    orderId = data[1]
+                    orderId = orderID
                 )
                 _order.value = DataState.Success(paymentRepository.verifyOrder(verifyOrderRequest))
             } catch (ex: Exception){

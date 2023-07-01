@@ -144,7 +144,7 @@ fun OrderScreen(
                             ){
                                 // Create image of the qr-Code with the username and the orderID as text
                                 Image(
-                                    painter = qrBitmapPainter(value.user+"-"+viewModel.getOrderId()),
+                                    painter = qrBitmapPainter(viewModel.getOrderId()),
                                     contentDescription = "OrderId",
                                     contentScale = ContentScale.FillBounds,
                                     modifier = Modifier
