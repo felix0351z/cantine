@@ -23,14 +23,19 @@ class OrderViewModel(
     init {
         viewModelScope.launch {
             try {
+                // try to get the order from the server
                 _order.value = DataState.Success(paymentRepository.getOrder(orderId))
             } catch (ex: Exception) {
+                // catch show an error message
                 Log.e(this@OrderViewModel::class.toString(), "Error occurred while loading the clicked order", ex)
                 _order.value = DataState.Error(ex)
             }
         }
     }
 
+    /**
+     * @return orderId to create the qrcode
+     */
     fun getOrderId(): String{
         return orderId
     }

@@ -31,6 +31,7 @@ fun WelcomeView(){
             showWelcome.value = true
         }
     })
+    // Shows either the WelcomeScreen or the LoginScreen
     if (showWelcome.value){
         WelcomeScreen(onClick = { showWelcome.value = false })
     }else{

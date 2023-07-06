@@ -61,6 +61,7 @@ fun ScannerScreen(
         verticalArrangement = Arrangement.Center
     ) {
         item {
+            // If the camara permission is granted show the camara screen
             if (hasCamPermission) {
                 AndroidView(
                     modifier= Modifier.fillMaxSize(),

@@ -1,7 +1,7 @@
 package de.juliando.app.data
 
 /**
- *Keys for LocalDataStore
+ * Keys for the LocalDataStore.
  */
 enum class StorageKeys {
     MEAL,

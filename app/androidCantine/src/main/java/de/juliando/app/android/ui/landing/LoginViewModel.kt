@@ -12,6 +12,8 @@ class LoginViewModel(
     private val authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
+    // Stores the current values of the text fields
+
     private var _serverURLInput: MutableStateFlow<String> = MutableStateFlow("http://207.180.215.119:8080/api")
     val serverURLInput = _serverURLInput.asStateFlow()
 
@@ -24,10 +26,12 @@ class LoginViewModel(
     private var _errorMessage: MutableStateFlow<String> = MutableStateFlow("")
     val errorMessage = _errorMessage.asStateFlow()
 
+    // Function to login when the login button was pressed
     suspend fun signIn(): Boolean{
         return try {
             val url = serverURLInput.value
             if (url==""){
+                // Shows an Error Message when there is no url
                 _errorMessage.value = "Bitte gebe eine URL ein!"
                 false
             }else {
@@ -52,6 +56,7 @@ class LoginViewModel(
         }
     }
 
+    // Functions to update the values of the TextFields
 
     fun updateServerURLInput(text: String) {
         _serverURLInput.value = text

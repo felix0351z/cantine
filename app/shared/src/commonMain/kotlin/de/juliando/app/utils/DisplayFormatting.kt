@@ -60,6 +60,9 @@ fun Content.Report.asDisplayable() = Report(
     creationTime = creationTime?.asFormattedDescription()
 )
 
+/**
+ * Formatting the [Content.OrderedMeal] object into a fully displayable [OrderedMeal] data class
+ **/
 fun List<Content.OrderedMeal>.asDisplayable(): List<OrderedMeal> =
     filter { it.id != null }
     .map { it.asDisplayable() }
@@ -76,6 +79,9 @@ fun Content.OrderedMeal.asDisplayable() = OrderedMeal(
     picture = toFullImageUrl(picture)
 )
 
+/**
+ * Formatting the [Content.Meal] object into a fully displayable [OrderedMeal] data class
+ **/
 fun Content.Meal.toOrderedMeal(selections: List<String>) = Content.OrderedMeal(
     id = id,
     name = name,
@@ -86,6 +92,10 @@ fun Content.Meal.toOrderedMeal(selections: List<String>) = Content.OrderedMeal(
     selections = selections,
     picture = picture
 )
+
+/**
+ * Formatting the [Content.Order] object into a fully displayable [Order] data class
+ **/
 @JvmName("asDisplayableOrderList")
 fun List<Content.Order>.asDisplayable() =
     map { it.asDisplayable() }

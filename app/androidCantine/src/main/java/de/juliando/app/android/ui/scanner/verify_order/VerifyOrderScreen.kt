@@ -159,6 +159,7 @@ fun VerifyOrderScreen(
                     }
                 }
                 is DataState.Error -> {
+                    // Shows the error message if sth goes wrong
                     item {
                         Spacer(modifier = Modifier.height(120.dp))
                         Icon(

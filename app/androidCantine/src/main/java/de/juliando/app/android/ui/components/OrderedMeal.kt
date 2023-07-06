@@ -96,8 +96,12 @@ fun OrderedMeal(
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Text( // Description
-                        text = item.description,
+                    var selections = ""
+                    for (selection in item.selections){
+                        selections+="- $selection \n"
+                    }
+                    Text( // Selected selections of the ordered meal
+                        text = selections,
                         style = CantineTypography.Bodies.mealBody,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis

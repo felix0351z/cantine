@@ -28,6 +28,7 @@ class OrdersViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                // Try to get the orders from the paymentRepository
                 val jobs = listOf(
                     launch { _orders.value =  paymentRepository.getOrders().asDisplayable() }
                 )
@@ -40,6 +41,9 @@ class OrdersViewModel(
         }
     }
 
+    /**
+     * Function to refresh the data (gets the current data from the paymentRepository)
+     */
     fun refresh() = viewModelScope.launch {
             _state.value = ViewState.Loading
             _isLoading.value = true
@@ -53,7 +57,9 @@ class OrdersViewModel(
             }
         }
 
-
+    /**
+     * Deletes the order when delete is pressed (long click on an order)
+     */
     fun onDeleteClick(id: String) = viewModelScope.launch {
         paymentRepository.deleteOrder(id)
         refresh()

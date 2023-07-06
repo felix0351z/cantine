@@ -1,7 +1,7 @@
 package de.juliando.app.models.errors
 
 /**
- * Exceptions which comes from the remote server
+ * Exceptions coming from the server.
  */
 sealed class HttpStatusException: RuntimeException() {
     class InternalDatabaseErrorException : HttpStatusException()

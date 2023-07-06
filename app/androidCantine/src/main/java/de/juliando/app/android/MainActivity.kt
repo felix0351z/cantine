@@ -28,10 +28,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             CantineApplicationTheme {
                 if(LocalDataStore.getAuthenticationCookieHeader() == null){
+                    // If no user is logged in start the LoginActivity (LoginScreen)
                     startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                     overridePendingTransition(0, 0)
                     finish()
                 }else{
+                    // else show the AppNavigator
                     AppNavigator()
                 }
             }

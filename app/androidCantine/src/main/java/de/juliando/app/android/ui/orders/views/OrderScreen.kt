@@ -80,6 +80,7 @@ fun OrderScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when(order) {
+                // When the data is loading
                 is DataState.Loading -> {
 
                     item {
@@ -117,6 +118,8 @@ fun OrderScreen(
                     }
 
                 }
+
+                // When the data is successfully loaded
                 is DataState.Success<*> -> {
                     val value: Order = (order as DataState.Success<*>).value as Order
 
@@ -139,6 +142,7 @@ fun OrderScreen(
 
                             Box(
                                 modifier = Modifier
+                                    // Border around the qrcode that the scanner recognises the qrcode
                                     .border(8.dp, Color.White, RoundedCornerShape(5))
                                     .size(248.dp)
                             ){
@@ -192,13 +196,12 @@ fun qrBitmapPainter(
     padding: Dp = 0.dp
 ): BitmapPainter {
 
+    // get the current density of the screen
     val density = LocalDensity.current
     val sizePx = with(density) { size.roundToPx() }
     val paddingPx = with(density) { padding.roundToPx() }
 
-    var bitmap by remember(content) {
-        mutableStateOf<Bitmap?>(null)
-    }
+    var bitmap by remember(content) { mutableStateOf<Bitmap?>(null) }
 
     LaunchedEffect(bitmap) {
         if (bitmap != null) return@LaunchedEffect
@@ -232,6 +235,7 @@ fun qrBitmapPainter(
             for (x in 0 until matrixWidth) {
                 for (y in 0 until matrixHeight) {
                     val shouldColorPixel = bitmapMatrix?.get(x, y) ?: false
+                    // Colors of the qrcode
                     val pixelColor = if (shouldColorPixel) CantineColors.backgroundColor else Color.White
 
                     newBitmap.setPixel(x, y, pixelColor.toArgb())

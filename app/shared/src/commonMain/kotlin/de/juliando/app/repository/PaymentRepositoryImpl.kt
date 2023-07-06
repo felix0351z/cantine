@@ -10,7 +10,7 @@ import de.juliando.app.utils.asDisplayable
 
 /**
  * This repository handles the payment data.
- * It decides whether the data comes from the server or from local storage.
+ * It decides whether the data comes from the server (ServerDataSource) or from local storage (LocalDataStore).
  */
 
 class PaymentRepositoryImpl(

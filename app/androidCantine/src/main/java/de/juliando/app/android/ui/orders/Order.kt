@@ -77,6 +77,7 @@ fun Order(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // List of the ordered items
                     LazyColumn(
                         modifier = Modifier
                             .padding(horizontal = 5.dp)

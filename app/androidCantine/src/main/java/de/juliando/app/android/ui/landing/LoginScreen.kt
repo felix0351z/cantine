@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,7 +59,10 @@ fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
 
     val mContext = LocalContext.current
 
-    Column(
+    var passwordVisibility by remember { mutableStateOf(true) }
+    var errorMessageText = remember { mutableStateOf("") }
+
+    LazyColumn(
         Modifier
             .fillMaxSize()
             .background(
@@ -68,155 +72,182 @@ fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-
-        var passwordVisibility by remember { mutableStateOf(true) }
-
-        Spacer(modifier = Modifier.padding(vertical = 25 .dp))
-
-        Text(
-            text = stringResource(id = R.string.landing_3),
-            fontWeight = FontWeight.Bold,
-            fontSize = 33.sp,
-            color = CantineTheme.white,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(horizontal = 20.dp)
-        )
-
-        Text(
-            text = stringResource(id = R.string.landing_4),
-            color = CantineTheme.grey1,
-            fontSize = 15.sp,
-            modifier = Modifier
-                .width(350.dp)
-                .align(Alignment.Start)
-                .padding(horizontal = 20.dp)
-                .align(Alignment.Start)
-        )
-
-        Spacer(modifier = Modifier.padding(vertical = 34.dp))
-
-        var errorMessageText = remember {
-            mutableStateOf("")
+        item {
+            Spacer(modifier = Modifier.padding(vertical = 25 .dp))
         }
 
-        //Error if sth is wrong/does not exist
-        Box(
-            Modifier
-                .height(48.dp)
-                .padding(horizontal = 18.dp, vertical = 0.dp)
-                .then(
-                    if (errorMessageText.value != "") Modifier
-                        .background(
-                            color = Color.Red.copy(alpha = 0.4f),
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                        .border(width = 1.dp, color = Color.Red, shape = RoundedCornerShape(5.dp))
-                    else Modifier
+        item {
+            // Text for the
+            Box(modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth()) {
+                Text(
+                    text = stringResource(id = R.string.landing_3),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 33.sp,
+                    color = CantineTheme.white,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(horizontal = 20.dp)
                 )
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            }
+        }
+
+        item {
+            Box(modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth()) {
+                Text(
+                    text = stringResource(id = R.string.landing_4),
+                    color = CantineTheme.grey1,
+                    fontSize = 15.sp,
+                    modifier = Modifier
+                        .width(350.dp)
+                        .align(Alignment.CenterStart)
+                        .padding(horizontal = 20.dp)
+                )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.padding(vertical = 34.dp))
+        }
+
+        item {
+            //Shows an error if sth is wrong/does not exist
+            Box(
+                Modifier
+                    .height(48.dp)
+                    .padding(horizontal = 18.dp, vertical = 0.dp)
+                    .then(
+                        if (errorMessageText.value != "") Modifier
+                            .background(
+                                color = Color.Red.copy(alpha = 0.4f),
+                                shape = RoundedCornerShape(5.dp)
+                            )
+                            .border(width = 1.dp, color = Color.Red, shape = RoundedCornerShape(5.dp))
+                        else Modifier
+                    )
             ) {
-                if(errorMessageText.value!="") {
-                    Icon(
-                        imageVector = Icons.Outlined.Warning,
-                        contentDescription = "Warning",
-                        tint = Color.White,
-                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if(errorMessageText.value!="") {
+                        Icon(
+                            imageVector = Icons.Outlined.Warning,
+                            contentDescription = "Warning",
+                            tint = Color.White,
+                            modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp)
+                        )
+                    }
+                    Text(
+                        text = errorMessageText.value,
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp, vertical = 0.dp),
+                        maxLines = 2,
+                        lineHeight = 20.sp
                     )
                 }
-                Text(
-                    text = errorMessageText.value,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp, vertical = 0.dp),
-                    maxLines = 2,
-                    lineHeight = 20.sp
-                )
             }
-
         }
 
-        Spacer(modifier = Modifier.padding(vertical = 4.dp))
+        item {
+            Spacer(modifier = Modifier.padding(vertical = 4.dp))
+        }
 
-        LoginTextField(
-            keyboardController = keyboardController,
-            bringIntoViewRequester = bringIntoViewRequester,
-            coroutineScope = coroutineScope,
-            label = "Server URL",
-            value = serverURLInput,
-            placeholder = "https://...",
-            onValueChange = viewModel::updateServerURLInput,
-            trailingIcon = { Icon(imageVector = Icons.Outlined.Dns, contentDescription = "Dns") }
-        )
+        // TextFields for the server url, username and password.
 
-        Spacer(modifier = Modifier.padding(vertical = 6.dp))
+        item {
+            LoginTextField(
+                keyboardController = keyboardController,
+                bringIntoViewRequester = bringIntoViewRequester,
+                coroutineScope = coroutineScope,
+                label = "Server URL",
+                value = serverURLInput,
+                placeholder = "https://...",
+                onValueChange = viewModel::updateServerURLInput,
+                trailingIcon = { Icon(imageVector = Icons.Outlined.Dns, contentDescription = "Dns") }
+            )
+        }
 
-        LoginTextField(
-            keyboardController = keyboardController,
-            bringIntoViewRequester = bringIntoViewRequester,
-            coroutineScope = coroutineScope,
-            label = "Nutzername",
-            value = usernameInput,
-            onValueChange = viewModel::updateUsernameInput,
-            trailingIcon = { Icon(imageVector = Icons.Outlined.Person, contentDescription = "Person") }
-        )
+        item {
+            Spacer(modifier = Modifier.padding(vertical = 6.dp))
+        }
 
-        LoginTextField(
-            keyboardController = keyboardController,
-            bringIntoViewRequester = bringIntoViewRequester,
-            coroutineScope = coroutineScope,
-            label = "Passwort",
-            value = passwordInput,
-            onValueChange = viewModel::updatePasswordInput,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Next
-            ),
-            visualTransformation = if(passwordVisibility)
-                PasswordVisualTransformation()
-            else
-                VisualTransformation.None,
-            trailingIcon = {
-                IconButton(onClick = {
-                    passwordVisibility = !passwordVisibility
-                }) {
-                    if(passwordVisibility)
-                        Icon(imageVector = Icons.Outlined.VisibilityOff, contentDescription = "VisibilityOff")
-                    else
-                        Icon(imageVector = Icons.Outlined.Visibility, contentDescription = "Visibility")
-                }
-            }
-        )
+        item {
+            LoginTextField(
+                keyboardController = keyboardController,
+                bringIntoViewRequester = bringIntoViewRequester,
+                coroutineScope = coroutineScope,
+                label = "Nutzername",
+                value = usernameInput,
+                onValueChange = viewModel::updateUsernameInput,
+                trailingIcon = { Icon(imageVector = Icons.Outlined.Person, contentDescription = "Person") }
+            )
+        }
 
-        Spacer(modifier = Modifier.padding(vertical = 14.5.dp))
-
-        LandingButton(
-            modifier = Modifier,
-            text = stringResource(id = R.string.login),
-            onClick = {
-                viewModel.clearErrorMessage()
-                keyboardController?.hide()
-                coroutineScope.launch {
-                    if(viewModel.signIn()){
-                        mContext.startActivity(Intent(mContext, MainActivity::class.java))
-                        (mContext as? Activity)?.finish()
+        item {
+            LoginTextField(
+                keyboardController = keyboardController,
+                bringIntoViewRequester = bringIntoViewRequester,
+                coroutineScope = coroutineScope,
+                label = "Passwort",
+                value = passwordInput,
+                onValueChange = viewModel::updatePasswordInput,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                visualTransformation = if(passwordVisibility)
+                    PasswordVisualTransformation()
+                else
+                    VisualTransformation.None,
+                trailingIcon = {
+                    // shows and hides the password with a click on the eye symbol
+                    IconButton(onClick = {
+                        passwordVisibility = !passwordVisibility
+                    }) {
+                        if(passwordVisibility)
+                            Icon(imageVector = Icons.Outlined.VisibilityOff, contentDescription = "VisibilityOff")
+                        else
+                            Icon(imageVector = Icons.Outlined.Visibility, contentDescription = "Visibility")
                     }
-                    errorMessageText.value = viewModel.errorMessage.value
                 }
-            }
-        )
+            )
+        }
 
-        Spacer(modifier = Modifier
-            .padding(vertical = 8.dp)
-            .bringIntoViewRequester(bringIntoViewRequester)
-        )
+        item {
+            Spacer(modifier = Modifier.padding(vertical = 14.5.dp))
+        }
+
+        item {
+            LandingButton(
+                modifier = Modifier,
+                text = stringResource(id = R.string.login),
+                onClick = {
+                    viewModel.clearErrorMessage()
+                    keyboardController?.hide()
+                    coroutineScope.launch {
+                        if(viewModel.signIn()){
+                            mContext.startActivity(Intent(mContext, MainActivity::class.java))
+                            (mContext as? Activity)?.finish()
+                        }
+                        errorMessageText.value = viewModel.errorMessage.value
+                    }
+                }
+            )
+        }
+        item {
+            Spacer(modifier = Modifier
+                .padding(vertical = 8.dp)
+                .bringIntoViewRequester(bringIntoViewRequester)
+            )
+        }
     }
 
 }
 
+/**
+ * Text Field composable for the server url, username and password
+ */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class,
     ExperimentalMaterial3Api::class
 )
@@ -269,7 +300,6 @@ fun LoginTextField(
         keyboardOptions = keyboardOptions,
         keyboardActions = KeyboardActions1(onDone = { keyboardController?.hide()})
     )
-
 }
 
 @Preview(showBackground = true)

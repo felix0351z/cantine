@@ -144,8 +144,12 @@ class ServerDataSource(
     }
 
 
-
-
+    /**
+     * Function to load an image from the server
+     *
+     * @param route Route to the server
+     * @return ByteArray of the picture
+     */
     suspend fun loadImage(route: String) : ByteArray {
         val response = httpClient.get(route) {
             setAuthenticationCookie()
@@ -156,12 +160,11 @@ class ServerDataSource(
     }
 
     /**
-     * Checks which status code
+     * Checks the status code and throws an exception if the status code is not ok(200-299)
      *
      * @param response HttpResponse to check the status code
-     * Throws an Exception if the status code is not ok(200-299)
      */
-    fun checkStatusCode(response: HttpResponse, requestType: Int = 0){
+    fun checkStatusCode(response: HttpResponse){
         val httpStatus = response.status.value
         if (httpStatus !in 200..299){
             throw when(httpStatus){

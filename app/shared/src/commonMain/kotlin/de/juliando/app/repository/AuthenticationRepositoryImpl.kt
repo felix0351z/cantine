@@ -7,6 +7,7 @@ import de.juliando.app.models.objects.backend.*
 
 /**
  * This repository handles the authentication data.
+ * It uses the ServerDataSource to get the data from the server.
  */
 //TODO: Save username and password in local datastore
 class AuthenticationRepositoryImpl(

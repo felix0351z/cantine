@@ -11,6 +11,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * LandingButton composable for the Button on the WelcomeScreen and the LoginScreen
+ */
 @Composable
 fun LandingButton(
     modifier: Modifier = Modifier,

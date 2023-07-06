@@ -140,6 +140,7 @@ fun AppNavigator() {
                 NavigationItem.bottomList.forEach { navigationItem ->
 
                     val currentUser = LocalDataStore.getCurrentUser()
+
                     // Only show the scanner to users with the permission level admin or worker
                     if (currentUser != null) {
                         if(navigationItem.route=="scanner" && currentUser.permissionLevel==Auth.PermissionLevel.USER){
